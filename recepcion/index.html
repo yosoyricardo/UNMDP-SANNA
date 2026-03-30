@@ -91,9 +91,35 @@ button:hover{background:#38bdf8}
   padding:12px 20px;
 }
 </style>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  body { margin:0; font-family: Arial, sans-serif; }
+  .container { max-width: 900px; margin: auto; padding: 10px; }
+  .banner-img { width:100%; height:220px; object-fit:cover; border-radius:10px; }
+  .options { display:flex; flex-direction:column; gap:10px; margin-top:15px; }
+  .options button { width:100%; padding:14px; font-size:16px; border-radius:10px; border:none; background:#2563eb; color:white; cursor:pointer; }
+  .options button:hover { background:#1d4ed8; }
+  iframe { width:100%; max-width:100%; height:160px; border:none; border-radius:10px; }
+
+  @media (max-width: 600px) {
+    .banner-img { height:180px; }
+    .options button { font-size:15px; padding:12px; }
+    h1, h2, h3 { font-size:18px; }
+    iframe { height:140px; }
+  }
+</style>
 </head>
 <body>
 
+<script>
+function isMobile() {
+    return window.innerWidth < 768;
+}
+
+if (isMobile()) {
+    window.location.href = "/mobile"; 
+}
+</script>
 <div class="game-container">
   <div class="header">
     <div class="title">Simulación Clínica Neonatal</div>

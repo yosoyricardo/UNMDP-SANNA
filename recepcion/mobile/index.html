@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Simulación Recepción del Recién Nacido</title>
+
+<style>
+body{margin:0;font-family:Arial;background:#0f172a;color:white}
+.container{max-width:900px;margin:auto;padding:15px}
+.banner-img{width:100%;height:220px;object-fit:cover;border-radius:10px}
+.card{background:#1e293b;padding:15px;border-radius:10px;margin-top:15px}
+.options{display:flex;flex-direction:column;gap:10px;margin-top:15px}
+.options button{width:100%;padding:14px;font-size:16px;border-radius:10px;border:none;background:#2563eb;color:white;cursor:pointer}
+.options button:hover{background:#1d4ed8}
+.center{text-align:center}
+iframe{width:100%;height:160px;border:none;border-radius:10px;margin-top:20px}
+.character{font-weight:bold;color:#38bdf8;margin-bottom:8px}
+@media(max-width:600px){.banner-img{height:180px}.options button{font-size:15px;padding:12px}iframe{height:140px}}
+</style>
+</head>
+
+<body>
+<div class="container">
+<h2 class="center">Recepción del Recién Nacido 👶</h2>
+<img id="sceneImage" class="banner-img" src="https://images.unsplash.com/photo-1584515933487-779824d29309" />
+
+<div class="card" id="gameArea">
+<h3>CASO CLÍNICO</h3>
+<p>
+<b>Situación clínica:</b> Usted es la/el pediatra del hospital, al lado suyo está Camila de 30 años que se encuentra en trabajo de parto. Se encuentra esperando con ropa estéril y guantes, para realizar la recepción de su hijo Pedro de 39 semanas de EG por FUM.<br><br>
+<b>Datos de la madre:</b> embarazo controlado, segunda gesta, 1 aborto, serologías toxo pasada negativas, hisopado vaginal strep agalactiae negativo, grupo y factor A RH (+).<br><br>
+<b>Datos del recién nacido:</b> Pedro EG 39 semanas, tono en flexión acorde a una persona recién nacida sana, FC 130 x min, respira con adecuado esfuerzo respiratorio sin uso de músculos accesorios. Color cianótico que se vuelve rosado a los 2 minutos de vida. Adecuada adaptación a la vida extrauterina.
+</p>
+<div class="center">
+<button onclick="startGame()">Iniciar simulación</button>
+</div>
+</div>
+
+<iframe src="https://www.youtube-nocookie.com/embed/jfKfPfyJRdk" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+</div>
+
+<script>
+const checklist=[
+"Recibe a la persona recién nacida con paño estéril",
+"Realiza de inmediato contacto piel a piel sin interferencias",
+"Mientras seca y estimula a la persona recién nacida realiza las 3 preguntas para determinar la necesidad de iniciar maniobras de reanimación",
+"Evalúa si es gestación a término",
+"Evalúa si respira o llora (presenta adecuado esfuerzo respiratorio)",
+"Evalúa el tono (miembros en flexión y movilidad activa)",
+"Evalúa la frecuencia cardíaca en el cordón umbilical (>100 lpm)",
+"Evalúa el estado clínico y de vigilia de la madre",
+"Dice que es un recién nacido vigoroso y lo deja con su madre",
+"Dice en voz alta que mantiene la temperatura. Cambia compresa húmeda por seca. La compresa cubre totalmente el cuerpo del recién nacido",
+"Coloca gorro",
+"Realiza Test de APGAR al minuto de vida para valorar tolerancia del RN al proceso de nacimiento. (puntaje=9)",
+"Realiza identificación del RN y coloca pulsera con misma identificación a la madre",
+"Dice que realiza clampeo oportuno o tardío del cordón umbilical (1-3 minutos o hasta que deje de latir)",
+"Clampea cordón con 2 pinzas Kocher separadas por 10 cm y corta con tijera estéril entre medio de ellas",
+"Coloca clamp en el cordón del recién nacido a 2-3 cm desde la piel del bebé y corta el cordón distal al clamp con hoja de bisturí estéril",
+"Observa el interior del cordón con presencia de 2 arterias y 1 vena",
+"Realiza Test de APGAR a los cinco minutos para valorar tolerancia de la persona recién nacida a la vida extrauterina (puntaje max 9-10)",
+"Dice en voz alta que el Test de Apgar es 9/10 (9 al 1 min y 10 a los 5 min)",
+"Dice que alienta al binomio a mantener contacto piel con piel iniciando la puesta al pecho sin separación hasta la toma del primer calostro",
+"Dice que permanece observando al binomio con mínima interferencia y que favorece que el/la acompañante permanezca a su lado"
+];
+
+let current=0;
+let startTime;
+
+function shuffleOptions(correctIndex){
+let options=[checklist[correctIndex]];
+while(options.length<4){
+let rand=Math.floor(Math.random()*checklist.length);
+if(!options.includes(checklist[rand])){
+options.push(checklist[rand]);
+}
+}
+return options.sort(()=>Math.random()-0.5);
+}
+
+function startGame(){
+startTime=new Date();
+current=0;
+loadStep();
+}
+
+function loadStep(){
+let correct=checklist[current];
+let options=shuffleOptions(current);
+
+let character=["Pediatra","Enfermera","Madre","Estudiante"][Math.floor(Math.random()*4)];
+
+let html=`
+<div class="character">${character}:</div>
+<p>¿Cuál es el siguiente paso correcto en la recepción del recién nacido?</p>
+<p><b>Paso ${current+1} de ${checklist.length}</b></p>
+<div class="options">
+${options.map(opt=>`<button onclick="checkAnswer('${opt.replace(/'/g,'')}')">${opt}</button>`).join('')}
+</div>
+`;
+
+document.getElementById("gameArea").innerHTML=html;
+document.getElementById("sceneImage").src="https://images.unsplash.com/photo-1516574187841-cb9cc2ca948b";
+}
+
+function checkAnswer(answer){
+if(answer===checklist[current]){
+current++;
+if(current>=checklist.length){finishGame();}
+else{loadStep();}
+}else{
+alert("Respuesta incorrecta. El juego se reiniciará.");
+location.reload();
+}
+}
+
+function finishGame(){
+let endTime=new Date();
+let time=Math.floor((endTime-startTime)/1000);
+
+document.getElementById("gameArea").innerHTML=`
+<h3>Simulación finalizada ✅</h3>
+<p>Checklist completado correctamente</p>
+<p>Tiempo total: ${time} segundos</p>
+<button onclick="location.reload()">Reiniciar</button>
+`;
+}
+</script>
+</body>
+</html>
