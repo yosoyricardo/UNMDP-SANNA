@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Juego Checklist Neonatal OSCE</title>
+<style>
+    body { font-family: Arial, sans-serif; background: #f4f6f8; margin: 0; padding: 20px; text-align: center; }
+    h1 { color: #2c3e50; }
+    .container { max-width: 1100px; margin: auto; }
+    ul { list-style: none; padding: 0; }
+    li { background: white; margin: 6px 0; padding: 10px; border-radius: 8px; cursor: grab; box-shadow: 0 2px 4px rgba(0,0,0,0.1); text-align: left; }
+    li.dragging { opacity: 0.5; }
+    button { margin: 6px; padding: 10px 18px; font-size: 16px; border: none; border-radius: 8px; background: #3498db; color: white; cursor: pointer; }
+    button:hover { background: #2980b9; }
+    .result { margin-top: 15px; font-size: 18px; font-weight: bold; }
+    .tabs { margin-bottom: 20px; }
+    .timer { font-size: 20px; font-weight: bold; margin: 10px; }
+    .score { font-size: 18px; margin: 10px; }
+    .osce-box { background: white; padding: 20px; border-radius: 10px; margin-top: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    .history { background: white; padding: 20px; border-radius: 10px; margin-top: 20px; box-shadow: 0 2px 5px rgba(0,0,0,0.1); text-align:left; }
+    .modal {
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.6);
+        justify-content: center;
+        align-items: center;
+    }
+    .modal-content {
+        background: white;
+        padding: 30px;
+        border-radius: 10px;
+        text-align: center;
+        width: 400px;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>🧠 Juego de Checklists Neonatales (Modo OSCE)</h1>
+
+    <div class="tabs">
+        <button onclick="loadChecklist('hora')">Primera Hora de Vida</button>
+        <button onclick="loadChecklist('profilaxis')">Profilaxis</button>
+        <button onclick="loadChecklist('reflejos')">Reflejos</button>
+        <button onclick="loadChecklist('sueno')">Sueño Seguro</button>
+        <button onclick="chooseRandomChecklist()" style="background:#27ae60;">🎓 Modo Profesor (Aleatorio)</button>
+    </div>
+
+    <div class="timer">⏱ Tiempo: <span id="time">0</span> s</div>
+    <div class="score">🏆 Puntaje: <span id="score">0</span></div>
+
+    <ul id="checklist"></ul>
+
+    <button onclick="checkOrder()">Verificar</button>
+    <button onclick="shuffleList()">Mezclar</button>
+    <button onclick="startTimer()">Iniciar Cronómetro</button>
+
+    <div class="result" id="result"></div>
+
+    <div class="osce-box">
+        <h2>🎤 Modo OSCE</h2>
+        <p id="osceStep">Presione iniciar para comenzar la simulación clínica.</p>
+        <button onclick="startOSCE()">Iniciar OSCE</button>
+        <button onclick="nextOSCE()">Siguiente Paso</button>
+    </div>
+
+    <div class="history">
+        <h2>📊 Histórico de Mejores Puntajes</h2>
+        <div id="historyContent">Sin registros aún</div>
+    </div>
+</div>
+
+<div class="modal" id="resultModal">
+    <div class="modal-content">
+        <h2>Resultado</h2>
+        <p id="modalText"></p>
+        <button onclick="closeModal()">Cerrar</button>
+        <button onclick="restartGame()" style="background:#27ae60;">Reiniciar</button>
+    </div>
+</div>
+
+<script>
+const checklists = {
+    hora: ["Recibe a la persona recién nacida con paño esteril","Realiza de inmediato contacto piel a piel sin interferencias","Mientras seca y estimula a la persona recién nacida realiza las 3 preguntas para determinar la necesidad de iniciar maniobras de reanimación","Evalúa si es gestación a término","Evalúa si Respira o llora (presenta adecuado esfuerzo respiratorio)","Evalúa el Tono (miembros en flexión y movilidad activa)","Evalúa la frecuencia cardiaca en el cordón umbilical (>100 lpm)","Evalúa el estado clínico y de vigilia de la madre","Dice qué es un recién nacido vigoroso y lo deja con su madre","Dice en voz alta qué mantiene la temperatura. Cambia compresa húmeda por seca. La compresa cubre totalmente el cuerpo del recién nacido","Coloca Gorro","Realiza Test de APGAR al minuto de vida para valorar tolerancia del RN al proceso de nacimiento. (puntaje=9)","Realiza identificación del RN y coloca pulsera con misma identificación a la madre","Dice que realiza Clampeo oportuno o tardío del cordón umbilical (1-3 minutos o hasta que deje de latir)","Clampea cordón con 2 pinzas Kocher separadas por 10 cm y corta con tijera esteril entre medio de ellas","Coloca clamp en el cordón del recién nacido a 2-3 cm desde la piel del bebe y corta el cordón distal al clamp con hoja de bisturi esteril","Observa el interior del cordón con presencia de 2 arterias y 1 vena","Realiza Test de APGAR a los cinco minutos para valorar tolerancia de la persona recién nacida a la vida extrauterina (puntaje máx =10)","Dice en voz alta que el Test de Apgar es 9/10 (9 al 1er min y 10 a los 5 min)","Dice que alienta al binomio a mantener contacto piel con piel iniciando la puesta al pecho sin separación hasta la toma del primer calostro","Dice que permanece observando al binomio con mínima interferencia y que favorece que el/la acompañante permanezca a su lado"],
+    profilaxis: ["Higieniza sus manos antes de realizar la práctica y se presenta.","Observa a la persona recién nacida y deja al descubierto sus muslos.","Considera alguna estrategia NO farmacológica para el manejo del dolor (puesta al pecho en contacto piel con piel si fuera posible / contención mediante posicionamiento)","Informa a quien acompaña al bebé que va a aplicar una inyección intramuscular de Vitamina K para prevenir la hemorragia neonatal y pide permiso.","Lee la ampolla de vitamina k en voz alta","Carga con la aguja la jeringa de 1 cm, de vit K","Cambia aguja para aplicar","Realiza limpieza / antisepsia en el muslo del Recién Nacido","Aplica en forma intramuscular 90° la vit k en región anterolateral del muslo","Descarta adecuadamente la aguja en descartador y jeringa en bolsa roja","Toma ampolla de Vacuna contra la Hep. B y lee en voz alta","Explica a quien acompaña al bebé que va a aplicar una inyección IM; la primera dosis de la vacuna que previene la infección por Hepatitis B y pide permiso.","Carga con la aguja la jeringa de 1 cm, de vacuna Hepatitis B","Cambia aguja para aplicar","Realiza limpieza / antisepsia en el muslo del Recién Nacido","Aplica en forma intramuscular 90° la vacuna hepatitis b en región anterolateral del otro muslo","Descarta adecuadamente la aguja y jeringa en descartador","Explica a quien acompaña al bebé que va a proceder a aplicar Eritromicina intraocular para prevenir la oftalmia gonocócica","Aplica Eritromicina en ambos ojos, desde el ángulo interno del ojo hacia afuera","Higieniza las manos luego de la práctica"],
+    reflejos: ["Se presenta a la familia y se lava las manos","Explica de qué se trata la exploración, para que se hace y pide permiso para realizarla.","Reflejo de Moro","Prehensión palmar y plantar","Búsqueda","Succión","Marcha automática","Reflejo tónico cervical (posición de esgrima)","Dice que finaliza la exploración y comunica a la familia los hallazgos"],
+    sueno: ["Realiza recomendaciones para un sueño seguro del recién nacido: cuna segura: colchón firme, no debe contener almohadas, peluches ni chichoneras","Recomienda que la posición para dormir más segura para evitar SMS es boca arriba","Dice que la lactancia materna exclusiva es un factor de protección","Dice que los ambientes deben permanecer libres de humo","Dice que deben evitarse sobrecalentamientos tanto en la cantidad de ropa que se le pone al bebé como en el ambiente","Dice que los brazos del recién nacido deben quedar por arriba de las sabanas","Pregunta a la familia si tienen alguna duda"]
+};
+
+let currentChecklist = [];
+let currentName = '';
+let timer = 0;
+let interval = null;
+let osceIndex = 0;
+
+function loadChecklist(name) {
+    currentChecklist = [...checklists[name]];
+    currentName = name;
+    shuffleList();
+    osceIndex = 0;
+}
+
+function chooseRandomChecklist() {
+    const keys = Object.keys(checklists);
+    const randomKey = keys[Math.floor(Math.random() * keys.length)];
+    loadChecklist(randomKey);
+    startTimer();
+    startOSCE();
+    document.getElementById('result').textContent = '🎓 Profesor eligió: ' + randomKey;
+}
+
+function shuffleList() {
+    const list = document.getElementById('checklist');
+    list.innerHTML = '';
+    let shuffled = [...currentChecklist].sort(() => Math.random() - 0.5);
+    shuffled.forEach(item => {
+        const li = document.createElement('li');
+        li.textContent = item;
+        li.draggable = true;
+        list.appendChild(li);
+    });
+}
+
+let dragItem = null;
+
+document.addEventListener('dragstart', e => {
+    if (e.target.tagName === 'LI') dragItem = e.target;
+});
+
+document.getElementById('checklist').addEventListener('dragover', e => {
+    e.preventDefault();
+    const container = document.getElementById('checklist');
+    const afterElement = [...container.children].find(child => e.clientY < child.getBoundingClientRect().top + child.offsetHeight/2);
+    if (!afterElement) container.appendChild(dragItem);
+    else container.insertBefore(dragItem, afterElement);
+});
+
+function checkOrder() {
+    stopTimer();
+    const items = [...document.querySelectorAll('#checklist li')].map(li => li.textContent);
+    let score = 0;
+    items.forEach((item, index) => { if (item === currentChecklist[index]) score++; });
+    document.getElementById('score').textContent = score;
+
+    saveHistory(currentName, score, timer);
+    showModal(score);
+}
+
+function startTimer() {
+    if (interval) clearInterval(interval);
+    timer = 0;
+    interval = setInterval(() => {
+        timer++;
+        document.getElementById('time').textContent = timer;
+    }, 1000);
+}
+
+function stopTimer() {
+    if (interval) clearInterval(interval);
+}
+
+function startOSCE() {
+    if (!currentChecklist.length) return;
+    osceIndex = 0;
+    document.getElementById('osceStep').textContent = currentChecklist[osceIndex];
+}
+
+function nextOSCE() {
+    osceIndex++;
+    if (osceIndex < currentChecklist.length)
+        document.getElementById('osceStep').textContent = currentChecklist[osceIndex];
+    else
+        document.getElementById('osceStep').textContent = 'Simulación finalizada';
+}
+
+function showModal(score) {
+    document.getElementById('modalText').innerHTML = `Acertaste ${score} de ${currentChecklist.length}<br>Tiempo: ${timer} segundos`;
+    document.getElementById('resultModal').style.display = 'flex';
+}
+
+function closeModal() {
+    document.getElementById('resultModal').style.display = 'none';
+}
+
+function restartGame() {
+    closeModal();
+    shuffleList();
+    startTimer();
+}
+
+function saveHistory(name, score, time) {
+    let history = JSON.parse(localStorage.getItem('osceHistory')) || {};
+    if (!history[name] || history[name].score < score)
+        history[name] = { score, time };
+    localStorage.setItem('osceHistory', JSON.stringify(history));
+    renderHistory();
+}
+
+function renderHistory() {
+    let history = JSON.parse(localStorage.getItem('osceHistory')) || {};
+    let html = '';
+    for (let key in history) {
+        html += `<p><b>${key}</b>: ${history[key].score} aciertos en ${history[key].time}s</p>`;
+    }
+    document.getElementById('historyContent').innerHTML = html || 'Sin registros aún';
+}
+
+loadChecklist('hora');
+renderHistory();
+</script>
+</body>
+</html>
