@@ -214,5 +214,74 @@ function renderHistory() {
 loadChecklist('hora');
 renderHistory();
 </script>
+
+
+
+
+<style>
+        body {
+            margin: 0;
+            padding-bottom: 40px; /* Evita que o rodapé cubra o conteúdo final da página */
+        }
+
+        .footer-premium {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 35px; /* Barra bem fininha */
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-size: 13px;
+            color: #666; /* Cinza elegante */
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05); /* Sombra projetada discreta */
+            overflow: hidden;
+            z-index: 9999;
+        }
+
+        /* Efeito de brilho passando */
+        .footer-premium::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                to right, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0) 30%, 
+                rgba(0, 0, 0, 0.03) 50%, 
+                rgba(255, 255, 255, 0) 70%, 
+                transparent 100%
+            );
+            transform: skewX(-25deg);
+            animation: shine 4s infinite ease-in-out;
+        }
+
+        @keyframes shine {
+            0% { left: -150%; }
+            100% { left: 150%; }
+        }
+
+        .footer-text {
+            letter-spacing: 0.5px;
+            font-weight: 400;
+        }
+
+        .name-highlight {
+            font-weight: 600;
+            color: #333;
+        }
+    </style>
+
+
+  <footer class="footer-premium">
+        <span class="footer-text">Criado por <span class="name-highlight">Ricardo Cardoso</span></span>
+    </footer>
+
 </body>
 </html>
