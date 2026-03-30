@@ -6,7 +6,7 @@
 <title>Simulación Neonatal - Visual Novel</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
-body {
+body{
   margin:0;
   font-family:'Inter',sans-serif;
   background:linear-gradient(120deg,#0f172a,#1e293b);
@@ -39,18 +39,24 @@ body {
 .title{font-weight:700;font-size:18px}
 .timer{color:#38bdf8}
 
-.scene{
-  flex:1;
-  background:url('https://images.unsplash.com/photo-1584515933487-779824d29309?q=80&w=1200&auto=format&fit=crop') center/cover;
-  display:flex;
-  align-items:flex-end;
+.banner{
+  width:100%;
+  height:220px;
+  background:#000;
+}
+
+.banner img{
+  width:100%;
+  height:100%;
+  object-fit:cover;
 }
 
 .dialog-box{
-  width:100%;
-  background:rgba(15, 23, 42, 0.438);
+  flex:1;
+  background:rgba(15,23,42,0.95);
   padding:20px;
-  border-top:2px solid #38bdf8;
+  display:flex;
+  flex-direction:column;
 }
 
 .speaker{color:#38bdf8;font-weight:700;margin-bottom:8px}
@@ -82,6 +88,7 @@ button:hover{background:#38bdf8}
 .start-btn{
   background:#22c55e;
   margin-top:20px;
+  padding:12px 20px;
 }
 </style>
 </head>
@@ -95,53 +102,41 @@ button:hover{background:#38bdf8}
 
   <div class="progress"><div class="bar" id="bar"></div></div>
 
-  <div class="scene">
-    <div class="dialog-box" id="gameArea">
-      <div class="start-screen" id="startScreen">
-        <h2>Caso Clínico</h2>
-        <p><b>Situación clínica:</b> Usted es la/el pediatra del hospital, alado suyo está Camila de 30 años que se encuentra en trabajo de parto. Se encuentra esperando con ropa estéril y guantes, para realizar la recepción de su hijo Pedro de 39 semanas de EG por FUM.</p>
-        <p><b>Datos de la madre:</b> Embarazo controlado, serologías negativas, grupo RH positivo, sin complicaciones.</p>
-        <p><b>Datos del recién nacido:</b> 39 semanas, FC 130 x min, respira sin dificultad, buen tono, color rosado a los 2 minutos.</p>
-        <p>Tu objetivo es realizar correctamente la recepción del recién nacido siguiendo la guía neonatal.</p>
-        <button class="start-btn" onclick="startGame()">Iniciar Simulación</button>
-      </div>
+  <div class="banner">
+    <img id="sceneImage" src="" alt="Escena clínica">
+  </div>
 
-      <div id="gameContent" style="display:none">
-        <div class="speaker" id="speaker"></div>
-        <div class="story" id="story"></div>
-        <div class="question" id="question"></div>
-        <div class="options" id="options"></div>
-      </div>
+  <div class="dialog-box" id="gameArea">
+    <div class="start-screen" id="startScreen">
+      <h2>Caso Clínico</h2>
+      <p><b>Situación clínica:</b> Usted es la/el pediatra del hospital, al lado suyo está Camila de 30 años que se encuentra en trabajo de parto. Se encuentra esperando con ropa estéril y guantes para realizar la recepción de su hijo Pedro de 39 semanas de EG por FUM.</p>
+      <p><b>Datos de la madre:</b> Embarazo controlado, serologías negativas, grupo RH positivo, sin complicaciones.</p>
+      <p><b>Datos del recién nacido:</b> 39 semanas, FC 130 x min, respira sin dificultad, buen tono, color rosado a los 2 minutos.</p>
+      <p>Tu objetivo es realizar correctamente la recepción del recién nacido siguiendo la guía neonatal.</p>
+      <button class="start-btn" onclick="startGame()">Iniciar Simulación</button>
+    </div>
+
+    <div id="gameContent" style="display:none">
+      <div class="speaker" id="speaker"></div>
+      <div class="story" id="story"></div>
+      <div class="question" id="question"></div>
+      <div class="options" id="options"></div>
     </div>
   </div>
 </div>
 
 <script>
-const scenes = [
-  'https://images.unsplash.com/photo-1600959907703-125ba1374a12?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1584515933487-779824d29309?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1581595219315-a187dd40c322?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1580281657527-47c1d87b3d9f?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1579154204601-01588f351e67?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1584515933487-779824d29309?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1600959907703-125ba1374a12?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1581595219315-a187dd40c322?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1580281657527-47c1d87b3d9f?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1579154204601-01588f351e67?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1600959907703-125ba1374a12?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1584515933487-779824d29309?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1581595219315-a187dd40c322?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1580281657527-47c1d87b3d9f?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1579154204601-01588f351e67?q=80&w=1200&auto=format&fit=crop',
-  'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=1200&auto=format&fit=crop'
+const scenes=[
+'https://images.unsplash.com/photo-1600959907703-125ba1374a12?q=80&w=1200&auto=format&fit=crop',
+'https://images.unsplash.com/photo-1584515933487-779824d29309?q=80&w=1200&auto=format&fit=crop',
+'https://images.unsplash.com/photo-1576765608535-5f04d1e3f289?q=80&w=1200&auto=format&fit=crop',
+'https://images.unsplash.com/photo-1581595219315-a187dd40c322?q=80&w=1200&auto=format&fit=crop',
+'https://images.unsplash.com/photo-1580281657527-47c1d87b3d9f?q=80&w=1200&auto=format&fit=crop',
+'https://images.unsplash.com/photo-1579154204601-01588f351e67?q=80&w=1200&auto=format&fit=crop',
+'https://images.unsplash.com/photo-1582719478250-c89cae4dc85b?q=80&w=1200&auto=format&fit=crop'
 ];
 
-const checklist = [
+const checklist=[
 "Recibe a la persona recién nacida con paño estéril",
 "Realiza de inmediato contacto piel a piel sin interferencias",
 "Mientras seca y estimula a la persona recién nacida realiza las 3 preguntas para determinar la necesidad de iniciar maniobras de reanimación",
@@ -151,34 +146,41 @@ const checklist = [
 "Evalúa la frecuencia cardíaca en el cordón umbilical (>100 lpm)",
 "Evalúa el estado clínico y de vigilia de la madre.",
 "Dice que es un recién nacido vigoroso y lo deja con su madre",
-"Dice en voz alta que mantiene la temperatura. Cambia compresa húmeda por seca. La compresa cubre totalmente el cuerpo del recién nacido.",
+"Dice que mantiene la temperatura y cambia compresa húmeda por seca",
 "Coloca Gorro",
-"Realiza Test de APGAR al minuto de vida para valorar tolerancia del RN al proceso de nacimiento. (puntaje=9)",
-"Realiza identificación del RN y coloca pulsera con misma identificación a la madre.",
-"Dice que realiza Clampéo oportuno o tardío del cordón umbilical (1-3 minutos o hasta que deje de latir)",
-"Clampea cordón con 2 pinzas Kocher separadas por 10 cm y corta con tijera estéril entre medio de ellas.",
-"Coloca clamp en el cordón del recién nacido a 2-3 cm desde la piel del bebe y corta el cordón distal al clamp con hoja de bisturí estéril.",
-"Observa el interior del cordón con presencia de 2 arterias y 1 vena",
-"Realiza Test de APGAR a los cinco minutos para valorar tolerancia de la persona recién nacida a la vida extrauterina (puntaje max=10)",
-"Dice en voz alta que el Test de Apgar es 9/10 (9 al 1er min y 10 a los 5 min)",
-"Dice que alienta al binomio a mantener contacto piel con piel iniciando la puesta al pecho sin separación hasta toma del primer calostro.",
-"Dice que permanece observando al binomio con mínima interferencia y que favorece que el/la acompañante permanezca a su lado."
+"Realiza Test de APGAR al minuto de vida",
+"Realiza identificación del RN",
+"Dice que realiza Clampéo oportuno del cordón",
+"Clampea cordón con pinzas Kocher",
+"Coloca clamp en el cordón",
+"Observa 2 arterias y 1 vena",
+"Realiza Test de APGAR a los cinco minutos",
+"Dice que el APGAR es 9/10",
+"Inicia contacto piel con piel y calostro",
+"Observa al binomio con mínima interferencia"
 ];
 
-const characters = [
- {name:"Pediatra",line:"¿Cuál es el siguiente paso en la recepción del recién nacido?"},
- {name:"Enfermera",line:"Doctor, ¿qué procedimiento debemos realizar ahora?"},
- {name:"Madre",line:"¿Mi bebé está bien?"},
- {name:"Estudiante",line:"Estoy pensando en el siguiente paso de la guía neonatal."}
+const characters=[
+{name:"Pediatra",line:"¿Cuál es el siguiente paso?"},
+{name:"Enfermera",line:"Doctor, ¿cómo procedemos ahora?"},
+{name:"Madre",line:"¿Mi bebé está bien?"},
+{name:"Estudiante",line:"Estoy pensando en la guía neonatal."}
 ];
 
-let current = 0;
+let current=0;
 let startTime;
+
+// Mostrar imagen inicial del caso clínico
+window.onload = function(){
+  if(document.getElementById('sceneImage')){
+    document.getElementById('sceneImage').src = scenes[0];
+  }
+}
 
 function startGame(){
  document.getElementById('startScreen').style.display='none';
  document.getElementById('gameContent').style.display='block';
- startTime = Date.now();
+ startTime=Date.now();
  setInterval(updateTimer,1000);
  loadQuestion();
 }
@@ -191,7 +193,7 @@ function updateTimer(){
 }
 
 function loadQuestion(){
-  document.querySelector('.scene').style.background = `url(${scenes[current]}) center/cover`;
+ document.getElementById('sceneImage').src=scenes[current%scenes.length];
 
  const char=characters[Math.floor(Math.random()*characters.length)];
  document.getElementById('speaker').textContent=char.name;
@@ -199,42 +201,42 @@ function loadQuestion(){
  document.getElementById('question').textContent="Seleccione el siguiente paso correcto:";
 
  let options=[checklist[current]];
-
  while(options.length<4){
-   let rand=checklist[Math.floor(Math.random()*checklist.length)];
-   if(!options.includes(rand)) options.push(rand);
+  let rand=checklist[Math.floor(Math.random()*checklist.length)];
+  if(!options.includes(rand)) options.push(rand);
  }
-
  options.sort(()=>Math.random()-0.5);
 
  const container=document.getElementById('options');
  container.innerHTML='';
-
  options.forEach(opt=>{
-   const btn=document.createElement('button');
-   btn.textContent=opt;
-   btn.onclick=()=>selectOption(opt);
-   container.appendChild(btn);
+  const btn=document.createElement('button');
+  btn.textContent=opt;
+  btn.onclick=()=>selectOption(opt);
+  container.appendChild(btn);
  });
 
  const progress=(current/checklist.length)*100;
- document.getElementById('bar').style.width=progress+"%";
+ document.querySelector('.bar').style.width=progress+"%";
 }
 
 function selectOption(opt){
  if(opt===checklist[current]){
-   current++;
-   if(current>=checklist.length){
-     alert('Parabéns! Você completou corretamente a recepção neonatal em '+document.getElementById('timer').textContent);
-     location.reload();
-   }else{
-     loadQuestion();
-   }
- }else{
-   alert('Respuesta incorrecta. El juego se reiniciará.');
+  current++;
+  if(current>=checklist.length){
+   alert('Parabéns! Simulación completada en '+document.getElementById('timer').textContent);
    location.reload();
+  }else{
+   loadQuestion();
+  }
+ }else{
+  alert('Respuesta incorrecta. El juego se reiniciará.');
+  location.reload();
  }
 }
 </script>
+<div style="text-align:center;padding:10px;background:#111827;">
+  <iframe width="560" height="315" src="https://www.youtube.com/embed/xv3h5tBDOmY?si=jPOQNckmRiHjB_UJ&amp;start=2481" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen style="width:100%;height:120px;border:none;border-radius:8px;"></iframe>
+</div>
 </body>
 </html>
