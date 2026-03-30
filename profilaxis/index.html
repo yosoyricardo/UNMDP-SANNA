@@ -165,9 +165,11 @@ const characters = [
 ];
 
 const images = [
-  "https://images.unsplash.com/photo-1505489435671-80a165c62611?q=80&w=1000&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?q=80&w=1000&auto=format&fit=crop",
-  "https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?q=80&w=1000&auto=format&fit=crop"
+ 'https://images.unsplash.com/photo-1505489435671-80a165c62611?auto=format&fit=crop&q=80&w=1000', // Bebé
+  'https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?auto=format&fit=crop&q=80&w=1000', // Médico
+  'https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&q=80&w=1000', // Hospital
+  'https://images.unsplash.com/photo-1632053019114-14bd8f04475e?auto=format&fit=crop&q=80&w=1000', // Cuidados
+  'https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&q=80&w=1000'  // Maternidade
 ];
 
 let currentStep = 0;
@@ -190,7 +192,11 @@ function updateTimer() {
 
 function loadStep() {
   const imgElement = document.getElementById('sceneImage');
-  if(imgElement) imgElement.src = images[currentStep % images.length];
+  let imageSelected = Math.floor(Math.random() * images.length);
+
+
+console.log(images[imageSelected])
+  if(imgElement) imgElement.src = images[imageSelected];
 
   const char = characters[Math.floor(Math.random() * characters.length)];
   document.getElementById('speaker').textContent = char.name;

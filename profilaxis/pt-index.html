@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pt-pt">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>O Meu Pequeno Paciente - Simulação Pediátrica</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary-soft: #a5f3fc;
+    --secondary-soft: #bbf7d0;
+    --accent-pink: #fbcfe8;
+    --text-color: #334155;
+    --bg-gradient: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Quicksand', sans-serif;
+    background: var(--bg-gradient);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .game-container {
+    width: 95%;
+    max-width: 1000px;
+    height: 85vh;
+    background: white;
+    border-radius: 30px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.1);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 8px solid white;
+  }
+
+  .header {
+    padding: 15px 25px;
+    background: #f8fafc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px dashed #e2e8f0;
+  }
+
+  .title { font-weight: 700; font-size: 20px; color: #0ea5e9; }
+  .timer { font-weight: 600; color: #64748b; background: #f1f5f9; padding: 5px 15px; border-radius: 20px; }
+
+  .banner {
+    width: 100%;
+    height: 250px;
+    background: #e2e8f0;
+    position: relative;
+  }
+
+  .banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .progress-bar-container { height: 10px; background: #f1f5f9; width: 100%; }
+  .progress-bar { height: 100%; background: #22c55e; width: 0%; transition: width 0.5s ease; }
+
+  .dialog-box {
+    flex: 1;
+    padding: 25px;
+    display: flex;
+    flex-direction: column;
+    background: white;
+  }
+
+  .speaker { color: #f472b6; font-weight: 700; font-size: 18px; margin-bottom: 5px; }
+  .story { font-size: 16px; margin-bottom: 15px; line-height: 1.4; color: #475569; }
+  .question { font-size: 19px; font-weight: 700; margin-bottom: 20px; color: #1e293b; }
+
+  .options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  button {
+    padding: 14px;
+    border: 2px solid #e2e8f0;
+    border-radius: 15px;
+    background: white;
+    color: #475569;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Quicksand', sans-serif;
+  }
+
+  button:hover { background: #0ea5e9; color: white; border-color: #0ea5e9; transform: translateY(-2px); }
+
+  .start-screen {
+    text-align: center;
+    padding: 40px;
+  }
+
+  .start-btn {
+    background: #22c55e;
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    font-size: 18px;
+    margin-top: 20px;
+  }
+
+  @media (max-width: 600px) {
+    .options { grid-template-columns: 1fr; }
+    .game-container { height: 95vh; }
+    .banner { height: 180px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="game-container">
+  <div class="header">
+    <div class="title">🍼 Missão Pediátrica: O Pedro</div>
+    <div class="timer" id="timer">00:00</div>
+  </div>
+
+  <div class="progress-bar-container"><div class="progress-bar" id="bar"></div></div>
+
+  <div class="banner">
+    <img id="sceneImage" src="https://images.unsplash.com/photo-1555252333-9f8e92e65df9?auto=format&fit=crop&q=80&w=1000" onerror="this.src='https://via.placeholder.com/1000x250/e0f2fe/0ea5e9?text=Ambiente+Pediatrico'">
+  </div>
+
+  <div class="dialog-box">
+    <div id="startScreen" class="start-screen">
+      <h2 style="color: #0ea5e9;">Bem-vindo, Doutor(a)!</h2>
+      <p>O pequeno <b>Pedro</b> nasceu saudável (39 semanas). Agora, a sua missão é realizar a <b>Profilaxia do Nascimento</b> com todo o carinho e cuidado seguindo o protocolo oficial.</p>
+      <p style="font-size: 0.9em; color: #64748b;">(Prepare as vacinas, a vitamina K e o colírio!)</p>
+      <button class="start-btn" onclick="startGame()">Começar Missão 👶</button>
+    </div>
+
+    <div id="gameContent" style="display:none">
+      <div class="speaker" id="speaker"></div>
+      <div class="story" id="story"></div>
+      <div class="question" id="question">Qual é o próximo passo correto?</div>
+      <div class="options" id="options"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Links de imagens mais estáveis com temas infantis/médicos
+const scenes = [
+  'https://images.unsplash.com/photo-1505489435671-80a165c62611?auto=format&fit=crop&q=80&w=1000', // Bebé
+  'https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?auto=format&fit=crop&q=80&w=1000', // Médico
+  'https://images.unsplash.com/photo-1584515933487-779824d29309?auto=format&fit=crop&q=80&w=1000', // Hospital
+  'https://images.unsplash.com/photo-1632053019114-14bd8f04475e?auto=format&fit=crop&q=80&w=1000', // Cuidados
+  'https://images.unsplash.com/photo-1516627145497-ae6968895b74?auto=format&fit=crop&q=80&w=1000'  // Maternidade
+];
+
+// Checklist traduzido e adaptado da imagem de Profilaxia
+const checklist = [
+  "Higieniza as mãos antes de realizar a prática e apresenta-se.",
+  "Observa o recém-nascido e deixa as suas coxas descobertas.",
+  "Considera estratégia NÃO farmacológica para o manejo da dor (contacto pele a pele ou posicionamento).",
+  "Informa o acompanhante que vai aplicar Vitamina K intramuscular para prevenir hemorragias e pede permissão.",
+  "Lê a ampola de Vitamina K em voz alta.",
+  "Carrega a seringa de 1 cm com a Vitamina K.",
+  "Troca a agulha para a aplicação.",
+  "Realiza a limpeza/antissepsia na coxa do recém-nascido.",
+  "Aplica a Vitamina K via intramuscular a 90° na região anterolateral da coxa.",
+  "Descarta adequadamente a agulha no contentor e a seringa no saco de resíduos biológicos.",
+  "Pega na ampola da Vacina contra a Hepatite B e lê em voz alta.",
+  "Explica ao acompanhante que vai aplicar a 1ª dose da vacina da Hepatite B e pede permissão.",
+  "Carrega a seringa de 1 cm com a vacina da Hepatite B.",
+  "Troca a agulha para a aplicação.",
+  "Realiza a limpeza/antissepsia na outra coxa do recém-nascido.",
+  "Aplica a vacina da Hepatite B via intramuscular a 90° na região anterolateral da outra coxa.",
+  "Descarta adequadamente a agulha e a seringa no contentor.",
+  "Explica ao acompanhante que vai aplicar a Eritromicina oftálmica para prevenir conjuntivites graves.",
+  "Aplica Eritromicina em ambos os olhos, do ângulo interno para o externo.",
+  "Higieniza as mãos após terminar a prática."
+];
+
+const scripts = [
+  { name: "Pediatra (Tu)", line: "Olá! Sou o pediatra de serviço. Vamos garantir que o Pedro comece a vida protegido." },
+  { name: "Mãe do Pedro", line: "Doutor, ele é tão pequenino... o que vai fazer agora?" },
+  { name: "Enfermeira", line: "Já preparei o material para a profilaxia. Por onde começamos?" },
+  { name: "Estudante", line: "Lembro-me das aulas: a segurança do paciente começa sempre pela higiene!" }
+];
+
+let currentStep = 0;
+let startTime;
+
+function startGame() {
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('gameContent').style.display = 'block';
+  startTime = Date.now();
+  setInterval(updateTimer, 1000);
+  loadStep();
+}
+
+function updateTimer() {
+  const diff = Math.floor((Date.now() - startTime) / 1000);
+  const min = String(Math.floor(diff / 60)).padStart(2, '0');
+  const sec = String(diff % 60).padStart(2, '0');
+  document.getElementById('timer').textContent = `${min}:${sec}`;
+}
+
+function loadStep() {
+  // Atualiza imagem
+  const imgElement = document.getElementById('sceneImage');
+  imgElement.src = scenes[currentStep % scenes.length];
+
+  // Atualiza diálogos
+  const script = scripts[Math.floor(Math.random() * scripts.length)];
+  document.getElementById('speaker').textContent = script.name;
+  document.getElementById('story').textContent = script.line;
+
+  // Gera opções
+  let options = [checklist[currentStep]];
+  while (options.length < 4) {
+    let randomStep = checklist[Math.floor(Math.random() * checklist.length)];
+    if (!options.includes(randomStep)) options.push(randomStep);
+  }
+  options.sort(() => Math.random() - 0.5);
+
+  const container = document.getElementById('options');
+  container.innerHTML = '';
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.textContent = opt;
+    btn.onclick = () => checkAnswer(opt);
+    container.appendChild(btn);
+  });
+
+  // Barra de progresso
+  const progress = (currentStep / checklist.length) * 100;
+  document.getElementById('bar').style.width = progress + "%";
+}
+
+function checkAnswer(selected) {
+  if (selected === checklist[currentStep]) {
+    currentStep++;
+    if (currentStep >= checklist.length) {
+      alert('Parabéns! O Pedro recebeu toda a profilaxia corretamente! 🎉\nTempo: ' + document.getElementById('timer').textContent);
+      location.reload();
+    } else {
+      loadStep();
+    }
+  } else {
+    alert('Ops! Esse não é o passo correto segundo o protocolo de profilaxia. Vamos tentar de novo? 👶');
+    location.reload();
+  }
+}
+</script>
+
+</body>
+</html>
