@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Simulación Pediátrica: Profilaxis de Pedro</title>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --primary: #0ea5e9;
+    --success: #22c55e;
+    --soft-bg: #f0f9ff;
+    --text: #334155;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Quicksand', sans-serif;
+    background: linear-gradient(135deg, #e0f2fe 0%, #dcfce7 100%);
+    color: var(--text);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+  }
+
+  .game-container {
+    width: 95%;
+    max-width: 900px;
+    background: white;
+    border-radius: 25px;
+    box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    overflow: hidden;
+    border: 6px solid white;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .header {
+    padding: 15px 25px;
+    background: #f8fafc;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 2px dashed #e2e8f0;
+  }
+
+  .title { font-weight: 700; color: var(--primary); font-size: 1.2rem; }
+  .timer { font-weight: 600; background: #e0f2fe; padding: 5px 15px; border-radius: 15px; }
+
+  .banner {
+    width: 100%;
+    height: 240px;
+    background: #e2e8f0; /* Color de respaldo si la imagen falla */
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .banner img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .progress-container { height: 8px; background: #f1f5f9; }
+  .progress-bar { height: 100%; background: var(--success); width: 0%; transition: width 0.4s; }
+
+  .dialog-box { padding: 25px; flex-grow: 1; }
+  .speaker { color: #f472b6; font-weight: 700; font-size: 1.1rem; margin-bottom: 5px; }
+  .story { font-size: 1rem; margin-bottom: 15px; color: #64748b; line-height: 1.4; }
+  .question { font-weight: 700; font-size: 1.1rem; margin-bottom: 20px; color: #1e293b; }
+
+  .options { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+  button {
+    padding: 12px 15px;
+    border: 2px solid #e2e8f0;
+    border-radius: 15px;
+    background: white;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: 600;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+  }
+
+  button:hover { 
+    background: var(--primary); 
+    color: white; 
+    border-color: var(--primary);
+    transform: translateY(-2px);
+  }
+
+  .start-screen { text-align: center; padding: 40px; }
+  .btn-start { background: var(--success); color: white; border: none; padding: 15px 30px; font-size: 1.1rem; margin-top: 20px; }
+
+  @media (max-width: 600px) {
+    .options { grid-template-columns: 1fr; }
+    .banner { height: 160px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="game-container">
+  <div class="header">
+    <div class="title">🍼 Simulación: Profilaxis de Pedro</div>
+    <div class="timer" id="timer">00:00</div>
+  </div>
+
+  <div class="progress-container"><div class="progress-bar" id="bar"></div></div>
+
+  <div class="banner" id="bannerBox">
+    <img id="sceneImage" src="https://images.unsplash.com/photo-1555252333-9f8e92e65df9?q=80&w=1000&auto=format&fit=crop" onerror="this.style.display='none'; document.getElementById('bannerBox').innerHTML='<span style=\'color:#94a3b8\'>🏥 Escena Clínica</span>'">
+  </div>
+
+  <div class="dialog-box">
+    <div id="startScreen" class="start-screen">
+      <h2 style="color: var(--primary)">¡Hola, Doctor/a!</h2>
+      <p>El pequeño <b>Pedro</b> ya está estable. Tu misión ahora es realizar la <b>Profilaxis del Nacimiento</b> siguiendo estrictamente los pasos de seguridad.</p>
+      <button class="btn-start" onclick="startGame()">Iniciar Procedimiento 🩺</button>
+    </div>
+
+    <div id="gameContent" style="display:none">
+      <div class="speaker" id="speaker"></div>
+      <div class="story" id="story"></div>
+      <div class="question" id="question">¿Cuál es el siguiente paso correcto?</div>
+      <div class="options" id="options"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Pasos exactos del checklist proporcionado
+const checklist = [
+  "Higieniza sus manos antes de realizar la práctica y se presenta.",
+  "Observa a la persona recién nacida y deja al descubierto sus muslos.",
+  "Considera alguna estrategia NO farmacológica para el manejo del dolor (puesta al pecho en contacto piel con piel si fuera posible / contención mediante posicionamiento)",
+  "Informa a quien acompaña al bebé que va a aplicar una inyección intramuscular de Vitamina K para prevenir la hemorragia neonatal y pide permiso.",
+  "Lee la ampolla de vitamina k en voz alta",
+  "Carga con la aguja la jeringa de 1 cm, de vit K",
+  "Cambia aguja para aplicar",
+  "Realiza limpieza / antisepsia en el muslo del Recién Nacido",
+  "Aplica en forma intramuscular 90° la vit k en región anterolateral del muslo",
+  "Descarta adecuadamente la aguja en descartador y jeringa en bolsa roja",
+  "Toma ampolla de Vacuna contra la Hep. B y lee en voz alta",
+  "Explica a quien acompaña al bebé que va a aplicar una inyección IM; la primera dosis de la vacuna que previene la infección por Hepatitis B y pide permiso.",
+  "Carga con la aguja la jeringa de 1 cm, de vacuna Hepatitis B",
+  "Cambia aguja para aplicar",
+  "Realiza limpieza / antisepsia en el muslo del Recién Nacido",
+  "Aplica en forma intramuscular 90° la vacuna hepatitis b en región anterolateral del otro muslo",
+  "Descarta adecuadamente la aguja y jeringa en descartador",
+  "Explica a quien acompaña al bebé que va a proceder a aplicar Eritromicina intraocular para prevenir la oftalmia gonocócica (o conjuntivitis por Gonococo)",
+  "Aplica Eritromicina en ambos ojos, desde el ángulo interno del ojo hacia afuera",
+  "Higieniza las manos luego de la práctica"
+];
+
+const characters = [
+  { name: "Pediatra (Tú)", line: "Pedro está muy bien. Empecemos con las rutinas de profilaxis." },
+  { name: "Mamá de Pedro", line: "¿Qué le van a poner a mi bebé, doctor?" },
+  { name: "Enfermera", line: "Tengo listo el kit de vitamina K y la vacuna de Hep B." },
+  { name: "Estudiante", line: "Recuerde seguir el protocolo paso a paso para evitar errores." }
+];
+
+const images = [
+  "https://images.unsplash.com/photo-1505489435671-80a165c62611?q=80&w=1000&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1581594693702-fbdc51b2763b?q=80&w=1000&auto=format&fit=crop",
+  "https://images.unsplash.com/photo-1532938911079-1b06ac7ceec7?q=80&w=1000&auto=format&fit=crop"
+];
+
+let currentStep = 0;
+let startTime;
+
+function startGame() {
+  document.getElementById('startScreen').style.display = 'none';
+  document.getElementById('gameContent').style.display = 'block';
+  startTime = Date.now();
+  setInterval(updateTimer, 1000);
+  loadStep();
+}
+
+function updateTimer() {
+  const diff = Math.floor((Date.now() - startTime) / 1000);
+  const min = String(Math.floor(diff / 60)).padStart(2, '0');
+  const sec = String(diff % 60).padStart(2, '0');
+  document.getElementById('timer').textContent = `${min}:${sec}`;
+}
+
+function loadStep() {
+  const imgElement = document.getElementById('sceneImage');
+  if(imgElement) imgElement.src = images[currentStep % images.length];
+
+  const char = characters[Math.floor(Math.random() * characters.length)];
+  document.getElementById('speaker').textContent = char.name;
+  document.getElementById('story').textContent = char.line;
+
+  let options = [checklist[currentStep]];
+  while (options.length < 4) {
+    let randomItem = checklist[Math.floor(Math.random() * checklist.length)];
+    if (!options.includes(randomItem)) options.push(randomItem);
+  }
+  options.sort(() => Math.random() - 0.5);
+
+  const container = document.getElementById('options');
+  container.innerHTML = '';
+  options.forEach(opt => {
+    const btn = document.createElement('button');
+    btn.textContent = opt;
+    btn.onclick = () => checkAnswer(opt);
+    container.appendChild(btn);
+  });
+
+  const progress = (currentStep / checklist.length) * 100;
+  document.getElementById('bar').style.width = progress + "%";
+}
+
+function checkAnswer(choice) {
+  if (choice === checklist[currentStep]) {
+    currentStep++;
+    if (currentStep >= checklist.length) {
+      alert("¡Excelente trabajo! Has completado la profilaxis de Pedro correctamente.\nTiempo total: " + document.getElementById('timer').textContent);
+      location.reload();
+    } else {
+      loadStep();
+    }
+  } else {
+    alert("¡Error en el protocolo! Debes seguir el orden correcto de la lista de cotejo. Inténtalo de nuevo.");
+    location.reload();
+  }
+}
+</script>
+
+</body>
+</html>
