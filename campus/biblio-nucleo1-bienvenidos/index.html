@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biblio Núcleo 1 - Bienvenidos</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f5f7fa;
+      padding: 40px;
+      color: #333;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      font-size: 28px;
+      color: #2c3e50;
+    }
+
+    .files {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 18px;
+    }
+
+    .file-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      text-decoration: none;
+      color: #333;
+      transition: 0.2s;
+      background: #fff;
+    }
+
+    .file-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+      border-color: #4f46e5;
+    }
+
+    .icon {
+      font-size: 28px;
+    }
+
+    .file-name {
+      font-size: 15px;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .back {
+      display: inline-block;
+      margin-bottom: 25px;
+      text-decoration: none;
+      color: #4f46e5;
+      font-weight: 600;
+    }
+
+    .back:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 20px;
+      }
+
+      .container {
+        padding: 25px;
+      }
+
+      .files {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <a href="../" class="back">← Voltar</a>
+
+    <h1>📚 Biblio Núcleo 1 - Bienvenidos</h1>
+
+    <div class="files">
+
+      <a class="file-card" href="./SaNNA en red- fundamentación.pdf" target="_blank">
+        <div class="icon">📄</div>
+        <div class="file-name">
+          SaNNA en red- fundamentación.pdf
+        </div>
+      </a>
+
+      <a class="file-card" href="./La hora de oro Generalidades La salud infantil en un municipio de 10.000 habitantes.pdf" target="_blank">
+        <div class="icon">📄</div>
+        <div class="file-name">
+          La hora de oro Generalidades La salud infantil en un municipio de 10.000 habitantes.pdf
+        </div>
+      </a>
+
+      <a class="file-card" href="./Modulo 1 . Palabras de bienvenida sanna 2026.docx (1).pdf" target="_blank">
+        <div class="icon">📄</div>
+        <div class="file-name">
+          Modulo 1 . Palabras de bienvenida sanna 2026.docx (1).pdf
+        </div>
+      </a>
+
+    </div>
+  </div>
+
+</body>
+</html>

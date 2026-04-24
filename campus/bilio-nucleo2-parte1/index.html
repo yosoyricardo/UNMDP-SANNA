@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Biblio Núcleo 2 - Parte 1</title>
+
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+    }
+
+    body {
+      background: #f5f7fa;
+      padding: 40px;
+      color: #333;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: auto;
+      background: white;
+      padding: 40px;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      font-size: 28px;
+      color: #2c3e50;
+    }
+
+    .files {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+      gap: 18px;
+    }
+
+    .file-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 18px;
+      border: 1px solid #e5e7eb;
+      border-radius: 12px;
+      text-decoration: none;
+      color: #333;
+      transition: 0.2s;
+      background: #fff;
+    }
+
+    .file-card:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+      border-color: #4f46e5;
+    }
+
+    .icon {
+      font-size: 28px;
+    }
+
+    .file-name {
+      font-size: 15px;
+      line-height: 1.4;
+      word-break: break-word;
+    }
+
+    .back {
+      display: inline-block;
+      margin-bottom: 25px;
+      text-decoration: none;
+      color: #4f46e5;
+      font-weight: 600;
+    }
+
+    .back:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 20px;
+      }
+
+      .container {
+        padding: 25px;
+      }
+
+      .files {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <a href="../" class="back">← Voltar</a>
+
+    <h1>📚 Biblio Núcleo 2 - Parte 1</h1>
+
+    <div class="files">
+
+      <a class="file-card" href="./7-Larguia. microbiom.pdf" target="_blank">
+        <div class="icon">📄</div>
+        <div class="file-name">7-Larguia. microbiom.pdf</div>
+      </a>
+
+      <a class="file-card" href="./Deguer -Que debe saber un pediatra sobre la Clasificacioěn y el Exaěmen fisico del Recien nacido (1) (4).pdf" target="_blank">
+        <div class="icon">📄</div>
+        <div class="file-name">
+          Deguer -Que debe saber un pediatra sobre la Clasificación y el Exámen fisico del RN.pdf
+        </div>
+      </a>
+
+      <a class="file-card" href="./IMPRIMIR esta hoja Historia Clinica Perinatal (2).pdf" target="_blank">
+        <div class="icon">📄</div>
+        <div class="file-name">
+          IMPRIMIR esta hoja Historia Clinica Perinatal (2).pdf
+        </div>
+      </a>
+
+      <a class="file-card" href="./4 Historia clinica perinatal CLAP (2).pdf" target="_blank">
+        <div class="icon">📄</div>
+        <div class="file-name">
+          4 Historia clinica perinatal CLAP (2).pdf
+        </div>
+      </a>
+
+      <a class="file-card" href="./consenso La primera hora de vida (6).pdf" target="_blank">
+        <div class="icon">📄</div>
+        <div class="file-name">
+          consenso La primera hora de vida (6).pdf
+        </div>
+      </a>
+
+      <a class="file-card" href="./guia para consulta prenatal SAP (1).pdf" target="_blank">
+        <div class="icon">📄</div>
+        <div class="file-name">
+          guia para consulta prenatal SAP (1).pdf
+        </div>
+      </a>
+
+      <a class="file-card" href="./la hora de oro Ictericia neonatal Enrique santos (4).pdf" target="_blank">
+        <div class="icon">📄</div>
+        <div class="file-name">
+          la hora de oro Ictericia neonatal Enrique santos (4).pdf
+        </div>
+      </a>
+
+      <a class="file-card" href="./5-Cone (3).pdf" target="_blank">
+        <div class="icon">📄</div>
+        <div class="file-name">5-Cone (3).pdf</div>
+      </a>
+
+      <a class="file-card" href="./Cuidados al recién nacido en el periodo de transición (4).pdf" target="_blank">
+        <div class="icon">📄</div>
+        <div class="file-name">
+          Cuidados al recién nacido en el periodo de transición (4).pdf
+        </div>
+      </a>
+
+      <a class="file-card" href="./GUIA-MODULO2-PARTE1.pdf" target="_blank">
+        <div class="icon">📄</div>
+        <div class="file-name">GUIA-MODULO2-PARTE1.pdf</div>
+      </a>
+
+      <a class="file-card" href="./Red Sanna NEO (3).pdf" target="_blank">
+        <div class="icon">📄</div>
+        <div class="file-name">Red Sanna NEO (3).pdf</div>
+      </a>
+
+    </div>
+  </div>
+
+</body>
+</html>
