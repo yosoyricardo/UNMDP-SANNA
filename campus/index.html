@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Módulos de Pediatria</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Trebuchet MS', 'Comic Sans MS', Arial, sans-serif;
+    }
+
+    body {
+      background: linear-gradient(135deg, #fff8fb, #f0f9ff, #fffdf2);
+      min-height: 100vh;
+      padding: 30px;
+      color: #2c3e50;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .header h1 {
+      text-shadow: 2px 2px 0 rgba(255,255,255,0.8);
+      font-size: 2.5rem;
+      color: #ff6fa5;
+      margin-bottom: 10px;
+    }
+
+    .header p {
+      color: #607d8b;
+      font-size: 1rem;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .card {
+      background: linear-gradient(180deg, #ffffff, #fffafc);
+      border: 2px solid #ffd6e7;
+      background: white;
+      border-radius: 28px;
+      padding: 30px;
+      box-shadow: 0 12px 30px rgba(255, 182, 193, 0.25);
+      cursor: pointer;
+      transition: 0.3s ease;
+      border: 1px solid #e3f2fd;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 18px 40px rgba(0,0,0,0.12);
+    }
+
+    .card h2 {
+      color: #0d47a1;
+      margin-bottom: 12px;
+      font-size: 1.5rem;
+    }
+
+    .card p {
+      color: #546e7a;
+      line-height: 1.6;
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.45);
+      z-index: 999;
+      padding: 20px;
+      overflow-y: auto;
+    }
+
+    .modal-content {
+      background: #fff;
+      max-width: 900px;
+      margin: 30px auto;
+      border-radius: 18px;
+      padding: 24px;
+      position: relative;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.15);
+    }
+
+    .close {
+      position: absolute;
+      right: 18px;
+      top: 14px;
+      font-size: 28px;
+      cursor: pointer;
+      color: #777;
+    }
+
+    .modal-title {
+      font-size: 2rem;
+      color: #37474f;
+      border-bottom: 3px solid #1e88e5;
+      display: inline-block;
+      padding-bottom: 6px;
+      margin-bottom: 24px;
+    }
+
+    .section {
+      padding: 18px 0;
+      border-bottom: 1px solid #eceff1;
+    }
+
+    .section h3 {
+      color: #ff6fa5;
+      margin-bottom: 12px;
+    }
+
+    .item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      padding: 12px 0;
+      flex-wrap: wrap;
+    }
+
+    .item span {
+      color: #455a64;
+      flex: 1;
+    }
+
+    .btn {
+      background: #fff0f7;
+      border: 2px solid #ffd1e6;
+      border: 1px solid #cfd8dc;
+      background: white;
+      padding: 10px 16px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s;
+    }
+
+    .btn:hover {
+      background: #f5f9fc;
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 16px;
+      }
+
+      .header h1 {
+        font-size: 2rem;
+      }
+
+      .modal-content {
+        padding: 18px;
+      }
+
+      .modal-title {
+        font-size: 1.5rem;
+      }
+
+      .item {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+
+      .btn {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>🌈 Pediatría Académica 🧸</h1>
+      <p>Seleccione un módulo para visualizar el contenido disponible</p>
+    </div>
+
+    <div class="cards">
+      <div class="card" onclick="openModal('Salud Infantil')">
+        <h2>🧒 Salud Infantil</h2>
+        <p>Seguimiento del crecimiento, desarrollo y control integral del niño.</p>
+      </div>
+
+      <div class="card" onclick="openModal('Neonatología')">
+        <h2>👶 Neonatología</h2>
+        <p>Atención neonatal, RN vigoroso, prematuridad y cuidados iniciales.</p>
+      </div>
+
+      <div class="card" onclick="openModal('Ambulatorio')">
+        <h2>🏥 Ambulatorio</h2>
+        <p>Consultas pediátricas, controles clínicos y seguimiento ambulatorio.</p>
+      </div>
+    </div>
+  </div>
+
+
+
+  <div class="modal" id="moduleModal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2 class="modal-title" id="modalTitle">Salud Infantil</h2>
+
+      <div class="section">
+        <p><strong>Miércoles 25 y viernes 27 de marzo de 2026</strong></p>
+        <p style="margin-top:10px;">LHC módulo parte 1: Traer guía resuelta y la historia clínica perinatal impresa para trabajar.</p>
+      </div>
+
+      <div class="section">
+        <div class="item">
+          <span>📄 Guía del módulo - Parte 1</span>
+           <a href="/biblio-nucleo1/guia-01.pdf" class="btn">Abrir guia</a>
+        </div>
+        <div class="item">
+          <span>🔗 Vademecum Garrahan</span>
+          <a target="_blank" href="https://farmacia.garrahan.gov.ar/Vademecum/Busqueda" class="btn">Abrir</a>
+        </div>
+        <div class="item">
+          <span>📁 Bibliografía obligatoria</span>
+          <a href="/biblio-nucleo1/" class="btn">Ver carpeta</a>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Laboratorio de Habilidades Clínicas: Parte 2</h3>
+        <div class="item">
+          <span>📄 Guía LHC Parte 2</span>
+          <button class="btn">Marcar como hecha</button>
+        </div>
+        <div class="item">
+          <span>📁 Bibliografía complementaria</span>
+          <button class="btn">Ver carpeta</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+    <div class="modal" id="moduleModal">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2 class="modal-title" id="modalTitle">Módulo</h2>
+
+      <div class="section">
+        <p><strong>Miércoles 25 y viernes 27 de marzo de 2026</strong></p>
+        <p style="margin-top:10px;">LHC módulo parte 1: Traer guía resuelta y la historia clínica perinatal impresa para trabajar.</p>
+      </div>
+
+      <div class="section">
+        <div class="item">
+          <span>📄 Guía del módulo - Parte 1</span>
+          <button class="btn">Marcar como hecha</button>
+        </div>
+        <div class="item">
+          <span>🔗 Video de investigación - Material realizado por la asignatura</span>
+          <button class="btn">Abrir</button>
+        </div>
+        <div class="item">
+          <span>📁 Bibliografía obligatoria</span>
+          <button class="btn">Ver carpeta</button>
+        </div>
+      </div>
+
+      <div class="section">
+        <h3>Laboratorio de Habilidades Clínicas: Parte 2</h3>
+        <div class="item">
+          <span>📄 Guía LHC Parte 2</span>
+          <button class="btn">Marcar como hecha</button>
+        </div>
+        <div class="item">
+          <span>📁 Bibliografía complementaria</span>
+          <button class="btn">Ver carpeta</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function openModal(moduleName) {
+      document.getElementById('modalTitle').innerText = moduleName;
+      document.getElementById('moduleModal').style.display = 'block';
+      document.body.style.overflow = 'hidden';
+    }
+
+    function closeModal() {
+      document.getElementById('moduleModal').style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+
+    window.onclick = function(event) {
+      const modal = document.getElementById('moduleModal');
+      if (event.target === modal) {
+        closeModal();
+      }
+    }
+  </script>
+</body>
+</html>
