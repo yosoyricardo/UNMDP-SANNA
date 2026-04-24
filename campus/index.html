@@ -191,13 +191,13 @@
 <body>
   <div class="container">
     <div class="header">
-      <h1>🌈 Pediatría Académica 🧸</h1>
+      <h1>👨‍⚕️ Pediatría Académica 🧸</h1>
       <p>Seleccione un módulo para visualizar el contenido disponible</p>
     </div>
 
     <div class="cards">
       <div class="card" onclick="openModal('Salud Infantil')">
-        <h2>🧒 Salud Infantil</h2>
+        <h2>🧒 Salud Infantil, consulta y Semiología clínica</h2>
         <p>Seguimiento del crecimiento, desarrollo y control integral del niño.</p>
       </div>
 
@@ -218,7 +218,7 @@
   <div class="modal" id="moduleModal" data-Model="Salud Infantil">
     <div class="modal-content">
       <span class="close" onclick="closeModal()">&times;</span>
-      <h2 class="modal-title" id="modalTitle">Salud Infantil</h2>
+      <h2 class="modal-title" id="modalTitle">Salud Infantil, consulta y Semiología clínica</h2>
 
 
       <div class="section">
@@ -301,7 +301,7 @@
   <div class="modal" id="moduleModal" data-Model="Ambulatorio">
     <div class="modal-content">
       <span class="close" onclick="closeModal()">&times;</span>
-      <h2 class="modal-title" id="modalTitle">Ambu</h2>
+      <h2 class="modal-title" id="modalTitle">Atención integral ambulatoria</h2>
 
 
       <div class="section">
@@ -399,7 +399,7 @@
 
   <script>
     function openModal(moduleName) {
-      document.getElementById('modalTitle').innerText = moduleName;
+      //document.getElementById('modalTitle').innerText = moduleName;
       document.querySelector(`[data-model="${moduleName}"]`).style.display = 'block';
       document.body.style.overflow = 'hidden';
     }
