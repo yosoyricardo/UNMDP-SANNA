@@ -114,8 +114,8 @@
     }
 
     .section {
-      padding: 18px 0;
-      border-bottom: 1px solid #eceff1;
+      padding: 30px 0 30px;
+      border-bottom: 1px solid #e0e7ec;
     }
 
     .section h3 {
@@ -147,6 +147,8 @@
       cursor: pointer;
       font-weight: 600;
       transition: 0.2s;
+      color: #2c3e50 !important;
+      text-decoration: none !important;
     }
 
     .btn:hover {
@@ -179,6 +181,11 @@
         width: 100%;
       }
     }
+
+    .image-nocleo {
+      width: max-content;
+      max-width: 50%;
+    }
   </style>
 </head>
 <body>
@@ -195,12 +202,12 @@
       </div>
 
       <div class="card" onclick="openModal('Neonatología')">
-        <h2>👶 Neonatología</h2>
+        <h2>👶 Módulo Neonatal</h2>
         <p>Atención neonatal, RN vigoroso, prematuridad y cuidados iniciales.</p>
       </div>
 
       <div class="card" onclick="openModal('Ambulatorio')">
-        <h2>🏥 Ambulatorio</h2>
+        <h2>🏥 Atención integral ambulatoria</h2>
         <p>Consultas pediátricas, controles clínicos y seguimiento ambulatorio.</p>
       </div>
     </div>
@@ -213,9 +220,14 @@
       <span class="close" onclick="closeModal()">&times;</span>
       <h2 class="modal-title" id="modalTitle">Salud Infantil</h2>
 
+
       <div class="section">
-        <p><strong>Miércoles 25 y viernes 27 de marzo de 2026</strong></p>
-        <p style="margin-top:10px;">LHC módulo parte 1: Traer guía resuelta y la historia clínica perinatal impresa para trabajar.</p>
+        <h3>Lunes  16/3/26 : Salud de las infancias y adolescencias</h3>
+        <STROng>Bienvenidos a SaNNA !!!</STROng>
+        <div class="item">
+          <span>📁 Palabras de bienvenida cursada 2026 y bibliografía</span>
+          <a target="_blank" href="./biblio-nucleo1-bienvenidos/" class="btn">Ver carpeta</a>
+        </div>
       </div>
 
       <div class="section">
@@ -234,58 +246,156 @@
         </div>
       </div>
 
-      <div class="section">
-        <h3>Laboratorio de Habilidades Clínicas: Parte 2</h3>
-        <div class="item">
-          <span>📄 Guía LHC Parte 2</span>
-          <button class="btn">Marcar como hecha</button>
-        </div>
-        <div class="item">
-          <span>📁 Bibliografía complementaria</span>
-          <button class="btn">Ver carpeta</button>
-        </div>
-      </div>
+     
     </div>
   </div>
 
-    <div class="modal" id="moduleModal">
+    <div class="modal" id="moduleModal"  data-Model="Neonatología">
     <div class="modal-content">
       <span class="close" onclick="closeModal()">&times;</span>
-      <h2 class="modal-title" id="modalTitle">Módulo</h2>
+      <h2 class="modal-title" id="modalTitle">Módulo Neonatal</h2>
 
       <div class="section">
         <p><strong>Miércoles 25 y viernes 27 de marzo de 2026</strong></p>
-        <p style="margin-top:10px;">LHC módulo parte 1: Traer guía resuelta y la historia clínica perinatal impresa para trabajar.</p>
+        <p style="margin-top:10px;">LHC Modulo neonatal parte 1:  Traer guía resuelta y la historia clínica perinatal impresa para trabajar</p>
       </div>
 
       <div class="section">
+        <h3>Laboratorio de Habilidades Clínicas: Parte 1</h3>
         <div class="item">
           <span>📄 Guía del módulo - Parte 1</span>
-          <button class="btn">Marcar como hecha</button>
+           <a target="_blank" href="./bilio-nucleo2-parte2/GUIA-MODULO2-PARTE1.pdf" class="btn">Abrir guia</a>
         </div>
-        <div class="item">
-          <span>🔗 Video de investigación - Material realizado por la asignatura</span>
-          <button class="btn">Abrir</button>
+
+        
+         <div class="item">
+          <span>🎬 Video de Pesquisa Cardiopatía Congénita- Material realizado por la asignatura</span>
+           <a target="_blank" href="https://drive.google.com/file/d/1A9qlaELf2o-ld0Rdr_TOGjSqPC9V23tU/view?usp=sharing" class="btn">Ver clase</a>
         </div>
+
         <div class="item">
-          <span>📁 Bibliografía obligatoria</span>
-          <button class="btn">Ver carpeta</button>
+          <span>🎬 Nuevos Videos LHC NEO 2026</span>
+           <a target="_blank" href="https://drive.google.com/drive/u/1/folders/15KTwUyru8sNftqv2tAM0MQ4O6eztsksl" class="btn">Ver videos</a>
+        </div>
+        
+        <div class="item">
+          <span>📁 Bibliografía</span>
+          <a target="_blank" href="./bilio-nucleo2-parte1/" class="btn">Ver carpeta</a>
         </div>
       </div>
 
       <div class="section">
         <h3>Laboratorio de Habilidades Clínicas: Parte 2</h3>
         <div class="item">
-          <span>📄 Guía LHC Parte 2</span>
-          <button class="btn">Marcar como hecha</button>
+          <span>📄 Guía del módulo - Parte 2</span>
+           <a target="_blank" href="./bilio-nucleo2-parte2/GUIA-MODULO2-PARTE2.pdf" class="btn">Abrir guia</a>
         </div>
         <div class="item">
-          <span>📁 Bibliografía complementaria</span>
-          <button class="btn">Ver carpeta</button>
+          <span>📁 Bibliografía obligatoria</span>
+          <a target="_blank" href="./bilio-nucleo2-parte2/" class="btn">Ver carpeta</a>
         </div>
       </div>
     </div>
   </div>
+
+  <div class="modal" id="moduleModal" data-Model="Ambulatorio">
+    <div class="modal-content">
+      <span class="close" onclick="closeModal()">&times;</span>
+      <h2 class="modal-title" id="modalTitle">Ambu</h2>
+
+
+      <div class="section">
+        <h3>Atención Integral Ambulatoria Lactantes</h3>
+        
+        <img src="./images/n3-1.jpg" class="image-nocleo" alt="">
+
+        <div class="item">
+          <span>📄 Guía del módulo - Parte 1</span>
+           <a target="_blank" href="./biblio-nucleo3-lactante/_GUIA ESTUDIANTE lactante SEMINARIO 2026 (1).pdf" class="btn">Abrir guia</a>
+        </div>
+
+        
+        <div class="item">
+          <span>🎬 Prunape video</span>
+           <a target="_blank" href="https://drive.google.com/file/d/1c7pLMZDgYR9Xb1E2NcbvKZysKbuFvHfP/view" class="btn">Ver clase</a>
+        </div>
+
+        <div class="item">
+          <span>🎬 Video resumen LHC desarrollo infantil</span>
+           <a target="_blank" href="https://drive.google.com/file/d/1TGf3bHqbhbRcxb99UyccMhmM_p3hS8Y5/view?usp=sharing" class="btn">Ver videos</a>
+        </div>
+
+        <div class="item">
+          <span>📁 Bibliografía Atención integral Lactante</span>
+          <a target="_blank" href="./biblio-nucleo3-lactante/" class="btn">Ver carpeta</a>
+        </div>
+      </div>
+
+
+      <div class="section">
+        <h3>Seminario preescolar, escolar y adolescente 20/4/2026</h3>
+        <div class="item">
+          <span>📄 Guía del módulo - Parte 1</span>
+           <a target="_blank" href="./biblio-nucleo3-preescolar-escolar/ESTUDIANTES SEMINARIO 2026 pre escolar, escolar, adolescente  .docx.pdf" class="btn">Abrir guia</a>
+        </div>
+
+
+        <div class="item">
+          <span>📄 Historia clínica Adolescente IMPRIMIR ( llevar al seminario))</span>
+           <a target="_blank" href="./biblio-nucleo3-adolescente/HISTORIA CLINICA ADOLESCENTE (1).pdf" class="btn">Abrir HC</a>
+        </div>
+        <div class="item">
+          <span>📄 Historia Clínica PROSANE- IMPRIMIR llevar al seminario </span>
+           <a target="_blank" href="./biblio-nucleo3-preescolar-escolar/Ficha_PROSANE (1).pdf" class="btn">Abrir Prosane</a>
+        </div>
+
+       <div class="item">
+          <span>📁 Bibliografía pre escolar, escolar</span>
+          <a target="_blank" href="./biblio-nucleo3-preescolar-escolar/" class="btn">Ver carpeta</a>
+        </div>
+        
+        <div class="item">
+          <span>📁 Bibliografía Obligatoria adolescente</span>
+          <a target="_blank" href="./biblio-nucleo3-adolescente/" class="btn">Ver carpeta</a>
+        </div>
+</div>
+
+        <div class="section">
+        <h3>LHC: Atención Integral Ambulatoria lactante, pre escolares, Escolares  Y  Adolescentes</h3>
+        <img src="./images/n3-3.jpg" class="image-nocleo" alt="">
+        <div class="item">
+          <span>📄 Guía LHC Atención Integral del lactante, Preescolar, Escolar y Adolescente 2026 </span>
+           <a target="_blank" href="./biblio-nucleo3-general/_LHC AMBULATORIO 2026 ESTUDIANTES (1).pdf" class="btn">Abrir guia</a>
+        </div>
+
+        <div class="item">
+          <span>🎬 Video de TOMA DE TA Y PERCENTILES DE TA</span>
+           <a target="_blank" href="https://drive.google.com/file/d/1sipGTnyF6td3pW45LilR_rNVR46HSKMZ/view?usp=drive_link" class="btn">Ver clase</a>
+        </div>
+
+        <div class="item">
+          <span>🎬 Video Maniobra de Adams 2026</span>
+           <a target="_blank" href="https://drive.google.com/file/d/1BBm_8O93wjr0JAedNZKoztRNeS6DoeBT/view" class="btn">Ver clase</a>
+        </div>
+        
+         <div class="item">
+          <span>🎬 Video de toma de agudeza visual 2026</span>
+           <a target="_blank" href="https://onedrive.live.com/?qt=allmyphotos&photosData=%2Fshare%2F4F49A4C8402737B7%21sf57d5ea0cae34415aa5f3eca587eecde%3Fithint%3Dvideo%26e%3DvdiO7u%26migratedtospo%3Dtrue&cid=4F49A4C8402737B7&id=4F49A4C8402737B7%21sf57d5ea0cae34415aa5f3eca587eecde&redeem=aHR0cHM6Ly8xZHJ2Lm1zL3YvYy80ZjQ5YTRjODQwMjczN2I3L0lRQ2dYbjMxNDhvVlJLcGZQc3BZZnV6ZUFhc0xxTFVUUHRrb2ZWQk1UMXgzTVNZP2U9dmRpTzd1&v=photos" class="btn">Ver clase</a>
+        </div>
+
+        <div class="item">
+          <span>🎬 Video Reflejo Rojo 2026</span>
+           <a target="_blank" href="https://drive.google.com/file/d/1vBGkn31fJ8dpHkoiZJx3-oMUddFvq8Pg/view" class="btn">Ver videos</a>
+        </div>
+        
+        <div class="item">
+          <span>📁 Bibliografía lactante pre escolar, escolar y adolescente  2026</span>
+          <a target="_blank" href="./biblio-nucleo3-general/" class="btn">Ver carpeta</a>
+        </div>
+      </div>
+      </div>
+    </div>
+
 
   <script>
     function openModal(moduleName) {
@@ -295,8 +405,10 @@
     }
 
     function closeModal() {
-      document.querySelector(`[data-model="${moduleName}"]`).style.display = 'none';
-      document.body.style.overflow = 'auto';
+      document.querySelectorAll(`.modal`).forEach(item => {
+        item.style.display = 'none';
+        document.body.style.overflow = 'auto';
+      })
     }
 
     window.onclick = function(event) {
@@ -306,5 +418,82 @@
       }
     }
   </script>
+
+
+
+
+
+
+
+
+
+
+
+
+<style>
+
+
+        .footer-premium {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 35px; /* Barra bem fininha */
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-size: 13px;
+            color: #666; /* Cinza elegante */
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05); /* Sombra projetada discreta */
+            overflow: hidden;
+            z-index: 9999;
+        }
+
+        /* Efeito de brilho passando */
+        .footer-premium::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                to right, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0) 30%, 
+                rgba(0, 0, 0, 0.03) 50%, 
+                rgba(255, 255, 255, 0) 70%, 
+                transparent 100%
+            );
+            transform: skewX(-25deg);
+            animation: shine 4s infinite ease-in-out;
+        }
+
+        @keyframes shine {
+            0% { left: -150%; }
+            100% { left: 150%; }
+        }
+
+        .footer-text {
+            letter-spacing: 0.5px;
+            font-weight: 400;
+        }
+
+        .name-highlight {
+            font-weight: 600;
+            color: #333;
+        }
+    </style>
+
+
+  <footer class="footer-premium">
+        <span class="footer-text">Hecho por <span class="name-highlight">Ricardo Cardoso</span> </span>
+    </footer>
+
+</body>
+</html>
+
 </body>
 </html>
