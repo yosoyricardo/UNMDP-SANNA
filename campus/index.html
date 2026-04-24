@@ -208,7 +208,7 @@
 
 
 
-  <div class="modal" id="moduleModal">
+  <div class="modal" id="moduleModal" data-Model="Salud Infantil">
     <div class="modal-content">
       <span class="close" onclick="closeModal()">&times;</span>
       <h2 class="modal-title" id="modalTitle">Salud Infantil</h2>
@@ -219,9 +219,10 @@
       </div>
 
       <div class="section">
+        <h3>Laboratorio de Habilidades Clínicas</h3>
         <div class="item">
           <span>📄 Guía del módulo - Parte 1</span>
-           <a href="/biblio-nucleo1/guia-01.pdf" class="btn">Abrir guia</a>
+           <a target="_blank" href="./biblio-nucleo1/guia-01.pdf" class="btn">Abrir guia</a>
         </div>
         <div class="item">
           <span>🔗 Vademecum Garrahan</span>
@@ -229,7 +230,7 @@
         </div>
         <div class="item">
           <span>📁 Bibliografía obligatoria</span>
-          <a href="/biblio-nucleo1/" class="btn">Ver carpeta</a>
+          <a target="_blank" href="./biblio-nucleo1/" class="btn">Ver carpeta</a>
         </div>
       </div>
 
@@ -289,17 +290,17 @@
   <script>
     function openModal(moduleName) {
       document.getElementById('modalTitle').innerText = moduleName;
-      document.getElementById('moduleModal').style.display = 'block';
+      document.querySelector(`[data-model="${moduleName}"]`).style.display = 'block';
       document.body.style.overflow = 'hidden';
     }
 
     function closeModal() {
-      document.getElementById('moduleModal').style.display = 'none';
+      document.querySelector(`[data-model="${moduleName}"]`).style.display = 'none';
       document.body.style.overflow = 'auto';
     }
 
     window.onclick = function(event) {
-      const modal = document.getElementById('moduleModal');
+      const modal = document.querySelector(`[data-model="${moduleName}"]`);
       if (event.target === modal) {
         closeModal();
       }
