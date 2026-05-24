@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulador de Examen Físico - Aparato Respiratorio</title>
+    <style>
+        *, *::before, *::after {
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f4f8;
+            color: #2c3e50;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 800px;
+            padding: 30px;
+            border-top: 8px solid #0056b3;
+            position: relative;
+        }
+        h1 {
+            color: #0056b3;
+            text-align: center;
+            font-size: 24px;
+            margin-top: 0;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+        
+        /* Selector de dificultad en tiempo real */
+        .live-mode-selector {
+            display: none;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            background: #e9ecef;
+            padding: 8px 15px;
+            border-radius: 20px;
+            width: fit-content;
+            margin-left: auto;
+        }
+        .live-mode-selector label {
+            font-size: 13px;
+            font-weight: bold;
+            color: #495057;
+        }
+        .live-mode-selector select {
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #ced4da;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .progress-bar-container {
+            background-color: #e9ecef;
+            border-radius: 10px;
+            height: 12px;
+            margin-bottom: 30px;
+            overflow: hidden;
+            display: none;
+        }
+        .progress-bar {
+            background-color: #007bff;
+            height: 100%;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+        .screen {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        .screen.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .step-number {
+            font-size: 14px;
+            font-weight: bold;
+            color: #0056b3;
+            text-transform: uppercase;
+            margin-bottom: 10px;
+        }
+        .instruction {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            background: #f8f9fa;
+            padding: 15px;
+            border-left: 5px solid #007bff;
+            border-radius: 4px;
+        }
+        .options-container {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 25px;
+        }
+        .option-btn {
+            background-color: #ffffff;
+            border: 2px solid #ced4da;
+            border-radius: 8px;
+            padding: 15px;
+            font-size: 15px;
+            text-align: left;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            color: #495057;
+        }
+        .option-btn:hover {
+            background-color: #e8f4fd;
+            border-color: #007bff;
+            color: #0056b3;
+        }
+        .option-btn.correct {
+            background-color: #d4edda;
+            border-color: #28a745;
+            color: #155724;
+            font-weight: bold;
+        }
+        .option-btn.wrong {
+            background-color: #f8d7da;
+            border-color: #dc3545;
+            color: #721c24;
+        }
+        .feedback {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 14px;
+            display: none;
+            font-weight: 500;
+        }
+        .feedback.success {
+            background-color: #d4edda;
+            color: #155724;
+            display: block;
+        }
+        .feedback.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            display: block;
+        }
+        .footer-buttons {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 20px;
+        }
+        .next-btn {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            display: none;
+            transition: background 0.2s;
+        }
+        .next-btn:hover {
+            background-color: #004085;
+        }
+        
+        /* Mode selection specific */
+        .mode-selection-container {
+            text-align: center;
+            padding: 20px 0;
+        }
+        .mode-btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        .mode-btn {
+            padding: 20px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: transform 0.2s, background-color 0.2s;
+            color: white;
+            flex: 1;
+            max-width: 250px;
+        }
+        .mode-btn.easy {
+            background-color: #28a745;
+        }
+        .mode-btn.easy:hover {
+            background-color: #218838;
+            transform: scale(1.03);
+        }
+        .mode-btn.hard {
+            background-color: #dc3545;
+        }
+        .mode-btn.hard:hover {
+            background-color: #c82333;
+            transform: scale(1.03);
+        }
+        .mode-desc {
+            font-size: 14px;
+            color: #6c757d;
+            margin-top: 10px;
+        }
+        /* Results view */
+        .results-container {
+            text-align: center;
+        }
+        .score {
+            font-size: 48px;
+            font-weight: bold;
+            color: #28a745;
+            margin: 20px 0;
+        }
+        .restart-btn {
+            background-color: #0056b3;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+        .restart-btn:hover {
+            background-color: #004085;
+        }
+        .review-list {
+            text-align: left;
+            margin-top: 30px;
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            max-height: 250px;
+            overflow-y: auto;
+        }
+        .review-item {
+            font-size: 13px;
+            padding: 6px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        .review-item:last-child {
+            border-bottom: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Examen Físico: Aparato Respiratorio</h1>
+    <div class="subtitle">Universidad Nacional de Mar del Plata - Facultad de Medicina</div>
+
+    <!-- Cambiar dificultad dinámicamente durante el juego -->
+    <div class="live-mode-selector" id="live-selector-box">
+        <label for="difficulty-select">Dificultad actual:</label>
+        <select id="difficulty-select" onchange="changeModeMidGame(this.value)">
+            <option value="easy">Fácil</option>
+            <option value="hard">Hard 💀</option>
+        </select>
+    </div>
+
+    <div class="progress-bar-container" id="progress-container">
+        <div class="progress-bar" id="progress-bar"></div>
+    </div>
+
+    <!-- PANTALLA 1: SELECCIÓN DE NIVEL INICIAL -->
+    <div id="mode-screen" class="screen active mode-selection-container">
+        <p style="font-size: 18px; font-weight: 500;">Antes de comenzar la simulación del checklist oficial, selecciona tu modalidad de entrenamiento:</p>
+        <div class="mode-btn-group">
+            <div>
+                <button class="mode-btn easy" onclick="startGame('easy')">Nivel Fácil</button>
+                <div class="mode-desc">Puedes seguir el examen clínico simulado aunque cometas errores.</div>
+            </div>
+            <div>
+                <button class="mode-btn hard" onclick="startGame('hard')">Nivel Hard</button>
+                <div class="mode-desc" style="color: #c82333; font-weight: bold;">¡Si te equivocas en un solo paso, vuelves automáticamente al inicio!</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PANTALLA 2: ZONA DE JUEGO -->
+    <div id="game-screen" class="screen">
+        <!-- Los pasos se inyectarán dinámicamente aquí mediante JS -->
+    </div>
+
+    <!-- PANTALLA 3: RESULTADOS -->
+    <div id="results-screen" class="screen results-container">
+        <h2 id="results-title">¡Simulación Finalizada!</h2>
+        <div class="score" id="final-score">100%</div>
+        <p id="feedback-score-text"></p>
+        
+        <div class="review-list">
+            <h3>Lista de Chequeo Oficial (Orden Estricto):</h3>
+            <div id="full-checklist-review"></div>
+        </div>
+
+        <button class="restart-btn" onclick="returnToMenu()">Volver al Menú Principal</button>
+    </div>
+</div>
+
+<script>
+    const checklistData = [
+        "Realiza lavado de manos y pide permiso para revisar al paciente",
+        "Realizar inspección general de piel y mucosas: evalúa coloración (cianosis). También evaluar faneras en busca de acropaquias",
+        "Dice qué evalúa el estado nutricional del paciente y la hidratación",
+        "Realizar toma de signos vitales: fr respiratoria: cuento respiraciones x min; fr cardíaca: cuento latidos por minuto (pulso o estetoscopio); saturación: con saturómetro",
+        "Evaluar OROFARINGE con bajalengua en pequeños o pidiendo al niño que abra la boca: Observar fauces, lengua, amígdalas, úvula, pilares",
+        "Evaluar ambos oídos por separado mediante la otoscopía: Se observa el conducto auditivo externo, membrana del tímpano, triángulo luminoso",
+        "Evaluar con el torso desnudo mediante la inspección estática la forma del tórax y sus características particulares",
+        "Dice qué evalúa la mecánica respiratoria, uso de músculos accesorios, tiraje, aleteo nasal o quejido",
+        "Realizar palpación de las bases, colocando las manos en las bases del tórax y pulgares hacia las vértebras dorsales (amplexación de bases) para ver elasticidad (Escolares y adolescentes)",
+        "Realizar palpación de los vértices (maniobra de Rouault) Apoyando las manos en los vértices y los pulgares coincidiendo en la 7.a vertebra cervical (Escolares y adolescentes)",
+        "Buscar puntos dolorosos mediante la palpación costal y en articulaciones costoesternales. Buscar crepitaciones",
+        "Palpar Adenopatías en región submaxilar, Cuello, Axilas y base del cuello",
+        "Realizar percusión del tórax con el método directo (aplicando golpes suaves sobre la pared torácica con los dedos índice y medio) en niños pequeños, y de forma indirecta (dedo-dedo) en el niño mayor. La percusión debe ser simétrica y comparativa; comenzar percutiendo las zonas donde se espera que exista timpanismo, siguiendo con las que presenten matidez",
+        "Percutir buscando el borde superior del hígado: se percute normalmente el nivel de la sexta costilla desde la línea media axilar al esternón",
+        "Percutir buscando el límite inferior de los pulmones o parte superior del diafragma: 9na -10ma costillas posteriormente o a ambos lados",
+        "Realizar auscultación pulmonar en ambos campos pulmonares desde los ápices hacia las bases. En superficie anterior, lateral y posterior sistemática y comparativa. Evaluar entrada de aire bilateral en la inspiración como la espiración: murmullo vesicular",
+        "También buscar a la auscultación ruidos agregados -Sibilancias, Estridor, Rales: Subcrepitantes, Crepitantes, transmisión de ruidos de Vía Aérea Superior, soplo tubario, pleurítico o cavernoso"
+    ];
+
+    let currentStep = 0;
+    let mistakes = 0;
+    let gameMode = 'easy';
+    let switchedModeDuringGame = false;
+
+    function shuffleArray(array) {
+        let shuffled = [...array];
+        for (let i = shuffled.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+        }
+        return shuffled;
+    }
+
+    function startGame(mode) {
+        gameMode = mode;
+        currentStep = 0;
+        mistakes = 0;
+        switchedModeDuringGame = false;
+        
+        // Sincronizar el selector dinámico superior
+        document.getElementById('difficulty-select').value = mode;
+        
+        document.getElementById('mode-screen').classList.remove('active');
+        document.getElementById('progress-container').style.display = 'block';
+        document.getElementById('live-selector-box').style.display = 'flex';
+        document.getElementById('game-screen').classList.add('active');
+        
+        loadStep();
+    }
+
+    function changeModeMidGame(newMode) {
+        gameMode = newMode;
+        switchedModeDuringGame = true;
+        
+        // Actualizar etiqueta del encabezado si la tarjeta ya está renderizada
+        const tag = document.getElementById('mode-tag');
+        if (tag) {
+            tag.innerText = `(${gameMode === 'easy' ? 'Modo Fácil' : 'Modo Hard'})`;
+        }
+    }
+
+    function loadStep() {
+        if (currentStep >= checklistData.length) {
+            showResults();
+            return;
+        }
+
+        const gameScreen = document.getElementById('game-screen');
+        gameScreen.innerHTML = '';
+
+        const progressPercent = (currentStep / checklistData.length) * 100;
+        document.getElementById('progress-bar').style.width = progressPercent + '%';
+
+        const card = document.createElement('div');
+        
+        const stepNum = document.createElement('div');
+        stepNum.className = 'step-number';
+        stepNum.innerHTML = `Paso ${currentStep + 1} de ${checklistData.length} <span id="mode-tag">(${gameMode === 'easy' ? 'Modo Fácil' : 'Modo Hard'})</span>`;
+
+        const instr = document.createElement('div');
+        instr.className = 'instruction';
+        instr.innerText = '¿Cuál es el siguiente paso exacto en el orden secuencial del checklist?';
+
+        const optionsCont = document.createElement('div');
+        optionsCont.className = 'options-container';
+
+        const correctAnswer = checklistData[currentStep];
+        let options = [correctAnswer];
+        
+        let distractors = checklistData.filter(item => item !== correctAnswer);
+        distractors = shuffleArray(distractors);
+        
+        for(let i=0; i<3; i++) {
+            if(distractors[i]) options.push(distractors[i]);
+        }
+        
+        options = shuffleArray(options);
+
+        options.forEach(optionText => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.innerText = optionText;
+            btn.onclick = () => checkAnswer(btn, optionText, correctAnswer);
+            optionsCont.appendChild(btn);
+        });
+
+        const feedback = document.createElement('div');
+        feedback.id = 'step-feedback';
+        feedback.className = 'feedback';
+
+        const footer = document.createElement('div');
+        footer.className = 'footer-buttons';
+        
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'next-btn';
+        nextBtn.id = 'next-button';
+        nextBtn.innerText = currentStep === checklistData.length - 1 ? 'Finalizar Examen' : 'Siguiente Paso';
+        
+        nextBtn.onclick = () => {
+            currentStep++;
+            loadStep();
+        };
+        
+        footer.appendChild(nextBtn);
+
+        card.appendChild(stepNum);
+        card.appendChild(instr);
+        card.appendChild(optionsCont);
+        card.appendChild(feedback);
+        card.appendChild(footer);
+
+        gameScreen.appendChild(card);
+    }
+
+    function checkAnswer(selectedBtn, selectedText, correctText) {
+        const buttons = document.querySelectorAll('.option-btn');
+        const feedback = document.getElementById('step-feedback');
+        const nextBtn = document.getElementById('next-button');
+
+        buttons.forEach(btn => btn.disabled = true);
+
+        if (selectedText === correctText) {
+            selectedBtn.classList.add('correct');
+            feedback.className = 'feedback success';
+            feedback.innerText = '¡Correcto! Cumples de forma estricta el orden clínico establecido.';
+            nextBtn.style.display = 'block';
+        } else {
+            selectedBtn.classList.add('wrong');
+            mistakes++;
+            
+            buttons.forEach(btn => {
+                if (btn.innerText === correctText) {
+                    btn.classList.add('correct');
+                }
+            });
+
+            if (gameMode === 'hard') {
+                feedback.className = 'feedback error';
+                feedback.innerHTML = `<strong>¡ERROR EN EL ORDEN CLÍNICO!</strong> Como estás en Modo Hard, un error te devuelve al inicio. Redireccionando...`;
+                
+                setTimeout(() => {
+                    alert(`Has fallado en el paso ${currentStep + 1} estando en Modo Hard. ¡Volviendo al inicio!`);
+                    startGame('hard');
+                }, 2500);
+            } else {
+                feedback.className = 'feedback error';
+                feedback.innerText = `Incorrecto. Para mantener la sistemática oficial de la UNMDP, este paso era obligatorio aquí. Puedes continuar (Modo Fácil).`;
+                nextBtn.style.display = 'block';
+            }
+        }
+    }
+
+    function showResults() {
+        document.getElementById('progress-container').style.display = 'none';
+        document.getElementById('live-selector-box').style.display = 'none';
+        document.getElementById('game-screen').classList.remove('active');
+        
+        const resultsScreen = document.getElementById('results-screen');
+        resultsScreen.classList.add('active');
+
+        const totalSteps = checklistData.length;
+        const correctCount = totalSteps - mistakes;
+        const finalPercentage = Math.round((correctCount / totalSteps) * 100);
+
+        const scoreElement = document.getElementById('final-score');
+        scoreElement.innerText = `${finalPercentage}%`;
+
+        const feedbackText = document.getElementById('feedback-score-text');
+        const titleElement = document.getElementById('results-title');
+
+        if (gameMode === 'hard' && mistakes === 0) {
+            titleElement.innerText = switchedModeDuringGame ? "¡Simulación Completada (Modo Hard alternado)!" : "¡NIVEL HARD SUPERADO DESDE EL INICIO!";
+            scoreElement.style.color = '#28a745';
+            feedbackText.innerText = '¡Impresionante! Lograste pasar los pasos más críticos en Modo Hard sin cometer ningún desliz en el orden.';
+        } else if (finalPercentage === 100) {
+            scoreElement.style.color = '#28a745';
+            feedbackText.innerText = '¡Excelente! Completaste el recorrido con un 100% de precisión.';
+        } else if (finalPercentage >= 75) {
+            scoreElement.style.color = '#ffc107';
+            feedbackText.innerText = `Buen intento. Terminaste con ${mistakes} fallo(s). ¡Prueba a mantener el Modo Hard todo el recorrido!`;
+        } else {
+            scoreElement.style.color = '#dc3545';
+            feedbackText.innerText = `Has acumulado ${mistakes} errores. Recuerda repasar la secuencia semiológica (Inspección, Palpación, Percusión, Auscultación).`;
+        }
+
+        const reviewContainer = document.getElementById('full-checklist-review');
+        reviewContainer.innerHTML = '';
+        checklistData.forEach((step, index) => {
+            const item = document.createElement('div');
+            item.className = 'review-item';
+            item.innerHTML = `<strong>${index + 1}.</strong> ${step}`;
+            reviewContainer.appendChild(item);
+        });
+    }
+
+    function returnToMenu() {
+        document.getElementById('results-screen').classList.remove('active');
+        document.getElementById('live-selector-box').style.display = 'none';
+        document.getElementById('mode-screen').classList.add('active');
+    }
+</script>
+
+
+
+
+<style>
+
+
+        .footer-premium {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 35px; /* Barra bem fininha */
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            font-size: 13px;
+            color: #666; /* Cinza elegante */
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05); /* Sombra projetada discreta */
+            overflow: hidden;
+            z-index: 9999;
+        }
+
+        /* Efeito de brilho passando */
+        .footer-premium::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: -150%;
+            width: 50%;
+            height: 100%;
+            background: linear-gradient(
+                to right, 
+                transparent 0%, 
+                rgba(255, 255, 255, 0) 30%, 
+                rgba(0, 0, 0, 0.03) 50%, 
+                rgba(255, 255, 255, 0) 70%, 
+                transparent 100%
+            );
+            transform: skewX(-25deg);
+            animation: shine 4s infinite ease-in-out;
+        }
+
+        @keyframes shine {
+            0% { left: -150%; }
+            100% { left: 150%; }
+        }
+
+        .footer-text {
+            letter-spacing: 0.5px;
+            font-weight: 400;
+        }
+
+        .name-highlight {
+            font-weight: 600;
+            color: #333;
+        }
+    </style>
+
+
+  <footer class="footer-premium">
+        <span class="footer-text">Hecho por <span class="name-highlight">Ricardo Cardoso</span> </span>
+    </footer>
+</body>
+</html>
