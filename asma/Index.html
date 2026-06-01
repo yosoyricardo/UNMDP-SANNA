@@ -3,155 +3,91 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Emergencia Pediátrica - Asma Grave
+<title>OSCE - Crisis Asmática Grave</title>
 
 <style>
-:root{
-   --bg:#071826;
-    --panel:#10273a;
-    --card:#16344d;
-    --accent:#00d4ff;
-    --success:#28c76f;
-    --danger:#ff4d4f;
-    --warning:#ffb020;
-    --text:#ffffff;
-}
-
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
-
 body{
-    font-family:Arial, Helvetica, sans-serif;
-    background:linear-gradient(135deg,#06111c,#10304a);
-    color:var(--text);
-    min-height:100vh;
-    padding:20px;
+font-family:Arial,sans-serif;
+background:#081b29;
+color:white;
+margin:0;
+padding:20px;
 }
 
 .container{
-    max-width:1100px;
-    margin:auto;
-}
-
-header{
-    text-align:center;
-    margin-bottom:20px;
+max-width:1100px;
+margin:auto;
 }
 
 h1{
-    color:var(--accent);
-    margin-bottom:10px;
+text-align:center;
+color:#4dd0ff;
 }
 
-.subtitle{
-    opacity:.9;
-}
-
-.panel{
-    background:var(--panel);
-    border-radius:16px;
-    padding:20px;
-    margin-top:15px;
-    box-shadow:0 0 20px rgba(0,0,0,.3);
-}
-
-.topbar{
-    display:flex;
-    flex-wrap:wrap;
-    justify-content:space-between;
-    gap:10px;
-    margin-bottom:15px;
-}
-
-.badge{
-    background:var(--card);
-    padding:10px 15px;
-    border-radius:10px;
-    font-weight:bold;
-}
-
-.timer{
-    color:#ffd166;
-}
-
-.steps{
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-}
-
-.step{
-    background:var(--card);
-    border:2px solid transparent;
-    padding:14px;
-    border-radius:12px;
-    cursor:pointer;
-    transition:.2s;
-    user-select:none;
-}
-
-.step:hover{
-    border-color:var(--accent);
-}
-
-.correct{
-    border-color:var(--success)!important;
-    background:#11492c!important;
-}
-
-.wrong{
-    border-color:var(--danger)!important;
-    background:#4b1717!important;
+.card{
+background:#102c3f;
+padding:20px;
+border-radius:15px;
+margin-top:15px;
 }
 
 button{
-    background:var(--accent);
-    color:#000;
-    border:none;
-    padding:12px 20px;
-    border-radius:10px;
-    font-weight:bold;
-    cursor:pointer;
+background:#4dd0ff;
+border:none;
+padding:12px 18px;
+margin:5px;
+border-radius:8px;
+font-weight:bold;
+cursor:pointer;
 }
 
 button:hover{
-    opacity:.9;
+opacity:.9;
 }
 
-.center{
-    text-align:center;
+.step{
+background:#173d57;
+padding:12px;
+margin:8px 0;
+border-radius:10px;
+cursor:pointer;
+border:2px solid transparent;
+}
+
+.step:hover{
+border-color:#4dd0ff;
+}
+
+.correct{
+background:#1f6f43 !important;
+}
+
+.wrong{
+background:#8f2323 !important;
+}
+
+.topbar{
+display:flex;
+flex-wrap:wrap;
+justify-content:space-between;
+gap:10px;
+margin-bottom:15px;
+}
+
+.badge{
+background:#173d57;
+padding:10px;
+border-radius:8px;
 }
 
 .hidden{
-    display:none;
-}
-
-.message{
-    margin-top:15px;
-    font-weight:bold;
-}
-
-.dragging{
-    opacity:.5;
-}
-
-.result{
-    text-align:center;
-    font-size:1.2rem;
-}
-
-.medical{
-    font-size:40px;
-    margin-bottom:10px;
+display:none;
 }
 
 @media(max-width:700px){
-    .topbar{
-        flex-direction:column;
-    }
+.topbar{
+flex-direction:column;
+}
 }
 </style>
 </head>
@@ -159,41 +95,39 @@ button:hover{
 
 <div class="container">
 
-<header>
-<div class="medical">🚑👶</div>
-<h1>Entrenamiento de Asma Grave</h1>
-<p class="subtitle">Emergencia Pediátrica - Checklist Oficial</p>
-</header>
+<h1>🚑 Crisis Asmática Grave - Entrenamiento OSCE</h1>
 
-<div class="panel" id="menu">
-    <h2>Selecciona un nivel</h2>
-    <br>
-    <button onclick="startLevel(1)">Nivel 1 - Reordenar Checklist</button>
-    <button onclick="startLevel(2)">Nivel 2 - Continuar tras error</button>
-    <button onclick="startLevel(3)">Nivel 3 - Error = Reinicio</button>
+<div id="menu" class="card">
+<h2>Selecciona un nivel</h2>
+
+<button onclick="startGame(1)">Nivel 1 - Reordenar</button>
+<button onclick="startGame(2)">Nivel 2 - Continuar tras error</button>
+<button onclick="startGame(3)">Nivel 3 - Reinicio por error</button>
+<button onclick="startGame(4)">Nivel 4 - Simulación OSCE</button>
 </div>
 
-<div class="panel hidden" id="game">
+<div id="game" class="card hidden">
 
-    <div class="topbar">
-        <div class="badge">Nivel: <span id="level"></span></div>
-        <div class="badge timer">⏱ Tiempo: <span id="time">02:00</span></div>
-        <div class="badge">Errores: <span id="errors">0</span></div>
-    </div>
+<div class="topbar">
+<div class="badge">Nivel: <span id="nivel"></span></div>
+<div class="badge">⏱ <span id="timer">02:00</span></div>
+<div class="badge">Errores: <span id="errores">0</span></div>
+</div>
 
-    <div id="instructions"></div>
-    <br>
+<div id="instructions"></div>
 
-    <div class="steps" id="steps"></div>
+<br>
 
-    <div class="message" id="message"></div>
+<div id="steps"></div>
+
+<div id="message"></div>
 
 </div>
 
-<div class="panel hidden" id="result">
-    <div class="result" id="resultText"></div>
-    <br>
-    <button onclick="location.reload()">Volver al menú</button>
+<div id="result" class="card hidden">
+<div id="resultText"></div>
+<br>
+<button onclick="location.reload()">Volver al menú</button>
 </div>
 
 </div>
@@ -219,261 +153,312 @@ const checklist = [
 "Comunica al familiar que se internará al paciente y/o deriva a centro de mayor complejidad"
 ];
 
-let level = 1;
+let level=1;
+let current=0;
+let errors=0;
+let score=0;
+let mistakes=[];
+let seconds=120;
 let timer;
-let seconds = 120;
-let errors = 0;
-let currentIndex = 0;
 
-function startLevel(lvl){
+function shuffle(a){
+return [...a].sort(()=>Math.random()-0.5);
+}
 
-    level = lvl;
+function startGame(l){
 
-    document.getElementById("menu").classList.add("hidden");
-    document.getElementById("game").classList.remove("hidden");
+level=l;
+current=0;
+errors=0;
+score=0;
+mistakes=[];
 
-    document.getElementById("level").textContent = lvl;
-    document.getElementById("errors").textContent = 0;
+document.getElementById("menu").classList.add("hidden");
+document.getElementById("game").classList.remove("hidden");
 
-    errors = 0;
-    currentIndex = 0;
+document.getElementById("nivel").textContent=l;
+document.getElementById("errores").textContent="0";
 
-    startTimer();
+startTimer();
 
-    if(level===1){
-        setupLevel1();
-    }else{
-        setupLevel2or3();
-    }
+if(l===1){
+level1();
+}else{
+selectionMode();
+}
 }
 
 function startTimer(){
 
-    clearInterval(timer);
+seconds=120;
 
-    seconds = 120;
+updateClock();
 
-    updateTimer();
+clearInterval(timer);
 
-    timer = setInterval(()=>{
-        seconds--;
+timer=setInterval(()=>{
 
-        updateTimer();
+seconds--;
 
-        if(seconds<=0){
-            lose("⏰ Tiempo agotado");
-        }
+updateClock();
 
-    },1000);
+if(seconds<=0){
+finish("⏰ Tiempo agotado");
 }
 
-function updateTimer(){
-    let m = Math.floor(seconds/60);
-    let s = seconds%60;
-
-    document.getElementById("time").textContent =
-        String(m).padStart(2,"0")+":"+
-        String(s).padStart(2,"0");
+},1000);
 }
 
-function shuffle(arr){
-    return [...arr].sort(()=>Math.random()-0.5);
+function updateClock(){
+
+let m=Math.floor(seconds/60);
+let s=seconds%60;
+
+document.getElementById("timer").textContent=
+String(m).padStart(2,"0")+":"+
+String(s).padStart(2,"0");
 }
 
-function setupLevel1(){
+function level1(){
 
-    document.getElementById("instructions").innerHTML =
-    "<b>Objetivo:</b> Arrastra los pasos hasta colocarlos en el orden correcto.";
+document.getElementById("instructions").innerHTML=
+"<b>Ordena correctamente el checklist.</b>";
 
-    const container = document.getElementById("steps");
-    container.innerHTML = "";
+const box=document.getElementById("steps");
 
-    let items = shuffle(checklist);
+box.innerHTML="";
 
-    items.forEach(text=>{
+let items=shuffle(checklist);
 
-        const div = document.createElement("div");
-        div.className = "step";
-        div.draggable = true;
-        div.textContent = text;
+items.forEach(t=>{
 
-        container.appendChild(div);
-    });
+let d=document.createElement("div");
 
-    enableDragAndDrop();
+d.className="step";
+d.draggable=true;
+d.textContent=t;
 
-    const btn = document.createElement("button");
-    btn.textContent = "Verificar Orden";
-    btn.onclick = checkLevel1;
+box.appendChild(d);
 
-    container.appendChild(btn);
+});
+
+enableDrag();
+
+let btn=document.createElement("button");
+
+btn.innerText="Verificar";
+
+btn.onclick=verifyOrder;
+
+box.appendChild(btn);
 }
 
-function enableDragAndDrop(){
+function enableDrag(){
 
-    const items = document.querySelectorAll(".step");
+let drag;
 
-    let dragged;
+document.querySelectorAll(".step").forEach(el=>{
 
-    items.forEach(item=>{
+el.addEventListener("dragstart",()=>drag=el);
 
-        item.addEventListener("dragstart",()=>{
-            dragged=item;
-            item.classList.add("dragging");
-        });
+el.addEventListener("dragover",(e)=>e.preventDefault());
 
-        item.addEventListener("dragend",()=>{
-            item.classList.remove("dragging");
-        });
+el.addEventListener("drop",(e)=>{
 
-        item.addEventListener("dragover",(e)=>{
-            e.preventDefault();
-        });
+e.preventDefault();
 
-        item.addEventListener("drop",(e)=>{
-            e.preventDefault();
+if(drag!==el){
 
-            if(dragged!==item){
+let parent=el.parentNode;
 
-                const parent=item.parentNode;
-                const nodes=[...parent.querySelectorAll(".step")];
+let nodes=[...parent.querySelectorAll(".step")];
 
-                const draggedIndex=nodes.indexOf(dragged);
-                const targetIndex=nodes.indexOf(item);
+if(nodes.indexOf(drag)<nodes.indexOf(el))
+parent.insertBefore(drag,el.nextSibling);
+else
+parent.insertBefore(drag,el);
 
-                if(draggedIndex<targetIndex){
-                    parent.insertBefore(dragged,item.nextSibling);
-                }else{
-                    parent.insertBefore(dragged,item);
-                }
-            }
-        });
-    });
 }
 
-function checkLevel1(){
+});
 
-    const items=[...document.querySelectorAll(".step")]
-        .map(el=>el.textContent);
+});
 
-    let ok=true;
-
-    for(let i=0;i<checklist.length;i++){
-        if(items[i]!==checklist[i]){
-            ok=false;
-            break;
-        }
-    }
-
-    if(ok){
-        win();
-    }else{
-        document.getElementById("message").innerHTML =
-        "❌ El orden aún no es correcto.";
-    }
 }
 
-function setupLevel2or3(){
+function verifyOrder(){
 
-    document.getElementById("instructions").innerHTML =
-    "<b>Objetivo:</b> Selecciona el siguiente paso correcto.";
+let order=[...document.querySelectorAll(".step")]
+.map(x=>x.textContent);
 
-    renderSelectionLevel();
+let ok=true;
+
+for(let i=0;i<checklist.length;i++){
+
+if(order[i]!==checklist[i]){
+ok=false;
+break;
 }
 
-function renderSelectionLevel(){
-
-    const container=document.getElementById("steps");
-    container.innerHTML="";
-
-    let remaining=checklist.slice(currentIndex);
-
-    let options=shuffle(remaining).slice(0,5);
-
-    if(!options.includes(checklist[currentIndex])){
-        options[0]=checklist[currentIndex];
-    }
-
-    options=shuffle(options);
-
-    options.forEach(text=>{
-
-        const div=document.createElement("div");
-        div.className="step";
-        div.textContent=text;
-
-        div.onclick=()=>selectStep(text,div);
-
-        container.appendChild(div);
-    });
 }
 
-function selectStep(text,element){
-
-    if(text===checklist[currentIndex]){
-
-        element.classList.add("correct");
-
-        setTimeout(()=>{
-
-            currentIndex++;
-
-            if(currentIndex>=checklist.length){
-                win();
-            }else{
-                renderSelectionLevel();
-            }
-
-        },400);
-
-    }else{
-
-        errors++;
-        document.getElementById("errors").textContent=errors;
-
-        element.classList.add("wrong");
-
-        if(level===3){
-
-            currentIndex=0;
-
-            document.getElementById("message").innerHTML=
-            "🚨 Error. Reinicias desde el primer paso.";
-
-            setTimeout(renderSelectionLevel,700);
-
-        }else{
-
-            document.getElementById("message").innerHTML=
-            "⚠️ Error registrado. Continúa.";
-
-        }
-    }
+if(ok){
+finishOSCELike();
+}else{
+document.getElementById("message").innerHTML=
+"❌ El orden no es correcto.";
+}
 }
 
-function win(){
+function selectionMode(){
 
-    clearInterval(timer);
+document.getElementById("instructions").innerHTML=
+"<b>Selecciona el siguiente paso correcto.</b>";
 
-    document.getElementById("game").classList.add("hidden");
-    document.getElementById("result").classList.remove("hidden");
-
-    document.getElementById("resultText").innerHTML=
-    "🏆 ¡Checklist completado!<br><br>Errores: "+errors;
+renderOptions();
 }
 
-function lose(text){
+function renderOptions(){
 
-    clearInterval(timer);
+const box=document.getElementById("steps");
 
-    document.getElementById("game").classList.add("hidden");
-    document.getElementById("result").classList.remove("hidden");
+box.innerHTML="";
 
-    document.getElementById("resultText").innerHTML=
-    text;
+let options=shuffle(checklist).slice(0,6);
+
+if(!options.includes(checklist[current])){
+options[0]=checklist[current];
+}
+
+options=shuffle(options);
+
+options.forEach(t=>{
+
+let d=document.createElement("div");
+
+d.className="step";
+d.textContent=t;
+
+d.onclick=()=>choose(t,d);
+
+box.appendChild(d);
+
+});
+}
+
+function choose(text,div){
+
+if(text===checklist[current]){
+
+div.classList.add("correct");
+
+score++;
+
+setTimeout(()=>{
+
+current++;
+
+if(current>=checklist.length){
+
+if(level===4)
+finishOSCELike();
+else
+finish("🏆 Checklist completado");
+
+}else{
+renderOptions();
+}
+
+},300);
+
+}else{
+
+div.classList.add("wrong");
+
+errors++;
+
+document.getElementById("errores").textContent=errors;
+
+if(level===4){
+
+score-=0.5;
+
+mistakes.push({
+esperado:checklist[current],
+elegido:text
+});
+
+}
+
+if(level===3){
+
+current=0;
+
+setTimeout(renderOptions,700);
+}
+}
+}
+
+function finish(text){
+
+clearInterval(timer);
+
+document.getElementById("game").classList.add("hidden");
+document.getElementById("result").classList.remove("hidden");
+
+document.getElementById("resultText").innerHTML=
+"<h2>"+text+"</h2>";
+}
+
+function finishOSCELike(){
+
+clearInterval(timer);
+
+document.getElementById("game").classList.add("hidden");
+document.getElementById("result").classList.remove("hidden");
+
+let percent=Math.max(0,(score/checklist.length)*100);
+
+let grade=(percent/10).toFixed(1);
+
+let pass=grade>=6;
+
+let html=`
+<h2>📋 Resultado OSCE</h2>
+
+<p><b>Nota:</b> ${grade}/10</p>
+
+<p><b>Aciertos:</b> ${percent.toFixed(1)}%</p>
+
+<p><b>Errores:</b> ${errors}</p>
+
+<p><b>Resultado:</b>
+${pass ? "✅ APROBADO" : "❌ NO APROBADO"}
+</p>
+`;
+
+if(mistakes.length){
+
+html+="<h3>Errores cometidos</h3><ul>";
+
+mistakes.forEach(m=>{
+
+html+=`
+<li>
+Elegido: ${m.elegido}<br>
+Correcto: ${m.esperado}
+</li><br>
+`;
+
+});
+
+html+="</ul>";
+}
+
+document.getElementById("resultText").innerHTML=html;
 }
 
 </script>
 
 </body>
-  </html>
+</html>
