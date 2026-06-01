@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Emergencia Pediátrica - Bronquiolitis</title>
+
+<style>
+:root{
+    --bg:#071826;
+    --panel:#10273a;
+    --card:#16344d;
+    --accent:#00d4ff;
+    --success:#28c76f;
+    --danger:#ff4d4f;
+    --warning:#ffb020;
+    --text:#ffffff;
+}
+
+*{
+    box-sizing:border-box;
+    margin:0;
+    padding:0;
+}
+
+body{
+    font-family:Arial, Helvetica, sans-serif;
+    background:linear-gradient(135deg,#06111c,#10304a);
+    color:var(--text);
+    min-height:100vh;
+    padding:20px;
+}
+
+.container{
+    max-width:1100px;
+    margin:auto;
+}
+
+header{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+h1{
+    color:var(--accent);
+    margin-bottom:10px;
+}
+
+.subtitle{
+    opacity:.9;
+}
+
+.panel{
+    background:var(--panel);
+    border-radius:16px;
+    padding:20px;
+    margin-top:15px;
+    box-shadow:0 0 20px rgba(0,0,0,.3);
+}
+
+.topbar{
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom:15px;
+}
+
+.badge{
+    background:var(--card);
+    padding:10px 15px;
+    border-radius:10px;
+    font-weight:bold;
+}
+
+.timer{
+    color:#ffd166;
+}
+
+.steps{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+}
+
+.step{
+    background:var(--card);
+    border:2px solid transparent;
+    padding:14px;
+    border-radius:12px;
+    cursor:pointer;
+    transition:.2s;
+    user-select:none;
+}
+
+.step:hover{
+    border-color:var(--accent);
+}
+
+.correct{
+    border-color:var(--success)!important;
+    background:#11492c!important;
+}
+
+.wrong{
+    border-color:var(--danger)!important;
+    background:#4b1717!important;
+}
+
+button{
+    background:var(--accent);
+    color:#000;
+    border:none;
+    padding:12px 20px;
+    border-radius:10px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+button:hover{
+    opacity:.9;
+}
+
+.center{
+    text-align:center;
+}
+
+.hidden{
+    display:none;
+}
+
+.message{
+    margin-top:15px;
+    font-weight:bold;
+}
+
+.dragging{
+    opacity:.5;
+}
+
+.result{
+    text-align:center;
+    font-size:1.2rem;
+}
+
+.medical{
+    font-size:40px;
+    margin-bottom:10px;
+}
+
+@media(max-width:700px){
+    .topbar{
+        flex-direction:column;
+    }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+
+<header>
+<div class="medical">🚑👶</div>
+<h1>Entrenamiento de Bronquiolitis</h1>
+<p class="subtitle">Emergencia Pediátrica - Checklist Oficial</p>
+</header>
+
+<div class="panel" id="menu">
+    <h2>Selecciona un nivel</h2>
+    <br>
+    <button onclick="startLevel(1)">Nivel 1 - Reordenar Checklist</button>
+    <button onclick="startLevel(2)">Nivel 2 - Continuar tras error</button>
+    <button onclick="startLevel(3)">Nivel 3 - Error = Reinicio</button>
+</div>
+
+<div class="panel hidden" id="game">
+
+    <div class="topbar">
+        <div class="badge">Nivel: <span id="level"></span></div>
+        <div class="badge timer">⏱ Tiempo: <span id="time">02:00</span></div>
+        <div class="badge">Errores: <span id="errors">0</span></div>
+    </div>
+
+    <div id="instructions"></div>
+    <br>
+
+    <div class="steps" id="steps"></div>
+
+    <div class="message" id="message"></div>
+
+</div>
+
+<div class="panel hidden" id="result">
+    <div class="result" id="resultText"></div>
+    <br>
+    <button onclick="location.reload()">Volver al menú</button>
+</div>
+
+</div>
+
+<script>
+
+const checklist = [
+"Se presenta ante el familiar y niño/a",
+"Realiza el lavado de manos",
+"Coloca en posición semisentada al paciente para mejorar su respiración",
+"Realiza oximetria de pulso",
+"Coloca oxígeno en caso de ser necesario (si sat <92%)",
+"Monitoriza y determina signos vitales (fr cardiaca, Fr resp y temperatura)",
+"Realiza examen físico respiratorio ( inspección, auscultación anterior, lateral y posterior)",
+"Realiza examen físico cardiovascular ( auscultación cardiaca, palpación de pulsos periféricos)",
+"Aspira secreciones en caso de ser necesario",
+"Calcula puntaje acompañado con la tabla de referencia el score de TAL (tendrá el TAL impreso en la mesa del examen)",
+"Valora según el algoritmo",
+"Indica el tratamiento qué recibirá el niño a la familia: Tratamiento de Sostén: Hidratación, alimentación ( fraccionada, frecuente y en pequeños volúmenes), priorizar la lactancia materna, los antitérmicos, mantener las fosas nasales despejadas, posición semisentada.",
+"Da pautas de consulta: rechazo de alimento o dificultad para alimentarse, taquipnea, tiraje, somnolencia, cianosis.",
+"Pregunta si hay dudas",
+"Indica control a las 24 hs si se va de alta"
+];
+
+let level = 1;
+let timer;
+let seconds = 120;
+let errors = 0;
+let currentIndex = 0;
+
+function startLevel(lvl){
+
+    level = lvl;
+
+    document.getElementById("menu").classList.add("hidden");
+    document.getElementById("game").classList.remove("hidden");
+
+    document.getElementById("level").textContent = lvl;
+    document.getElementById("errors").textContent = 0;
+
+    errors = 0;
+    currentIndex = 0;
+
+    startTimer();
+
+    if(level===1){
+        setupLevel1();
+    }else{
+        setupLevel2or3();
+    }
+}
+
+function startTimer(){
+
+    clearInterval(timer);
+
+    seconds = 120;
+
+    updateTimer();
+
+    timer = setInterval(()=>{
+        seconds--;
+
+        updateTimer();
+
+        if(seconds<=0){
+            lose("⏰ Tiempo agotado");
+        }
+
+    },1000);
+}
+
+function updateTimer(){
+    let m = Math.floor(seconds/60);
+    let s = seconds%60;
+
+    document.getElementById("time").textContent =
+        String(m).padStart(2,"0")+":"+
+        String(s).padStart(2,"0");
+}
+
+function shuffle(arr){
+    return [...arr].sort(()=>Math.random()-0.5);
+}
+
+function setupLevel1(){
+
+    document.getElementById("instructions").innerHTML =
+    "<b>Objetivo:</b> Arrastra los pasos hasta colocarlos en el orden correcto.";
+
+    const container = document.getElementById("steps");
+    container.innerHTML = "";
+
+    let items = shuffle(checklist);
+
+    items.forEach(text=>{
+
+        const div = document.createElement("div");
+        div.className = "step";
+        div.draggable = true;
+        div.textContent = text;
+
+        container.appendChild(div);
+    });
+
+    enableDragAndDrop();
+
+    const btn = document.createElement("button");
+    btn.textContent = "Verificar Orden";
+    btn.onclick = checkLevel1;
+
+    container.appendChild(btn);
+}
+
+function enableDragAndDrop(){
+
+    const items = document.querySelectorAll(".step");
+
+    let dragged;
+
+    items.forEach(item=>{
+
+        item.addEventListener("dragstart",()=>{
+            dragged=item;
+            item.classList.add("dragging");
+        });
+
+        item.addEventListener("dragend",()=>{
+            item.classList.remove("dragging");
+        });
+
+        item.addEventListener("dragover",(e)=>{
+            e.preventDefault();
+        });
+
+        item.addEventListener("drop",(e)=>{
+            e.preventDefault();
+
+            if(dragged!==item){
+
+                const parent=item.parentNode;
+                const nodes=[...parent.querySelectorAll(".step")];
+
+                const draggedIndex=nodes.indexOf(dragged);
+                const targetIndex=nodes.indexOf(item);
+
+                if(draggedIndex<targetIndex){
+                    parent.insertBefore(dragged,item.nextSibling);
+                }else{
+                    parent.insertBefore(dragged,item);
+                }
+            }
+        });
+    });
+}
+
+function checkLevel1(){
+
+    const items=[...document.querySelectorAll(".step")]
+        .map(el=>el.textContent);
+
+    let ok=true;
+
+    for(let i=0;i<checklist.length;i++){
+        if(items[i]!==checklist[i]){
+            ok=false;
+            break;
+        }
+    }
+
+    if(ok){
+        win();
+    }else{
+        document.getElementById("message").innerHTML =
+        "❌ El orden aún no es correcto.";
+    }
+}
+
+function setupLevel2or3(){
+
+    document.getElementById("instructions").innerHTML =
+    "<b>Objetivo:</b> Selecciona el siguiente paso correcto.";
+
+    renderSelectionLevel();
+}
+
+function renderSelectionLevel(){
+
+    const container=document.getElementById("steps");
+    container.innerHTML="";
+
+    let remaining=checklist.slice(currentIndex);
+
+    let options=shuffle(remaining).slice(0,5);
+
+    if(!options.includes(checklist[currentIndex])){
+        options[0]=checklist[currentIndex];
+    }
+
+    options=shuffle(options);
+
+    options.forEach(text=>{
+
+        const div=document.createElement("div");
+        div.className="step";
+        div.textContent=text;
+
+        div.onclick=()=>selectStep(text,div);
+
+        container.appendChild(div);
+    });
+}
+
+function selectStep(text,element){
+
+    if(text===checklist[currentIndex]){
+
+        element.classList.add("correct");
+
+        setTimeout(()=>{
+
+            currentIndex++;
+
+            if(currentIndex>=checklist.length){
+                win();
+            }else{
+                renderSelectionLevel();
+            }
+
+        },400);
+
+    }else{
+
+        errors++;
+        document.getElementById("errors").textContent=errors;
+
+        element.classList.add("wrong");
+
+        if(level===3){
+
+            currentIndex=0;
+
+            document.getElementById("message").innerHTML=
+            "🚨 Error. Reinicias desde el primer paso.";
+
+            setTimeout(renderSelectionLevel,700);
+
+        }else{
+
+            document.getElementById("message").innerHTML=
+            "⚠️ Error registrado. Continúa.";
+
+        }
+    }
+}
+
+function win(){
+
+    clearInterval(timer);
+
+    document.getElementById("game").classList.add("hidden");
+    document.getElementById("result").classList.remove("hidden");
+
+    document.getElementById("resultText").innerHTML=
+    "🏆 ¡Checklist completado!<br><br>Errores: "+errors;
+}
+
+function lose(text){
+
+    clearInterval(timer);
+
+    document.getElementById("game").classList.add("hidden");
+    document.getElementById("result").classList.remove("hidden");
+
+    document.getElementById("resultText").innerHTML=
+    text;
+}
+
+</script>
+
+</body>
+</html>
