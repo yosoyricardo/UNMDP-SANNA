@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checklist por Voz</title>
+<style>
+body{font-family:Arial,sans-serif;background:#0f172a;color:white;max-width:900px;margin:auto;padding:20px}
+.card{background:#1e293b;padding:20px;border-radius:15px;margin-top:15px;text-align:center}
+.score{font-size:1.2rem;margin-top:15px}
+.good{color:#22c55e}.bad{color:#ef4444}
+.hidden{display:none}.progress{margin-bottom:10px}
+/* Novo botão para melhorar a UX */
+.btn-mic {
+  background: #3b82f6; color: white; border: none; padding: 12px 24px; 
+  font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: pointer; 
+  margin-top: 15px; transition: background 0.2s;
+}
+.btn-mic:hover { background: #2563eb; }
+.btn-mic.listening { background: #ef4444; }
+.btn-mic:disabled { background: #64748b; cursor: not-allowed; }
+</style>
+</head>
+<body>
+
+<h1>🎤 Entrenamiento de Bronquiolitis</h1>
+
+<div class="card">
+<div class="progress">
+Paso <span id="stepNum">1</span> / <span id="totalSteps"></span>
+</div>
+
+<h3>Paso esperado</h3>
+<p id="expected" style="font-size: 1.3rem; font-weight: bold; color: #f8fafc;"></p>
+
+<button id="micBtn" class="btn-mic">▶️ Iniciar Entrenamiento</button>
+
+<div id="result" class="score"></div>
+</div>
+
+<div class="card hidden" id="finalCard">
+<h2>🏆 Entrenamiento finalizado</h2>
+<p id="finalScore"></p>
+</div>
+
+<script>
+const checklist = [
+"Se presenta ante el familiar y niño",
+"Realiza el lavado de manos",
+"Coloca en posición semisentada al paciente",
+"Realiza oximetria de pulso",
+"Coloca oxígeno en caso de ser necesario",
+"Monitoriza signos vitales",
+"Realiza examen físico respiratorio",
+"Realiza examen físico cardiovascular",
+"Aspira secreciones si es necesario",
+"Calcula el score TAL",
+"Valora según el algoritmo",
+"Indica tratamiento de sostén",
+"Da pautas de consulta",
+"Pregunta si hay dudas",
+"Indica control a las 24 horas"
+];
+
+let currentIndex = 0;
+let totalSimilarity = 0;
+let attempts = 0;
+let isTrainingActive = false; // Controla se o treino está rodando
+
+document.getElementById("totalSteps").textContent = checklist.length;
+
+const micBtn = document.getElementById("micBtn");
+const resultDiv = document.getElementById("result");
+
+function showStep(){
+ document.getElementById("expected").textContent = checklist[currentIndex];
+ document.getElementById("stepNum").textContent = currentIndex + 1;
+}
+
+function normalize(text){
+ return text.toLowerCase()
+ .normalize("NFD")
+ .replace(/[\u0300-\u036f]/g,"")
+ .replace(/[^\w\s]/g,"")
+ .replace(/\s+/g," ")
+ .trim();
+}
+
+function editDistance(a,b){
+ const matrix=[];
+ for(let i=0;i<=b.length;i++) matrix[i]=[i];
+ for(let j=0;j<=a.length;j++) matrix[0][j]=j;
+
+ for(let i=1;i<=b.length;i++){
+   for(let j=1;j<=a.length;j++){
+     if(b.charAt(i-1)===a.charAt(j-1)){
+       matrix[i][j]=matrix[i-1][j-1];
+     } else {
+       matrix[i][j]=Math.min(
+         matrix[i-1][j-1]+1,
+         matrix[i][j-1]+1,
+         matrix[i-1][j]+1
+       );
+     }
+   }
+ }
+ return matrix[b.length][a.length];
+}
+
+function similarity(a,b){
+ a=normalize(a);
+ b=normalize(b);
+ const longer=a.length>b.length?a:b;
+ const shorter=a.length>b.length?b:a;
+ if(longer.length===0) return 100;
+ return ((longer.length-editDistance(longer,shorter))/longer.length)*100;
+}
+
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if(!SpeechRecognition){
+ alert("Este navegador no soporta reconocimiento de voz.");
+}
+
+const recognition = new SpeechRecognition();
+recognition.lang="es-AR";
+recognition.interimResults=false;
+recognition.maxAlternatives=1;
+
+let listening=false;
+
+// Alterna o estado do microfone pelo botão
+micBtn.addEventListener("click", () => {
+  if (!isTrainingActive) {
+    isTrainingActive = true;
+    startListening();
+  } else {
+    if (listening) {
+      recognition.stop();
+    } else {
+      startListening();
+    }
+  }
+});
+
+function startListening(){
+ if(!isTrainingActive || listening) return;
+ listening=true;
+ 
+ micBtn.textContent = "🎙️ Escuchando... Habla ahora";
+ micBtn.classList.add("listening");
+ resultDiv.innerHTML = "<span style='color: #64748b;'>Microfono activo...</span>";
+ 
+ try {
+   recognition.start();
+ } catch(e) {
+   console.log("Erro ao iniciar reconecimento: ", e);
+ }
+}
+
+recognition.onresult=(event)=>{
+ listening=false;
+
+ const spoken=event.results[0][0].transcript;
+ const expected=checklist[currentIndex];
+ const score=similarity(spoken,expected);
+
+ totalSimilarity+=score;
+ attempts++;
+
+ if(score>=60){
+   micBtn.disabled = true; // Desabilita temporariamente para evitar cliques duplos
+   resultDiv.innerHTML=`
+   <div class="good">
+   <b>✅ Correcto</b><br><br>
+   Dijiste:<br>"${spoken}"<br><br>
+   Similaridad: ${score.toFixed(1)}%<br><br>
+   ⏭️ Pasando al siguiente paso...
+   </div>`;
+
+   setTimeout(()=>{
+     currentIndex++;
+     micBtn.disabled = false;
+     if(currentIndex>=checklist.length){
+       finish();
+       return;
+     }
+     showStep();
+     startListening();
+   },2000);
+ }else{
+   resultDiv.innerHTML=`
+   <div class="bad">
+   <b>❌ Repite el paso</b><br><br>
+   Dijiste:<br>"${spoken}"<br><br>
+   Esperado:<br>"${expected}"<br><br>
+   Similaridad: ${score.toFixed(1)}%<br><br>
+   🔄 Intentando nuevamente...
+   </div>`;
+
+   setTimeout(()=> {
+     if(isTrainingActive) startListening();
+   },2500);
+ }
+};
+
+recognition.onerror=(event)=>{
+ listening=false;
+ micBtn.textContent = "🔄 Reintentar Micrófono";
+ micBtn.classList.remove("listening");
+
+ // Se o usuário não falou nada, não forçamos o loop infinito imediatamente, 
+ // damos uma pausa maior ou esperamos ele interagir se preferir.
+ if(event.error==="no-speech"){
+   resultDiv.innerHTML="<span style='color: #94a3b8;'>No se detectó voz. Haz clic en o habla de nuevo.</span>";
+   setTimeout(() => { if(isTrainingActive && !listening) startListening(); }, 2000);
+   return;
+ }
+ 
+ if(event.error==="aborted"){
+   resultDiv.innerHTML="<span style='color: #94a3b8;'>Reconocimiento pausado.</span>";
+   return;
+ }
+
+ if(event.error === "not-allowed") {
+   resultDiv.innerHTML="<span class='bad'>⚠️ Permiso de micrófono denegado. Actívalo en la barra de direcciones.</span>";
+   isTrainingActive = false;
+   micBtn.textContent = "▶️ Iniciar Entrenamiento";
+   return;
+ }
+
+ resultDiv.innerHTML="⚠️ Error: "+event.error;
+};
+
+function finish(){
+ isTrainingActive = false;
+ document.querySelector(".card").classList.add("hidden");
+ document.getElementById("finalCard").classList.remove("hidden");
+
+ const average = attempts ? totalSimilarity/attempts : 0;
+
+ document.getElementById("finalScore").innerHTML =
+ `📊 Nota final: <b>${average.toFixed(1)}%</b>`;
+}
+
+window.onload=()=>{
+ showStep();
+};
+</script>
+</body>
+</html>
