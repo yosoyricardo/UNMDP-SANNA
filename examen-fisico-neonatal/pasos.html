@@ -161,7 +161,7 @@ button:hover{
 
 <header>
 <div class="medical">🚑👶</div>
-<h1>Entrenamiento de Bronquiolitis</h1>
+<h1>Entrenamiento de Examen Físico</h1>
 <p class="subtitle">Examen Fisico </p>
 </header>
 
@@ -177,7 +177,7 @@ button:hover{
 
     <div class="topbar">
         <div class="badge">Nivel: <span id="level"></span></div>
-        <div class="badge timer">⏱ Tiempo: <span id="time">02:00</span></div>
+        <div class="badge timer">⏱ Tiempo: <span id="time">04:00</span></div>
         <div class="badge">Errores: <span id="errors">0</span></div>
     </div>
 
@@ -435,7 +435,7 @@ function renderSelectionLevel(){
 
         const div=document.createElement("div");
         div.className="step";
-        div.textContent=text;
+        div.textContent=text.t + text.e;
 
         div.onclick=()=>selectStep(text,div);
 
