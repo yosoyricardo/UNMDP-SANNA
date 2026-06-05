@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Checklist por Voz</title>
 <style>
-body{font-family:Arial,sans-serif;background:#0f172a;color:white;max-width:900px;margin:auto;padding:20px}
+body{font-family:Arial,sans-serif;background:#3d152a;color:white;max-width:900px;margin:auto;padding:20px}
 .card{background:#1e293b;padding:20px;border-radius:15px;margin-top:15px}
 .score{font-size:1.2rem;margin-top:15px}
 .good{color:#22c55e}.bad{color:#ef4444}
@@ -14,7 +14,7 @@ body{font-family:Arial,sans-serif;background:#0f172a;color:white;max-width:900px
 </head>
 <body>
 
-<h1>🎤 Entrenamiento de Bronquiolitis</h1>
+<h1>🎤 Entrenamiento de Examen Físico</h1>
 
 <div class="card">
 <div class="progress">
@@ -33,22 +33,17 @@ Paso <span id="stepNum">1</span> / <span id="totalSteps"></span>
 </div>
 
 <script>
+
 const checklist = [
-"Se presenta ante el familiar y niño",
-"Realiza el lavado de manos",
-"Coloca en posición semisentada al paciente",
-"Realiza oximetria de pulso",
-"Coloca oxígeno en caso de ser necesario",
-"Monitoriza signos vitales",
-"Realiza examen físico respiratorio",
-"Realiza examen físico cardiovascular",
-"Aspira secreciones si es necesario",
-"Calcula el score TAL",
-"Valora según el algoritmo",
-"Indica tratamiento de sostén",
-"Da pautas de consulta",
-"Pregunta si hay dudas",
-"Indica control a las 24 horas"
+  "Saludo.",
+  "Me presento.",
+  "Pregunto el nombre del paciente.",
+  "En los adolescentes pregunto cómo quiere que lo llame.",
+  "Si es mayor a 13 años pregunto si Desea realizar consulta solo o acompañado.",
+  "Realizo lavado de manos.",
+  "Desvisto al paciente de manera respetuosa, teniendo en cuenta la edad y los tiempos de la consulta.",
+  "Pido permiso para iniciar el examen físico.",
+  "Digo en voz alta que voy a realizar el examen físico de forma cefalo-caudal."
 ];
 
 let currentIndex = 0;
