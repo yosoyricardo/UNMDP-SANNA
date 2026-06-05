@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checklist por Voz</title>
+<style>
+body{font-family:Arial,sans-serif;background:#0f172a;color:white;max-width:900px;margin:auto;padding:20px}
+.card{background:#1e293b;padding:20px;border-radius:15px;margin-top:15px}
+.score{font-size:1.2rem;margin-top:15px}
+.good{color:#22c55e}.bad{color:#ef4444}
+.hidden{display:none}.progress{margin-bottom:10px}
+</style>
+</head>
+<body>
+
+<h1>🎤 Entrenamiento de Bronquiolitis</h1>
+
+<div class="card">
+<div class="progress">
+Paso <span id="stepNum">1</span> / <span id="totalSteps"></span>
+</div>
+
+<h3>Paso esperado</h3>
+<p id="expected"></p>
+
+<div id="result" class="score"></div><br><button id="repeatBtn">🔁 Repetir passo</button>
+</div>
+
+<div class="card hidden" id="finalCard">
+<h2>🏆 Entrenamiento finalizado</h2>
+<p id="finalScore"></p>
+</div>
+
+<script>
+const checklist = [
+"Se presenta ante el familiar y niño",
+"Realiza el lavado de manos",
+"Coloca en posición semisentada al paciente",
+"Realiza oximetria de pulso",
+"Coloca oxígeno en caso de ser necesario",
+"Monitoriza signos vitales",
+"Realiza examen físico respiratorio",
+"Realiza examen físico cardiovascular",
+"Aspira secreciones si es necesario",
+"Calcula el score TAL",
+"Valora según el algoritmo",
+"Indica tratamiento de sostén",
+"Da pautas de consulta",
+"Pregunta si hay dudas",
+"Indica control a las 24 horas"
+];
+
+let currentIndex = 0;
+let totalSimilarity = 0;
+let attempts = 0;
+
+document.getElementById("totalSteps").textContent = checklist.length;
+
+function showStep(){
+ document.getElementById("expected").textContent = checklist[currentIndex];
+ document.getElementById("stepNum").textContent = currentIndex + 1;
+}
+
+function normalize(text){
+ return text.toLowerCase()
+ .normalize("NFD")
+ .replace(/[\u0300-\u036f]/g,"")
+ .replace(/[^\w\s]/g,"")
+ .replace(/\s+/g," ")
+ .trim();
+}
+
+function editDistance(a,b){
+ const matrix=[];
+ for(let i=0;i<=b.length;i++) matrix[i]=[i];
+ for(let j=0;j<=a.length;j++) matrix[0][j]=j;
+
+ for(let i=1;i<=b.length;i++){
+   for(let j=1;j<=a.length;j++){
+     if(b.charAt(i-1)===a.charAt(j-1)){
+       matrix[i][j]=matrix[i-1][j-1];
+     } else {
+       matrix[i][j]=Math.min(
+         matrix[i-1][j-1]+1,
+         matrix[i][j-1]+1,
+         matrix[i-1][j]+1
+       );
+     }
+   }
+ }
+ return matrix[b.length][a.length];
+}
+
+function similarity(a,b){
+ a=normalize(a);
+ b=normalize(b);
+ const longer=a.length>b.length?a:b;
+ const shorter=a.length>b.length?b:a;
+ if(longer.length===0) return 100;
+ return ((longer.length-editDistance(longer,shorter))/longer.length)*100;
+}
+
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if(!SpeechRecognition){
+ alert("Este navegador no soporta reconocimiento de voz.");
+}
+
+const recognition = new SpeechRecognition();
+recognition.lang="es-AR";
+recognition.interimResults=false;
+recognition.maxAlternatives=1;
+
+let listening=false;
+
+function startListening(){
+ if(listening) return;
+ listening=true;
+ document.getElementById("result").innerHTML="🎙️ Escuchando...";
+ recognition.start();
+}
+
+recognition.onresult=(event)=>{
+ listening=false;
+
+ const spoken=event.results[0][0].transcript;
+ const expected=checklist[currentIndex];
+ const score=similarity(spoken,expected);
+
+ totalSimilarity+=score;
+ attempts++;
+
+ if(score>=60){
+   document.getElementById("result").innerHTML=`
+   <div class="good">
+   <b>✅ Correcto</b><br><br>
+   Dijiste:<br>${spoken}<br><br>
+   Similaridad: ${score.toFixed(1)}%<br><br>
+   ⏭️ Pasando al siguiente paso...
+   </div>`;
+
+   setTimeout(()=>{
+     currentIndex++;
+     if(currentIndex>=checklist.length){
+       finish();
+       return;
+     }
+     showStep();
+     startListening();
+   },1500);
+ }else{
+   document.getElementById("result").innerHTML=`
+   <div class="bad">
+   <b>❌ Repite el paso</b><br><br>
+   Dijiste:<br>${spoken}<br><br>
+   Esperado:<br>${expected}<br><br>
+   Similaridad: ${score.toFixed(1)}%<br><br>
+   🔄 Intentando nuevamente...
+   </div>`;
+
+   setTimeout(()=>startListening(),2000);
+ }
+};
+
+recognition.onerror=(event)=>{
+ listening=false;
+
+ if(event.error==="no-speech" || event.error==="aborted"){
+   setTimeout(()=>startListening(),1000);
+   return;
+ }
+
+ document.getElementById("result").innerHTML="⚠️ "+event.error;
+ setTimeout(()=>startListening(),1500);
+};
+
+function finish(){
+ document.querySelector(".card").classList.add("hidden");
+ document.getElementById("finalCard").classList.remove("hidden");
+
+ const average = attempts ? totalSimilarity/attempts : 0;
+
+ document.getElementById("finalScore").innerHTML =
+ `📊 Nota final: <b>${average.toFixed(1)}%</b>`;
+}
+
+
+document.getElementById("repeatBtn").addEventListener("click",()=>{
+  try{
+    recognition.abort();
+  }catch(e){}
+
+  listening=false;
+
+  document.getElementById("result").innerHTML=`
+    🎙️ Repita novamente:
+    <br><br>
+    <b>${checklist[currentIndex]}</b>
+  `;
+
+  setTimeout(()=>startListening(),300);
+});
+
+window.onload=()=>{
+
+ showStep();
+ setTimeout(()=>startListening(),1000);
+};
+</script>
+</body>
+</html>
