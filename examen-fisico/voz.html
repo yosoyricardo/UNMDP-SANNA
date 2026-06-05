@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checklist por Voz</title>
+<style>
+body{font-family:Arial,sans-serif;background:#0f172a;color:white;max-width:900px;margin:auto;padding:20px}
+.card{background:#1e293b;padding:20px;border-radius:15px;margin-top:15px;text-align:center}
+.score{font-size:1.2rem;margin-top:15px}
+.good{color:#22c55e}.bad{color:#ef4444}
+.hidden{display:none}.progress{margin-bottom:10px}
+
+/* Botones principales */
+.btn-mic, .btn-mode {
+  background: #3b82f6; color: white; border: none; padding: 12px 24px; 
+  font-size: 1.1rem; font-weight: bold; border-radius: 8px; cursor: pointer; 
+  margin: 10px; transition: background 0.2s;
+}
+.btn-mode:hover { background: #2563eb; }
+.btn-mic:hover { background: #2563eb; }
+.btn-mic.listening { background: #ef4444; }
+.btn-mic:disabled { background: #64748b; cursor: not-allowed; }
+
+/* Estilo para el modo ciego */
+.blur-text {
+  filter: blur(5px);
+  user-select: none;
+  transition: filter 0.3s;
+}
+.blur-text:hover {
+  filter: blur(0px); /* Por si quiere una pista rápida pasando el mouse */
+}
+</style>
+</head>
+<body>
+
+<h1>🎤 Entrenamiento de Bronquiolitis</h1>
+
+<!-- PANTALLA DE SELECCIÓN DE MODO -->
+<div class="card" id="modeCard">
+  <h2>Selecciona el modo de entrenamiento</h2>
+  <p>¿Quieres ver los pasos en pantalla mientras hablas?</p>
+  <button class="btn-mode" onclick="selectMode(true)">👀 Modo Guiado (Mostrar pasos)</button>
+  <button class="btn-mode" style="background:#8b5cf6;" onclick="selectMode(false)">🙈 Modo Ciego (Ocultar pasos)</button>
+</div>
+
+<!-- PANTALLA PRINCIPAL DE ENTRENAMIENTO -->
+<div class="card hidden" id="trainingCard">
+<div class="progress">
+Paso <span id="stepNum">1</span> / <span id="totalSteps"></span>
+</div>
+
+<h3 id="titleExpected">Paso esperado</h3>
+<p id="expected" style="font-size: 1.3rem; font-weight: bold; color: #f8fafc;"></p>
+
+<button id="micBtn" class="btn-mic">▶️ Iniciar Entrenamiento</button>
+
+<div id="result" class="score"></div>
+</div>
+
+<!-- PANTALLA FINAL -->
+<div class="card hidden" id="finalCard">
+<h2>🏆 Entrenamiento finalizado</h2>
+<p id="finalScore"></p>
+<button class="btn-mode" onclick="location.reload()">🔄 Reiniciar</button>
+</div>
+
+<script>
+const checklist = [
+  "Saluda.",
+  "Se presenta.",
+  "Pregunta el nombre del paciente.",
+  "En los adolescentes pregunta cómo quiere que lo llame.",
+  "Si es mayor a 13 años preguntar si Desea realizar consulta solo o acompañado",
+  "Realiza lavado de manos.",
+  "Desviste al paciente de manera respetuosa, teniendo en cuenta la edad y los tiempos de la consulta.",
+  "Pide permiso para iniciar el examen físico.",
+  "Dice en voz alta que realizará el examen físico de forma cefalo-caudal."
+];
+
+let currentIndex = 0;
+let totalSimilarity = 0;
+let attempts = 0;
+let isTrainingActive = false; 
+let showStepsMode = true; // Controla si se muestran o no los pasos
+
+document.getElementById("totalSteps").textContent = checklist.length;
+
+const micBtn = document.getElementById("micBtn");
+const resultDiv = document.getElementById("result");
+const expectedP = document.getElementById("expected");
+
+// Función para elegir el modo
+function selectMode(showSteps) {
+  showStepsMode = showSteps;
+  document.getElementById("modeCard").classList.add("hidden");
+  document.getElementById("trainingCard").classList.remove("hidden");
+  
+  if (!showStepsMode) {
+    document.getElementById("titleExpected").textContent = "🤔 ¿Qué paso sigue?";
+    expectedP.classList.add("blur-text");
+  }
+  
+  showStep();
+}
+
+function showStep(){
+ if(showStepsMode) {
+   expectedP.textContent = checklist[currentIndex];
+ } else {
+   expectedP.textContent = "[ Paso Oculto - Pasa el mouse aquí si necesitas una pista ]";
+ }
+ document.getElementById("stepNum").textContent = currentIndex + 1;
+}
+
+function normalize(text){
+ return text.toLowerCase()
+ .normalize("NFD")
+ .replace(/[\u0300-\u036f]/g,"")
+ .replace(/[^\w\s]/g,"")
+ .replace(/\s+/g," ")
+ .trim();
+}
+
+function editDistance(a,b){
+ const matrix=[];
+ for(let i=0;i<=b.length;i++) matrix[i]=[i];
+ for(let j=0;j<=a.length;j++) matrix[0][j]=j;
+
+ for(let i=1;i<=b.length;i++){
+   for(let j=1;j<=a.length;j++){
+     if(b.charAt(i-1)===a.charAt(j-1)){
+       matrix[i][j]=matrix[i-1][j-1];
+     } else {
+       matrix[i][j]=Math.min(
+         matrix[i-1][j-1]+1,
+         matrix[i][j-1]+1,
+         matrix[i-1][j]+1
+       );
+     }
+   }
+ }
+ return matrix[b.length][a.length];
+}
+
+function similarity(a,b){
+ a=normalize(a);
+ b=normalize(b);
+ const longer=a.length>b.length?a:b;
+ const shorter=a.length>b.length?b:a;
+ if(longer.length===0) return 100;
+ return ((longer.length-editDistance(longer,shorter))/longer.length)*100;
+}
+
+const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+if(!SpeechRecognition){
+ alert("Este navegador no soporta reconocimiento de voz.");
+}
+
+const recognition = new SpeechRecognition();
+recognition.lang="es-AR";
+recognition.interimResults=false;
+recognition.maxAlternatives=1;
+
+let listening=false;
+
+micBtn.addEventListener("click", () => {
+  if (!isTrainingActive) {
+    isTrainingActive = true;
+    startListening();
+  } else {
+    if (listening) {
+      recognition.stop();
+    } else {
+      startListening();
+    }
+  }
+});
+
+function startListening(){
+ if(!isTrainingActive || listening) return;
+ listening=true;
+ 
+ micBtn.textContent = "🎙️ Escuchando... Habla ahora";
+ micBtn.classList.add("listening");
+ resultDiv.innerHTML = "<span style='color: #64748b;'>Micrófono activo...</span>";
+ 
+ try {
+   recognition.start();
+ } catch(e) {
+   console.log("Error al iniciar reconocimiento: ", e);
+ }
+}
+
+recognition.onresult=(event)=>{
+ listening=false;
+
+ const spoken=event.results[0][0].transcript;
+ const expected=checklist[currentIndex];
+ const score=similarity(spoken,expected);
+
+ totalSimilarity+=score;
+ attempts++;
+
+ if(score>=60){
+   micBtn.disabled = true; 
+   resultDiv.innerHTML=`
+   <div class="good">
+   <b>✅ Correcto</b><br><br>
+   Dijiste:<br>"${spoken}"<br><br>
+   Significaba:<br>"${expected}"<br><br>
+   Similaridad: ${score.toFixed(1)}%<br><br>
+   ⏭️ Pasando al siguiente paso...
+   </div>`;
+
+   setTimeout(()=>{
+     currentIndex++;
+     micBtn.disabled = false;
+     if(currentIndex>=checklist.length){
+       finish();
+       return;
+     }
+     showStep();
+     startListening();
+   },3000); // 3 segundos para que alcancen a leer el feedback del paso que acaban de adivinar
+ }else{
+   resultDiv.innerHTML=`
+   <div class="bad">
+   <b>❌ Repite el paso o intenta otra idea</b><br><br>
+   Dijiste:<br>"${spoken}"<br><br>
+   ${showStepsMode ? `Esperado:<br>"${expected}"<br><br>` : ''}
+   Similaridad: ${score.toFixed(1)}%<br><br>
+   🔄 Intentando nuevamente...
+   </div>`;
+
+   setTimeout(()=> {
+     if(isTrainingActive) startListening();
+   },2500);
+ }
+};
+
+recognition.onerror=(event)=>{
+ listening=false;
+ micBtn.textContent = "🔄 Reintentar Micrófono";
+ micBtn.classList.remove("listening");
+
+ if(event.error==="no-speech"){
+   resultDiv.innerHTML="<span style='color: #94a3b8;'>No se detectó voz. Haz clic o habla de nuevo.</span>";
+   setTimeout(() => { if(isTrainingActive && !listening) startListening(); }, 2000);
+   return;
+ }
+ 
+ if(event.error==="aborted"){
+   resultDiv.innerHTML="<span style='color: #94a3b8;'>Reconocimiento pausado.</span>";
+   return;
+ }
+
+ if(event.error === "not-allowed") {
+   resultDiv.innerHTML="<span class='bad'>⚠️ Permiso de micrófono denegado.</span>";
+   isTrainingActive = false;
+   micBtn.textContent = "▶️ Iniciar Entrenamiento";
+   return;
+ }
+
+ resultDiv.innerHTML="⚠️ Error: "+event.error;
+};
+
+function finish(){
+ isTrainingActive = false;
+ document.getElementById("trainingCard").classList.add("hidden");
+ document.getElementById("finalCard").classList.remove("hidden");
+
+ const average = attempts ? totalSimilarity/attempts : 0;
+
+ document.getElementById("finalScore").innerHTML =
+ `📊 Nota final: <b>${average.toFixed(1)}%</b><br>Modo: ${showStepsMode ? "Guiado" : "Ciego"}`;
+}
+</script>
+</body>
+  </html>
