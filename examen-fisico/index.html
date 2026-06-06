@@ -288,9 +288,10 @@ document.getElementById("repeatBtn").addEventListener("click",()=>{
 });
 
 document.getElementById("iniciarTudo").addEventListener("click", () => {
+  document.getElementById("iniciarTudo").classList.add("hidden"),
   document.querySelector(".card-inicio").classList.remove("hidden"),
   showStep();
-  setTimeout(()=>startListening(),1000);
+  setTimeout(()=>startListening(),4000);
 })
 /*
 window.onload=()=>{
