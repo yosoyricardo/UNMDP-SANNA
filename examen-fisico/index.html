@@ -48,9 +48,8 @@ function tocarSom(tipo) {
 }
 </script>
 <h1>🎤 Entrenamiento de Examen Físico</h1>
-<button id="startBtn">▶️ Iniciar simulador</button>
 
-<div class="card hidden">
+<div class="card">
 <div class="progress">
 Paso <span id="stepNum">1</span> / <span id="totalSteps"></span>
 </div>
@@ -58,16 +57,16 @@ Paso <span id="stepNum">1</span> / <span id="totalSteps"></span>
 <h3>Paso esperado</h3>
 <p id="expected"></p>
 
-<div id="result" class="score hidden"></div><br><button id="repeatBtn">🔁 Repetir passo</button>
+<div id="result" class="score"></div><br><button id="repeatBtn">🔁 Repetir passo</button>
 </div>
 
-<div class="card" id="finalCard">
+<div class="card hidden" id="finalCard">
 <h2>🏆 Entrenamiento finalizado</h2>
 <p id="finalScore"></p>
 </div>
 
 <script>
-
+tocarSom("inicio");
 const checklist = [
   "Saludo.",
   "Me presento.",
@@ -289,15 +288,10 @@ document.getElementById("repeatBtn").addEventListener("click",()=>{
 });
 
 window.onload=()=>{
- showStep();
-};
 
-document.getElementById("startBtn").addEventListener("click",()=>{
-  tocarSom("inicio");
-  document.getElementById("result").classList.remove('result');
-  document.getElementById("startBtn").disabled = true;
-  startListening();
-});
+ showStep();
+ setTimeout(()=>startListening(),1000);
+};
 </script>
 </body>
 </html>
