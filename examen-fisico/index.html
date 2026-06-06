@@ -236,7 +236,22 @@ body {
 }
 
 body {
-      background-image: url(https://as2.ftcdn.net/jpg/02/17/65/17/1000_F_217651790_GaHtTByQpCQpXuGdzriOvms8zcEbaj6g.jpg);
+      margin: 0;
+  min-height: 100vh;
+  /* Isolate the body so pseudo-element doesn't mess with child stacking */
+  isolation: isolate; 
+  position: relative;
+}
+
+body::before {
+  content: '';
+  position: fixed !important;
+  inset: 0;
+  z-index: -1;
+   background-image: url(https://as2.ftcdn.net/jpg/02/17/65/17/1000_F_217651790_GaHtTByQpCQpXuGdzriOvms8zcEbaj6g.jpg);
+    background-size: 400px;
+    position: relative;
+  opacity: 0.3; /* <-- Adjust the background opacity here (0.0 to 1.0) */
 }
 </style>
 </head>
