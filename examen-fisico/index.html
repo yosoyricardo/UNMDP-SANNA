@@ -3,45 +3,288 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Checklist por Voz</title>
+<title>Checklist por Voz - Entrenamiento Médico</title>
 <style>
-body{font-family:Arial,sans-serif;background:#3d152a;color:white;max-width:900px;margin:auto;padding:20px}
-.card{background:#1e293b;padding:20px;border-radius:15px;margin-top:15px}
-.score{font-size:1.2rem;margin-top:15px}
-.good{color:#22c55e}.bad{color:#ef4444}
-.hidden{display:none}.progress{margin-bottom:10px}
-@keyframes brillo{
-    from{
-        left: -50%;
-    }
-    to{
-        left: 150%;
-    }
+:root {
+    --bg-main: #f8fafc;
+    --bg-card: #ffffff;
+    --text-main: #1e293b;
+    --text-muted: #64748b;
+    --primary: #0284c7;
+    --primary-hover: #0369a1;
+    --success: #10b981;
+    --danger: #ef4444;
+    --border: #e2e8f0;
 }
 
-#result{
-    position: relative;
+body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background-color: var(--bg-main);
+    color: var(--text-main);
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    width: 100%;
+    max-width: 500px;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.app-header {
+    text-align: center;
+    margin-bottom: 24px;
+}
+
+.app-header h1 {
+    font-size: 1.8rem;
+    font-weight: 800;
+    color: #0f172a;
+    margin: 0;
+    letter-spacing: -0.025em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.card {
+    background-color: var(--bg-card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.03);
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+}
+
+/* Animação de piscada/flash para o reset do passo */
+@keyframes flashReset {
+    0% { border-color: var(--primary); box-shadow: 0 0 20px rgba(2, 132, 199, 0.4); }
+    100% { border-color: var(--border); box-shadow: 0 10px 25px -5px rgba(2, 132, 199, 0.05); }
+}
+
+.flash-effect {
+    animation: flashReset 0.6s ease-out;
+}
+
+.progress-container {
+    margin-bottom: 24px;
+}
+
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 8px;
+}
+
+.step-count-badge {
+    background-color: #e0f2fe;
+    color: var(--primary);
+    padding: 2px 8px;
+    border-radius: 12px;
+}
+
+.progress-bar-bg {
+    background-color: #f1f5f9;
+    height: 8px;
+    border-radius: 9999px;
     overflow: hidden;
 }
 
-.escuchando::after{
-    content: "";
-    position: absolute;
-    top: 0;
-    left: -100%;
-    width: 30%;
+.progress-bar-fill {
+    background: linear-gradient(90deg, var(--primary), #38bdf8);
     height: 100%;
-    background: linear-gradient(
-        90deg,
-        transparent,
-        rgba(255, 255, 255, 0.459),
-        transparent
-    );
-    animation: brillo 1.5s infinite;
+    width: 0%;
+    transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.step-label {
+    color: var(--primary);
+    font-size: 0.85rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin: 0 0 8px 0;
+}
+
+.step-text {
+    font-size: 1.35rem;
+    font-weight: 700;
+    line-height: 1.4;
+    color: #0f172a;
+    margin: 0 0 28px 0;
+}
+
+/* Área de Status e Feedback */
+.status-box {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background-color: #f8fafc;
+    border: 1px solid var(--border);
+    padding: 14px 16px;
+    border-radius: 14px;
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    margin-bottom: 24px;
+    min-height: 24px;
+    line-height: 1.4;
+}
+
+/* Bolinha pulsante de escuta */
+.pulse-indicator {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    background-color: #ef4444;
+    border-radius: 50%;
+    position: relative;
+}
+.pulse-indicator::after {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    background-color: #ef4444;
+    border-radius: 50%;
+    animation: pulseAnimate 1.5s infinite ease-out;
+}
+@keyframes pulseAnimate {
+    0% { transform: scale(1); opacity: 1; }
+    100% { transform: scale(3); opacity: 0; }
+}
+
+/* Estilização interna dos Feedbacks */
+.good, .bad { font-size: 0.95rem; width: 100%; }
+.good b { color: var(--success); font-size: 1.05rem; }
+.bad b { color: var(--danger); font-size: 1.05rem; }
+
+/* Botões */
+.btn {
+    font-family: inherit;
+    font-size: 0.95rem;
+    font-weight: 600;
+    padding: 12px 24px;
+    border-radius: 14px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+}
+
+.btn-primary {
+    background-color: var(--primary);
+    color: white;
+    width: 100%;
+    font-size: 1.1rem;
+    padding: 16px;
+    border-radius: 16px;
+    box-shadow: 0 10px 15px -3px rgba(2, 132, 199, 0.2);
+}
+.btn-primary:hover { background-color: var(--primary-hover); transform: translateY(-1px); }
+.btn-primary:active { transform: translateY(0); }
+
+.btn-secondary {
+    background-color: #ffffff;
+    border: 1px solid var(--border);
+    color: var(--text-main);
+}
+.btn-secondary:hover { background-color: #f1f5f9; border-color: #cbd5e1; }
+
+.actions-layout {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.hidden { display: none !important; }
+
+/* Tela Final */
+.final-card {
+    text-align: center;
+    padding: 40px 28px;
+}
+.final-icon { font-size: 3.5rem; margin-bottom: 16px; display: block; }
+.final-card h2 { font-size: 1.6rem; font-weight: 800; margin: 0 0 12px 0; color: #0f172a; }
+.final-score-box {
+    background-color: #f0fdf4;
+    border: 1px solid #bbf7d0;
+    color: #166534;
+    font-size: 1.3rem;
+    padding: 16px;
+    border-radius: 14px;
+    margin-top: 20px;
+    display: inline-block;
+}
+
+body {
+      background-image: url(https://as2.ftcdn.net/jpg/02/17/65/17/1000_F_217651790_GaHtTByQpCQpXuGdzriOvms8zcEbaj6g.jpg);
 }
 </style>
 </head>
 <body>
+
+<div class="container" style="background: #fff;">
+    <header class="app-header">
+        <h2><span>🎤</span> Entrenamiento de Examen Físico</h2>
+    </header>
+
+    <button id="iniciarTudo" class="btn btn-primary">¡Vamo que se puede!</button>
+
+    <main class="card hidden card-inicio">
+        <div class="progress-container">
+            <div class="progress-header">
+                <span>Progreso del Examen</span>
+                <span class="step-count-badge">Paso <span id="stepNum">1</span> / <span id="totalSteps"></span></span>
+            </div>
+            <div class="progress-bar-bg">
+                <div id="progressBarFill" class="progress-bar-fill"></div>
+            </div>
+        </div>
+
+        <div class="step-content">
+            <p class="step-label">Paso esperado...</p>
+            <h2 id="expected" class="step-text"></h2>
+        </div>
+
+        <div id="result" class="status-box">
+            Pronto para comenzar...
+        </div>
+
+        <div class="actions-layout">
+            <button id="repeatBtn" class="btn btn-secondary">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+                Repetir paso
+            </button>
+        </div>
+    </main>
+
+    <section class="card hidden final-card" id="finalCard">
+        <span class="final-icon">🏆</span>
+        <h2>Entrenamiento Finalizado</h2>
+        <p style="color: var(--text-muted); margin: 0;">¡Excelente esfuerzo! Has completado todos los pasos requeridos.</p>
+        <div id="finalScore" class="final-score-box"></div>
+    </section>
+</div>
+
 <script>
 const sons = {
     ok: [
@@ -72,33 +315,13 @@ const sons = {
 };
 
 function tocarSom(tipo) {
-  
     const lista = sons[tipo];
-    indice = Math.floor(Math.random() * lista.length);
+    let indice = Math.floor(Math.random() * lista.length);
     const audio = new Audio(lista[indice]);
     console.log(indice, lista[indice]);
     audio.play();
 }
 </script>
-<h1>🎤 Entrenamiento de Examen Físico</h1>
-</div><br><button id="iniciarTudo">Vamo que se puede!</button>
-<div class="card hidden card-inicio">
-<div class="progress">
-Paso <span id="stepNum">1</span> / <span id="totalSteps"></span>
-</div>
-
-<h4>Paso esperado...</h4>
-<h2 id="expected"></h2>
-<div id="area">
-<div id="result" class="score"></div><br><button id="repeatBtn">🔁 Repetir passo</button>
-</div>
-
-</div>
-
-<div class="card hidden" id="finalCard">
-<h2>🏆 Entrenamiento finalizado</h2>
-<p id="finalScore"></p>
-</div>
 
 <script>
 const checklist = [
@@ -108,7 +331,7 @@ const checklist = [
   "En los adolescentes pregunto cómo quiere que lo llame.",
   "Si es mayor a 13 años pregunto si Desea realizar consulta solo o acompañado.",
   "Realizo lavado de manos.",
-  "Desvisto al paciente de manera respetuosa, teniendo en cuenta la edad y los tiempos de la consulta.",
+  "Desvisto al paciente de manera respetuosa, teniendo en cuenta la idade y los tiempos de la consulta.",
   "Pido permiso para iniciar el examen físico.",
   "Digo en voz alta que voy a realizar el examen físico de forma cefalo-caudal.",
   "Inspeccióno el estado general del paciente",
@@ -125,13 +348,13 @@ const checklist = [
   "Realiza otoscopia en cada oído.",
   "Examina nariz y fosas nasales",
   "Dice en voz alta que evalúa la presencia de dientes y características de los mismos. Caries u otras lesiones en la boca.",
-    "Dice en voz alta que evalúa el frenillo sublingual (en lactantes).",
+  "Dice en voz alta que evalúa el frenillo sublingual (en lactantes).",
   "Dice y realiza evaluación del cuello Ej: ganglios (tiroides en adolescentes).",
-  "Dice y realiza evaluación de espacio supraclavicular",
+  "Dice y realiza avaliação de espaço supraclavicular",
   "Dice y realiza la Inspección del tórax, evalúa forma y mecánica ventilatoria",
   "Realiza y dice en voz alta auscultación pulmonar anterior simétrica y comparativa.",
   "Realiza y dice en voz alta auscultación pulmonar posterior simétrica y comparativa",
-  "Realiza y dice en voz alta auscultación de la región lateral del tórax.",
+  "Realiza y dice en voz alta auscultación de la região lateral del tórax.",
   "Realiza y dice en voz alta que auscultación del aparato cardiovascular en 4 focos (los localiza mientras realiza la maniobra de auscultación)",
   "Realiza y dice en voz alta que toma pulsos de forma simétrica y comparativa. Debe de realizar todos los pulsos. En caso de RN y lactantes puede mencionar que si existe asimetría entre pulsos braquiales y femorales asociada a coartación de aorta.",
   "Realiza y dice en voz alta Inspección abdominal",
@@ -142,29 +365,28 @@ const checklist = [
   "Realiza la maniobra de palpación del bazo",
   "Realiza la maniobra de palpación en búsqueda de masas profundas y peloteo renal.",
   "Realiza percusión abdominal",
-  "Dice en voz alta y evalúa genitales femeninos: presencia de labios mayores,labios menores. Sinequias vulvares,Presencia de Capuchon del clitoris",
+  "Dice en voz alta y evalúa genitales femeninos: presencia de labios maiores,labios menores. Sinequias vulvares,Presencia de Capuchon del clitoris",
   "Dice en voz alta y evalúa genitales masculinos: presencia de pene y testículos, ubicación de uretra. Epispadias o Hipospadias, Testículos en bolsa. Presencia de hidrocele, diagnóstico diferencial con hernia inguinal. Transiluminación, puede realizarla",
   "Dice que calcula estadios de Tanner (en adolescentes)",
   "Dice en voz alta que evalúa Aparato osteoarticular: presencia de extremidades y dedos (en recién nacidos).",
   "Realiza y dice en voz alta que evalúa pliegues de miembros inferiores por delante y por detrás en lactantes",
-  "Evalúa simetría de longitud de miembros inferiores.",
+  "Evalúa simetria de longitud de membros inferiores.",
   "Realiza Signo de Galeazzi en lactantes",
-  "SOLO debe de nombrar que va a Realiza Maniobra de Ortolani y Barlow en lactantes ( no les dará tiempo en esa posta en hacer la maniobra)",
+  "SOLO debe de nombrar que va a Realiza Maniobra de Ortolani y Barlow en lactantes ( no les dará tempo en esa posta en hacer la manobra)",
   "Dice en voz alta que evalúa Aparato osteoarticular:(preescolar, escolar y adolescente) Evalúa la columna: con el paciente de espalda, se debe observar • Nivel de los hombros. • Nivel de las escápulas. • Nivel de la pelvis.",
   "Dice que realiza la Maniobra de Adams (a partir de preescolar, escolar y adolescentes)",
-  "Dice que evalúa rodillas, genu valgo, genu varo (según la edad que corresponda)",
-  "Dice que evalúa pies, pie plano (según la edad que corresponda)",
+  "Dice que evalúa rodillas, genu valgo, genu varo (según la idade que corresponda)",
+  "Dice que evalúa pies, pie plano (según la idade que corresponda)",
   "Dice en voz alta que realiza examen neurológico ( esto no se evaluará en este examen, solo mencionar este punto)",
-  "Dice en voz alta que evalúa desarrollo en sus 4 áreas (personal- social, lenguaje, motricidad fina y gruesa hasta los 6 años)",
+  "Dice en voz alta que evalúa desarrollo en sus 4 áreas (personal- social, lenguaje, motricidade fina y gruesa hasta los 6 años)",
   "Dice que realiza toma de peso y percentila ( solo nombrar este punto)",
   "Dice que realiza toma de talla y percentila ( solo nombrar este punto)",
   "Dice que realiza toma el perímetro cefálico en menores de 3 años y percentila ( solo nombrar este punto)",
   "Dice que realiza el cálculo del IMC y percentila ( solo nombrar este punto)",
   "Dice que realiza la toma de TA (en mayores de 3 años) y percentila ( solo nombrar este punto)",
-  "SOLO debe de nombrar ( no tendrá tiempo para hacerlo) Dice y evalúa la agudeza visual con la tabla correspondiente a su edad. Comunica resultado de cada ojo y si debe realizar alguna derivación",
+  "SOLO debe de nombrar ( no tendrá tempo para hacerlo) Dice y evalúa la agudeza visual con la tabla correspondiente a su edad. Comunica resultado de cada ojo y si debe realizar alguna derivación",
   "Se Comunica amablemente y anota los datos recabados en la historia clínica"
 ];
-    
 
 let currentIndex = 0;
 let totalSimilarity = 0;
@@ -175,6 +397,9 @@ document.getElementById("totalSteps").textContent = checklist.length;
 function showStep(){
  document.getElementById("expected").textContent = checklist[currentIndex];
  document.getElementById("stepNum").textContent = currentIndex + 1;
+ 
+ const percentage = ((currentIndex) / checklist.length) * 100;
+ document.getElementById("progressBarFill").style.width = `${percentage}%`;
 }
 
 function normalize(text){
@@ -227,141 +452,144 @@ recognition.lang="es-AR";
 recognition.interimResults=false;
 recognition.maxAlternatives=1;
 
+// AJUSTES CRÍTICOS PARA FRASES LONGAS:
+recognition.continuous = true; // Mantém o microfone aberto mesmo se houver pausas curtas
+
 let listening=false;
+let processTimeout = null;
 
 function startListening(){
  if(listening) return;
  tocarSom("fale");
  listening=true;
  
-
   setTimeout(()=>{
-    document.getElementById("result").innerHTML="🎙️ Escuchando...";
-    recognition.start();
+    document.getElementById("result").innerHTML='<span class="pulse-indicator"></span> &nbsp;Escuchando...';
+    try {
+        recognition.start();
+    } catch(e) { console.log(e); }
   },300);
 }
 
+// O motor contínuo não fecha sozinho no primeiro silêncio.
+// Usamos o evento onend apenas como proteção caso o sistema caia por timeout longo.
 recognition.onend = () => {
     console.log("Reconocimiento finalizado");
-    document.getElementById("result").classList.add("escuchando");
-    tocarSom("repetir");
-    setTimeout(() => {
-                document.getElementById("result").classList.remove("escuchando");   
-        }, 500);
-    
     if (listening) {
         setTimeout(() => {
-            try {
-                recognition.start();
-                 
-            } catch (e) {
-                console.log(e);
-            }
+            try { recognition.start(); } catch (e) { console.log(e); }
         }, 300);
     }
 };
 
 recognition.onresult=(event)=>{
- listening=false;
+ // Limpa qualquer temporizador anterior para redefinir o tempo de espera pós-fala
+ if(processTimeout) clearTimeout(processTimeout);
 
- const spoken=event.results[0][0].transcript;
- const expected=checklist[currentIndex];
- const score=similarity(spoken,expected);
+ // Pega o último resultado que foi capturado pelo microfone contínuo
+ const lastResultIndex = event.results.length - 1;
+ const spoken = event.results[lastResultIndex][0].transcript;
 
- totalSimilarity+=score;
+ // Aguarda 1,5 segundos (1500ms) após você parar de falar para processar o texto final.
+ // Isso evita que ele corte respostas longas antes que você conclua o raciocínio completo!
+ processTimeout = setTimeout(() => {
+     processSpeech(spoken);
+ }, 1500); 
+};
+
+function processSpeech(spoken) {
+ // Desliga temporariamente para evitar capturar feedbacks ou sons do sistema
+ listening = false;
+ try { recognition.stop(); } catch(e){}
+
+ const expected = checklist[currentIndex];
+ const score = similarity(spoken, expected);
+
+ totalSimilarity += score;
  attempts++;
 
- if(score>=60){
+ if(score >= 60){
    tocarSom("ok");
-   document.getElementById("area").classList.remove("hidden");
-   document.getElementById("result").classList.remove("escuchando"); 
-   document.getElementById("result").innerHTML=`
+   document.getElementById("result").innerHTML = `
    <div class="good">
    <b>✅ Correcto</b><br><br>
-   Dijiste:<br>${spoken}<br><br>
-   Similaridad: ${score.toFixed(1)}%<br><br>
+   Dijeste: <span style="color:var(--text-main)">"${spoken}"</span><br>
+   Similaridad: <b>${score.toFixed(1)}%</b><br><br>
    ⏭️ Pasando al siguiente paso...
    </div>`;
 
    setTimeout(()=>{
      currentIndex++;
-     if(currentIndex>=checklist.length){
+     if(currentIndex >= checklist.length){
        finish();
        return;
      }
      showStep();
      startListening();
-   },2000);
- }else{
+   }, 2000);
+ } else {
    tocarSom("erro");
-   document.getElementById("result").classList.remove("escuchando"); 
-   document.getElementById("result").innerHTML=`
+   document.getElementById("result").innerHTML = `
    <div class="bad">
    <b>❌ Repite el paso</b><br><br>
-   Dijiste:<br>${spoken}<br><br>
-   Esperado:<br>${expected}<br><br>
-   Similaridad: ${score.toFixed(1)}%<br><br>
+   Dijeste: <span style="color:var(--text-main)">"${spoken}"</span><br>
+   Esperado: <span style="color:var(--text-main)">"${expected}"</span><br>
+   Similaridad: <b>${score.toFixed(1)}%</b><br><br>
    🔄 Intentando nuevamente...
    </div>`;
 
-   setTimeout(()=>startListening(),3400);
+   setTimeout(() => startListening(), 3400);
  }
-};
+}
 
 recognition.onerror=(event)=>{
- listening=false;
-
- if(event.error==="no-speech" || event.error==="aborted"){
-   setTimeout(()=>startListening(),1000);
-   return;
+ if(event.error === "no-speech" || event.error === "aborted"){
+   return; // Silencia erros comuns para manter o fluxo fluído
  }
-
- document.getElementById("result").innerHTML="⚠️ "+event.error;
- setTimeout(()=>startListening(),1500);
+ listening = false;
+ document.getElementById("result").innerHTML = "⚠️ " + event.error;
+ setTimeout(() => startListening(), 1500);
 };
 
 function finish(){
-  tocarSom("finalizado");
- document.querySelector(".card").classList.add("hidden");
+ tocarSom("finalizado");
+ document.querySelector(".card-inicio").classList.add("hidden");
  document.getElementById("finalCard").classList.remove("hidden");
+ document.getElementById("progressBarFill").style.width = `100%`;
 
  const average = attempts ? totalSimilarity/attempts : 0;
-
- document.getElementById("finalScore").innerHTML =
- `📊 Nota final: <b>${average.toFixed(1)}%</b>`;
+ document.getElementById("finalScore").innerHTML = `Nota final: <b>${average.toFixed(1)}%</b>`;
 }
 
+document.getElementById("repeatBtn").addEventListener("click", () => {
+  if(processTimeout) clearTimeout(processTimeout);
+  try { recognition.abort(); } catch(e) {}
 
-document.getElementById("repeatBtn").addEventListener("click",()=>{
-  try{
-    recognition.abort();
-  }catch(e){}
+  listening = false;
 
-  listening=false;
+  const card = document.querySelector(".card-inicio");
+  card.classList.add("flash-effect");
+  
+  setTimeout(() => { card.classList.remove("flash-effect"); }, 600);
 
-  document.getElementById("result").innerHTML=`
-    🎙️ Repita novamente:
-    <br><br>
-    <b>${checklist[currentIndex]}</b>
+  document.getElementById("result").innerHTML = `
+    <div style="width:100%; color: var(--primary); font-weight: 600;">
+        🔄 Reiniciando paso...<br>
+        <span style="color: var(--text-muted); font-weight: 400; font-size: 0.85rem;">Diga nuevamente:</span> 
+        <b style="color: var(--text-main); display: block; margin-top: 4px;">"${checklist[currentIndex]}"</b>
+    </div>
   `;
 
-  setTimeout(()=>startListening(),300);
+  setTimeout(() => startListening(), 600);
 });
 
 document.getElementById("iniciarTudo").addEventListener("click", () => {
   document.getElementById("iniciarTudo").classList.add("hidden");
   document.querySelector(".card-inicio").classList.remove("hidden");
-  console.log("vai tocva");
   tocarSom("inicio");
   showStep();
-  setTimeout(()=>startListening(),5500);
-})
-/*
-window.onload=()=>{
-
- showStep();
- setTimeout(()=>startListening(),1000);
-};*/
+  setTimeout(() => startListening(), 5500);
+});
 </script>
 </body>
 </html>
