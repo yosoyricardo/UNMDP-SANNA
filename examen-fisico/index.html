@@ -289,6 +289,7 @@ document.getElementById("repeatBtn").addEventListener("click",()=>{
 document.getElementById("iniciarTudo").addEventListener("click", () => {
   document.getElementById("iniciarTudo").classList.add("hidden");
   document.querySelector(".card-inicio").classList.remove("hidden");
+  console.log("vai tocva");
   tocarSom("inicio");
   showStep();
   setTimeout(()=>startListening(),5000);
