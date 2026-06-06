@@ -43,7 +43,7 @@ function tocarSom(tipo) {
     const lista = sons[tipo];
     const indice = Math.floor(Math.random() * lista.length);
 
-    const audio = new Audio(lista[indice]);
+    const audio = new Audio(lista[indice-1]);
     audio.play();
 }
 </script>
