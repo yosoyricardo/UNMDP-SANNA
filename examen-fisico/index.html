@@ -48,8 +48,8 @@ function tocarSom(tipo) {
 }
 </script>
 <h1>🎤 Entrenamiento de Examen Físico</h1>
-
-<div class="card">
+</div><br><button id="iniciarTudo">Vamo que se puede!</button>
+<div class="card hidden card-inicio">
 <div class="progress">
 Paso <span id="stepNum">1</span> / <span id="totalSteps"></span>
 </div>
@@ -287,11 +287,17 @@ document.getElementById("repeatBtn").addEventListener("click",()=>{
   setTimeout(()=>startListening(),300);
 });
 
+document.getElementById("iniciarTudo").addEventListener("click", () => {
+  document.querySelector(".card-inicio").classList.remove("hidden"),
+  showStep();
+  setTimeout(()=>startListening(),1000);
+})
+/*
 window.onload=()=>{
 
  showStep();
  setTimeout(()=>startListening(),1000);
-};
+};*/
 </script>
 </body>
 </html>
