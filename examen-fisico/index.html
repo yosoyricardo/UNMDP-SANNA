@@ -16,26 +16,26 @@ body{font-family:Arial,sans-serif;background:#3d152a;color:white;max-width:900px
 <script>
 const sons = {
     ok: [
-        "sounds/ok-1.mp3",
-        "sounds/ok-2.mp3",
-        "sounds/ok-3.mp3"
+        "../sounds/ok-1.mp3",
+        "../sounds/ok-2.mp3",
+        "../sounds/ok-3.mp3"
     ],
     erro: [
-        "sounds/no-1.mp3",
-        "sounds/no-2.mp3",
-        "sounds/no-3.mp3"
+        "../sounds/no-1.mp3",
+        "../sounds/no-2.mp3",
+        "../sounds/no-3.mp3"
     ],
     finalizado: [
-        "sounds/victoria-1.mp3",
-        "sounds/victoria-2.mp3",
-        "sounds/victoria-3.mp3",
-        "sounds/victoria-4.mp3",
+        "../sounds/victoria-1.mp3",
+        "../sounds/victoria-2.mp3",
+        "../sounds/victoria-3.mp3",
+        "../sounds/victoria-4.mp3",
     ],
     fale: [
-        "sounds/fale-0.mp3",
+        "../sounds/fale-0.mp3",
     ],
     inicio: [
-        "sounds/inicio-0.mp3",
+        "../sounds/inicio-0.mp3",
     ]
 };
 
@@ -43,7 +43,7 @@ function tocarSom(tipo) {
     const lista = sons[tipo];
     const indice = Math.floor(Math.random() * lista.length);
 
-    const audio = new Audio("../" + lista[indice-1]);
+    const audio = new Audio(lista[indice-1]);
     audio.play();
 }
 </script>
