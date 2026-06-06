@@ -30,6 +30,12 @@ const sons = {
         "sounds/victoria-2.mp3",
         "sounds/victoria-3.mp3",
         "sounds/victoria-4.mp3",
+    ],
+    fale: [
+        "sounds/fale-0.mp3",
+    ],
+    inicio: [
+        "sounds/inicio-0.mp3",
     ]
 };
 
@@ -60,7 +66,7 @@ Paso <span id="stepNum">1</span> / <span id="totalSteps"></span>
 </div>
 
 <script>
-
+tocarSom("inicio");
 const checklist = [
   "Saludo.",
   "Me presento.",
@@ -195,6 +201,7 @@ let listening=false;
 function startListening(){
  if(listening) return;
  listening=true;
+ tocarSom("fale");
  document.getElementById("result").innerHTML="🎙️ Escuchando...";
  recognition.start();
 }
