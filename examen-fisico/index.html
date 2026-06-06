@@ -58,7 +58,7 @@ Paso <span id="stepNum">1</span> / <span id="totalSteps"></span>
 <h3>Paso esperado</h3>
 <p id="expected"></p>
 
-<div id="result" class="score"></div><br><button id="repeatBtn">🔁 Repetir passo</button>
+<div id="result" class="score hidden"></div><br><button id="repeatBtn">🔁 Repetir passo</button>
 </div>
 
 <div class="card hidden" id="finalCard">
@@ -294,6 +294,7 @@ window.onload=()=>{
 
 document.getElementById("startBtn").addEventListener("click",()=>{
   tocarSom("inicio");
+  document.getElementById("result").classList.remove('result');
   document.getElementById("startBtn").disabled = true;
   startListening();
 });
