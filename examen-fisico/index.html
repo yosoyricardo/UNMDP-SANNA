@@ -66,7 +66,6 @@ Paso <span id="stepNum">1</span> / <span id="totalSteps"></span>
 </div>
 
 <script>
-tocarSom("inicio");
 const checklist = [
   "Saludo.",
   "Me presento.",
@@ -290,6 +289,7 @@ document.getElementById("repeatBtn").addEventListener("click",()=>{
 document.getElementById("iniciarTudo").addEventListener("click", () => {
   document.getElementById("iniciarTudo").classList.add("hidden"),
   document.querySelector(".card-inicio").classList.remove("hidden"),
+  tocarSom("inicio");
   showStep();
   setTimeout(()=>startListening(),4000);
 })
