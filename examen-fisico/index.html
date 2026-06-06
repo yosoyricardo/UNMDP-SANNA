@@ -287,8 +287,8 @@ document.getElementById("repeatBtn").addEventListener("click",()=>{
 });
 
 document.getElementById("iniciarTudo").addEventListener("click", () => {
-  document.getElementById("iniciarTudo").classList.add("hidden"),
-  document.querySelector(".card-inicio").classList.remove("hidden"),
+  document.getElementById("iniciarTudo").classList.add("hidden");
+  document.querySelector(".card-inicio").classList.remove("hidden");
   tocarSom("inicio");
   showStep();
   setTimeout(()=>startListening(),5000);
