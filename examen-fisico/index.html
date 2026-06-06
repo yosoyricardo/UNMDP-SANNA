@@ -13,7 +13,34 @@ body{font-family:Arial,sans-serif;background:#3d152a;color:white;max-width:900px
 </style>
 </head>
 <body>
+<script>
+const sons = {
+    ok: [
+        "sounds/ok-1.mp3",
+        "sounds/ok-2.mp3",
+        "sounds/ok-3.mp3"
+    ],
+    erro: [
+        "sounds/no-1.mp3",
+        "sounds/no-2.mp3",
+        "sounds/no-3.mp3"
+    ],
+    finalizado: [
+        "sounds/victoria-1.mp3",
+        "sounds/victoria-2.mp3",
+        "sounds/victoria-3.mp3",
+        "sounds/victoria-4.mp3",
+    ]
+};
 
+function tocarSom(tipo) {
+    const lista = sons[tipo];
+    const indice = Math.floor(Math.random() * lista.length);
+
+    const audio = new Audio(lista[indice]);
+    audio.play();
+}
+</script>
 <h1>🎤 Entrenamiento de Examen Físico</h1>
 
 <div class="card">
@@ -183,6 +210,7 @@ recognition.onresult=(event)=>{
  attempts++;
 
  if(score>=60){
+   tocarSom(ok);
    document.getElementById("result").innerHTML=`
    <div class="good">
    <b>✅ Correcto</b><br><br>
@@ -201,6 +229,7 @@ recognition.onresult=(event)=>{
      startListening();
    },1500);
  }else{
+   tocarSom(erro);
    document.getElementById("result").innerHTML=`
    <div class="bad">
    <b>❌ Repite el paso</b><br><br>
@@ -227,6 +256,7 @@ recognition.onerror=(event)=>{
 };
 
 function finish(){
+  tocarSom(finalizado);
  document.querySelector(".card").classList.add("hidden");
  document.getElementById("finalCard").classList.remove("hidden");
 
