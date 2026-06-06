@@ -10,41 +10,73 @@ body{font-family:Arial,sans-serif;background:#3d152a;color:white;max-width:900px
 .score{font-size:1.2rem;margin-top:15px}
 .good{color:#22c55e}.bad{color:#ef4444}
 .hidden{display:none}.progress{margin-bottom:10px}
+@keyframes brillo{
+    from{
+        left: -50%;
+    }
+    to{
+        left: 150%;
+    }
+}
+
+#result{
+    position: relative;
+    overflow: hidden;
+}
+
+.escuchando::after{
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 30%;
+    height: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, 0.459),
+        transparent
+    );
+    animation: brillo 1.5s infinite;
+}
 </style>
 </head>
 <body>
 <script>
 const sons = {
     ok: [
+        "../sounds/ok-0.mp3",
         "../sounds/ok-1.mp3",
-        "../sounds/ok-2.mp3",
-        "../sounds/ok-3.mp3"
+        "../sounds/ok-2.mp3"
     ],
     erro: [
+        "../sounds/no-0.mp3",
         "../sounds/no-1.mp3",
-        "../sounds/no-2.mp3",
-        "../sounds/no-3.mp3"
+        "../sounds/no-2.mp3"
     ],
     finalizado: [
+        "../sounds/victoria-0.mp3",
         "../sounds/victoria-1.mp3",
         "../sounds/victoria-2.mp3",
         "../sounds/victoria-3.mp3",
-        "../sounds/victoria-4.mp3",
     ],
     fale: [
         "../sounds/fale-0.mp3",
     ],
     inicio: [
         "../sounds/inicio-0.mp3",
+    ],
+    repetir: [
+        "../sounds/repetir-0.mp3",
     ]
 };
 
 function tocarSom(tipo) {
-  console.log(tipo);
+  
     const lista = sons[tipo];
-    const indice = Math.floor(Math.random() * lista.length);
-
-    const audio = new Audio(lista[indice-1]);
+    indice = Math.floor(Math.random() * lista.length);
+    const audio = new Audio(lista[indice]);
+    console.log(indice, lista[indice]);
     audio.play();
 }
 </script>
@@ -55,10 +87,12 @@ function tocarSom(tipo) {
 Paso <span id="stepNum">1</span> / <span id="totalSteps"></span>
 </div>
 
-<h3>Paso esperado</h3>
-<p id="expected"></p>
-
+<h4>Paso esperado...</h4>
+<h2 id="expected"></h2>
+<div id="area">
 <div id="result" class="score"></div><br><button id="repeatBtn">🔁 Repetir passo</button>
+</div>
+
 </div>
 
 <div class="card hidden" id="finalCard">
@@ -197,11 +231,35 @@ let listening=false;
 
 function startListening(){
  if(listening) return;
- listening=true;
  tocarSom("fale");
- document.getElementById("result").innerHTML="🎙️ Escuchando...";
- recognition.start();
+ listening=true;
+ 
+
+  setTimeout(()=>{
+    document.getElementById("result").innerHTML="🎙️ Escuchando...";
+    recognition.start();
+  },300);
 }
+
+recognition.onend = () => {
+    console.log("Reconocimiento finalizado");
+    document.getElementById("result").classList.add("escuchando");
+    tocarSom("repetir");
+    setTimeout(() => {
+                document.getElementById("result").classList.remove("escuchando");   
+        }, 500);
+    
+    if (listening) {
+        setTimeout(() => {
+            try {
+                recognition.start();
+                 
+            } catch (e) {
+                console.log(e);
+            }
+        }, 300);
+    }
+};
 
 recognition.onresult=(event)=>{
  listening=false;
@@ -215,6 +273,8 @@ recognition.onresult=(event)=>{
 
  if(score>=60){
    tocarSom("ok");
+   document.getElementById("area").classList.remove("hidden");
+   document.getElementById("result").classList.remove("escuchando"); 
    document.getElementById("result").innerHTML=`
    <div class="good">
    <b>✅ Correcto</b><br><br>
@@ -231,9 +291,10 @@ recognition.onresult=(event)=>{
      }
      showStep();
      startListening();
-   },1500);
+   },2000);
  }else{
    tocarSom("erro");
+   document.getElementById("result").classList.remove("escuchando"); 
    document.getElementById("result").innerHTML=`
    <div class="bad">
    <b>❌ Repite el paso</b><br><br>
@@ -243,7 +304,7 @@ recognition.onresult=(event)=>{
    🔄 Intentando nuevamente...
    </div>`;
 
-   setTimeout(()=>startListening(),2000);
+   setTimeout(()=>startListening(),3400);
  }
 };
 
@@ -293,7 +354,7 @@ document.getElementById("iniciarTudo").addEventListener("click", () => {
   console.log("vai tocva");
   tocarSom("inicio");
   showStep();
-  setTimeout(()=>startListening(),5000);
+  setTimeout(()=>startListening(),5500);
 })
 /*
 window.onload=()=>{
