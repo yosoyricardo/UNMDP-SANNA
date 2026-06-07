@@ -331,7 +331,7 @@ const sons = {
 
 function tocarSom(tipo) {
     const lista = sons[tipo];
-    let inDigo = Math.floor(Math.random() * lista.length);
+    let indice = Math.floor(Math.random() * lista.length);
     const audio = new Audio(lista[indice]);
     console.log(indice, lista[indice]);
     audio.play();
