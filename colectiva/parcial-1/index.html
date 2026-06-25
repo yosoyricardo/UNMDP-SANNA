@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Simulador Oficial de Examen: Salud Colectiva</title>
-    <!-- STREAMING_CHUNK: Loading External Libraries and Fonts... -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
@@ -36,7 +35,6 @@
 </head>
 <body class="min-h-screen flex flex-col antialiased">
 
-    <!-- STREAMING_CHUNK: Initializing Header and Navigation Bar... -->
     <header class="bg-white border-b border-slate-100 sticky top-0 z-50 shadow-sm">
         <div class="max-w-5xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
             <div class="flex items-center gap-3">
@@ -44,8 +42,8 @@
                     SC
                 </div>
                 <div>
-                    <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Salud Colectiva <span class="text-indigo-600">Provecho</span></h1>
-                    <p class="text-xs font-semibold text-slate-400">Simulador del 1er Parcial</p>
+                    <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Salud Colectiva <span class="text-indigo-600">Oficial</span></h1>
+                    <p class="text-xs font-semibold text-slate-400">Simulador de Parciales 2020-2023</p>
                 </div>
             </div>
             <nav class="flex bg-slate-100 p-1 rounded-xl">
@@ -62,7 +60,6 @@
         </div>
     </header>
 
-    <!-- STREAMING_CHUNK: Constructing Database of PDF Questions... -->
     <script type="text/javascript">
         // Exhaustive complete array representing 100% of the transcribed questions from the PDF, with exact original options and correct keys.
         const QUESTIONS_DB = [
@@ -95,7 +92,7 @@
             {
                 id: 3,
                 topic: "Epidemiología",
-                q: "La mortalidad infantil es un indicador para la gestión, porque:",
+                q: "La mortalidad infantil is un indicador para la gestión, porque:",
                 options: [
                     "Existe una relacion causal entre los determinantes culturales y las altas tasas de mortalidad infantil, debiendo el Estado, accionar sobre las mismas.",
                     "Se realiza un enfoque de riesgo sobre los determinantes que influyen en la misma, generando estructuras de análisis cuantitativo para modificar dichos factores.",
@@ -689,7 +686,7 @@
                     "Falso"
                 ],
                 correct: 1,
-                reason: "Falso. Existen variantes, crisis de paradigmas y diferentes abordajes clínicos históricos."
+                reason: "Falso. Existen variantes, crisis de paradigmas y differentes abordajes clínicos históricos."
             },
             {
                 id: 54,
@@ -738,7 +735,7 @@
             {
                 id: 58,
                 topic: "Testa",
-                q: "Es dificil modificar la actitud critica y es posible fortalecer la aptitud critica solo por medio de la educación universitaria en la facultad de medicina.",
+                q: "Es dificil modificar la actitud critica and es posible fortalecer la aptitud critica solo por medio de la educación universitaria en la facultad de medicina.",
                 options: [
                     "Verdadero",
                     "Falso"
@@ -857,7 +854,7 @@
                 reason: "Falso. Debe desarmar los mecanismos tradicionales de cura objetivante para integrar el cuidado vivo."
             },
             {
-                id: 69,
+                id: 70,
                 topic: "Mehry",
                 q: "La dimensión cuidadora, para Mehry, posee la característica de entender al otro como un producto en donde la solución del problema es esencial.",
                 options: [
@@ -868,7 +865,7 @@
                 reason: "Falso. El otro no es un producto; es un sujeto activo que co-produce su propia curación."
             },
             {
-                id: 70,
+                id: 71,
                 topic: "Salud Colectiva",
                 q: "La Salud Colectiva forma parte de las corrientes funcionalistas.",
                 options: [
@@ -879,7 +876,7 @@
                 reason: "Falso. Nace de corrientes críticas marxistas e históricas contrarias al funcionalismo norteamericano."
             },
             {
-                id: 71,
+                id: 72,
                 topic: "Salud Colectiva",
                 q: "La Medicina Social Latinoamericana busca integrar las dimensiones culturales y sociales en sus reflexiones, buscando excluir la dimensión económica.",
                 options: [
@@ -890,7 +887,7 @@
                 reason: "Falso. La dimensión socioeconómica e histórica de la desigualdad es el pilar central de su análisis."
             },
             {
-                id: 72,
+                id: 73,
                 topic: "Salud Colectiva",
                 q: "Antonio Gramsci es un autor que contribuye a desentrañar las formas de dominación que se dan en el modo de producción capitalista.",
                 options: [
@@ -901,7 +898,7 @@
                 reason: "Verdadero. Sus teorías sobre la hegemonía cultural fundamentan las críticas al MMH de Menéndez."
             },
             {
-                id: 73,
+                id: 74,
                 topic: "Salud Colectiva",
                 q: "Silvia Federici es una autora que critica el carácter economicista de los análisis marxistas.",
                 options: [
@@ -912,7 +909,7 @@
                 reason: "Falso. En realidad expande el análisis de la acumulación originaria integrando el trabajo de reproducción de las mujeres."
             },
             {
-                id: 74,
+                id: 75,
                 topic: "Salud Colectiva",
                 q: "La noción de interdependencia de N Elias busca dar cuenta de la interacción que hay entre la estructura social y la acción Intencionada por los individuos.",
                 options: [
@@ -923,7 +920,7 @@
                 reason: "Verdadero. Su analogía del juego supera la clásica dicotomía entre sociedad y sujeto."
             },
             {
-                id: 75,
+                id: 76,
                 topic: "Salud Colectiva",
                 q: "Las categorías analíticas buscan dar cuenta de la acción de los sujetos como una práctica social.",
                 options: [
@@ -934,7 +931,7 @@
                 reason: "Verdadero. Son herramientas epistémicas para comprender la praxis colectiva."
             },
             {
-                id: 76,
+                id: 77,
                 topic: "Salud Colectiva",
                 q: "El Concepto Operacional es un concepto propio del Modelo Médico Hegemónico.",
                 options: [
@@ -945,7 +942,7 @@
                 reason: "Falso. El concepto operacional es un instrumento de la planificación normativa tecnocrática."
             },
             {
-                id: 77,
+                id: 78,
                 topic: "Salud Colectiva",
                 q: "Hegemonía: es la capacidad de un sector social de hacer creer que sus intereses son los intereses de la mayoría.",
                 options: [
@@ -956,7 +953,7 @@
                 reason: "Verdadero. Define el mecanismo cultural de validación del dominio de una clase."
             },
             {
-                id: 78,
+                id: 79,
                 topic: "Salud Colectiva",
                 q: "Clase, género y raza son Categorias analiticas.",
                 options: [
@@ -967,7 +964,7 @@
                 reason: "Verdadero. Se utilizan para deconstruir la complejidad del proceso salud-enfermedad-atención."
             },
             {
-                id: 79,
+                id: 80,
                 topic: "Salud Colectiva",
                 q: "La Salud Colectiva promueve la búsqueda de leyes generales.",
                 options: [
@@ -978,7 +975,7 @@
                 reason: "Falso. Se centra en el análisis histórico-particular de los grupos humanos frente al universalismo abstracto."
             },
             {
-                id: 80,
+                id: 81,
                 topic: "Salud Colectiva",
                 q: "El surgimiento de la medicina social, y la idea de la medicina como ciencia social surge en un contexto politico complejo, donde se problematizan principalmente las cuestiones de salud ligadas al saneamiento del medio.",
                 options: [
@@ -989,7 +986,7 @@
                 reason: "Falso. Surge centralmente vinculada a los problemas de explotación laboral y de condiciones de vida obreras."
             },
             {
-                id: 81,
+                id: 82,
                 topic: "Salud Colectiva",
                 q: "Uno de los principios que establecia el proyecto de Salud Pública era:",
                 options: [
@@ -1001,7 +998,7 @@
                 reason: "La visión de la medicina social demanda el rol del Estado como garante supremo y universal del bienestar."
             },
             {
-                id: 82,
+                id: 83,
                 topic: "Salud Colectiva",
                 q: "Segun R. Virchow, las epidemias 'artificiales' son:",
                 options: [
@@ -1013,7 +1010,7 @@
                 reason: "Virchow planteó que las epidemias artificiales muestran los defectos de la organización política y social de un territorio."
             },
             {
-                id: 83,
+                id: 84,
                 topic: "Salud Colectiva",
                 q: "El alcance de la medicina social se puede delimitar en 3 aspectos: 1) salud relacionada con la comunidad, 2) salud como valor social, 3) salud y prevención del Estado.",
                 options: [
@@ -1024,7 +1021,7 @@
                 reason: "Falso. El tercer aspecto es política social compartida y no se reduce a una acción preventiva unilateral del aparato del Estado."
             },
             {
-                id: 84,
+                id: 85,
                 topic: "Salud Colectiva",
                 q: "Una de las diferencias fundamentales entre la salud pública convencional y ampliada es cómo entienden el carácter biológico y social de la salud-enfermedad.",
                 options: [
@@ -1035,7 +1032,7 @@
                 reason: "Falso. La tensión principal radica radicalmente en la forma de conceptualizar, reconstruir e intervenir sobre lo social."
             },
             {
-                id: 85,
+                id: 86,
                 topic: "Salud Colectiva",
                 q: "Entre las diferencias metodológicas de la salud pública convencional y ampliada se encuentran las herramientas de análisis. La SP ampliada configura e incorpora categorías de análisis que permiten introducirse en los procesos más complejos y profundos del colectivo.",
                 options: [
@@ -1046,7 +1043,7 @@
                 reason: "Verdadero. Al incorporar categorías de clase, etnia y género se desmarca del simple cálculo probabilístico del riesgo."
             },
             {
-                id: 86,
+                id: 87,
                 topic: "Salud Colectiva",
                 q: "La salud pública convencional, podemos decir que es 'funcional al sistema', a diferencia de la ampliada, ya que esta última cuestiona al orden social.",
                 options: [
@@ -1057,7 +1054,7 @@
                 reason: "Verdadero. La SP convencional asume las desigualdades como dadas y no busca cambiar el régimen de producción."
             },
             {
-                id: 87,
+                id: 88,
                 topic: "Salud Colectiva",
                 q: "Tanto la salud pública convencional como la ampliada, al momento de explicar la Salud-Enfermedad, estudian los determinantes sociales identificando los factores causales tanto biomédicos como sociales.",
                 options: [
@@ -1068,7 +1065,7 @@
                 reason: "Falso. La SP ampliada rechaza la noción causal determinista simple y propone procesos de determinación social de carácter dialéctico."
             },
             {
-                id: 88,
+                id: 89,
                 topic: "Salud Colectiva",
                 q: "La salud colectiva y la medicina social son corrientes que nacieron en Brasil.",
                 options: [
@@ -1079,7 +1076,7 @@
                 reason: "Falso. La medicina social nació en Alemania y Francia en 1848; la salud colectiva se desarrolló en Brasil y el resto de América Latina en los años 70."
             },
             {
-                id: 89,
+                id: 90,
                 topic: "Salud Colectiva",
                 q: "Uno de los desafios de la salud colectiva se fundamenta en la dificultad para llevar a cabo las transformaciones estructurales que propone.",
                 options: [
@@ -1090,20 +1087,20 @@
                 reason: "Verdadero. Requiere rearticulaciones profundas del sistema económico y político."
             },
             {
-                id: 90,
+                id: 91,
                 topic: "Modelos",
                 q: "Menéndez, en su artículo 'El modelo médico y la Salud de los Trabajadores' sostiene que el biologicismo es el rasgo más saliente del modelo médico hegemónico porque:",
                 options: [
                     "Porque posibilita la exclusión de las condiciones sociales y económicas en la explicación de la causalidad.",
                     "Porque permite considerar la evolución y la historia natural de la enfermedad.",
                     "Porque incorpora activamente el papel de los sujetos que se enferman con todos sus condicionantes estructurales, sociales y económicos.",
-                    "Porque es la dimensión que se caracteriza por operar en la cotidianeidad de los sujetos y grupos sociales."
+                    "Porque es la dimensión que se caracteriza por operar en la cotidineidad de los sujetos y grupos sociales."
                 ],
                 correct: 0,
                 reason: "El biologicismo aísla el cuerpo físico de la estructura de producción que lo daña."
             },
             {
-                id: 91,
+                id: 92,
                 topic: "Modelos",
                 q: "El proceso salud/enfermedad como hecho social, es un dispositivo con capacidad potencial:",
                 options: [
@@ -1116,7 +1113,7 @@
                 reason: "Como hecho social, desviste los intereses de clase y poder que determinan las políticas y prácticas sanitarias."
             },
             {
-                id: 92,
+                id: 93,
                 topic: "Modelos",
                 q: "La Medicina Social surge en 1848, de la mano de Rudolph Virchow, y en un contexto social complejo. En este marco, aquel científico y pensador, considerado padre de la Medicina Social plantea:",
                 options: [
@@ -1129,7 +1126,7 @@
                 reason: "Virchow acuñó la idea del rol central de la salud como derecho político de los ciudadanos provisto por el Estado."
             },
             {
-                id: 93,
+                id: 94,
                 topic: "Modelos",
                 q: "En los inicios de la Medicina Social, se plantea una ruptura característica en la concepción de salud-enfermedad que se manejaba hasta entonces. Esta ruptura se basa fundamentalmente en:",
                 options: [
@@ -1142,7 +1139,7 @@
                 reason: "Se rompe con la noción mecanicista y anatomoclínica pura heredada de la revolución científica."
             },
             {
-                id: 94,
+                id: 95,
                 topic: "Mehry",
                 q: "El concepto de 'integralidad' según Mehry surge por:",
                 options: [
@@ -1155,7 +1152,7 @@
                 reason: "La integralidad es un contrapeso dialéctico al fraccionamiento de especialidades del MMH."
             },
             {
-                id: 95,
+                id: 96,
                 topic: "Mehry",
                 q: "Cuando hablamos de tecnologías en Salud nos referimos a:",
                 options: [
@@ -1168,7 +1165,7 @@
                 reason: "Mehry expande el concepto: abarca la organización de los procesos asistenciales y las relaciones interpersonales."
             },
             {
-                id: 96,
+                id: 97,
                 topic: "Género",
                 q: "Respecto de la aparición de la píldora anticonceptiva en la década del '60 y su utilización:",
                 options: [
@@ -1181,7 +1178,7 @@
                 reason: "En Argentina, el acceso no fue estructurado o promovido masivamente por el Estado de forma liberadora; dependió de factores particulares locales."
             },
             {
-                id: 97,
+                id: 98,
                 topic: "Género",
                 q: "Respecto de la distribución diferencial de los riesgos para morbimortalidad planteada por D. Tajer:",
                 options: [
@@ -1194,7 +1191,7 @@
                 reason: "Tajer evidencia la paradoja de género: las mujeres viven más pero padecen más años con dolencias crónicas."
             },
             {
-                id: 98,
+                id: 99,
                 topic: "Testa",
                 q: "Según M Testa, las categorías analíticas son:",
                 options: [
@@ -1207,7 +1204,7 @@
                 reason: "No son objetos reales, sino instrumentos reflexivos para orientar las transformaciones en salud."
             },
             {
-                id: 99,
+                id: 100,
                 topic: "Salud Colectiva",
                 q: "Respecto de La analogía del juego de ajedrez de N Elias:",
                 options: [
@@ -1220,7 +1217,7 @@
                 reason: "Elias muestra cómo el sujeto juega activamente dentro de un sistema dinámico de reglas interdependientes."
             },
             {
-                id: 100,
+                id: 101,
                 topic: "Salud Pública",
                 q: "Para Eduardo Menéndez la salud pública es: indique opción CORRECTA:",
                 options: [
@@ -1233,7 +1230,7 @@
                 reason: "Menéndez sitúa a la SP como parte de los dispositivos estatales de regulación del orden social."
             },
             {
-                id: 101,
+                id: 102,
                 topic: "Campos",
                 q: "Para Gastón Wagner de Souza Campos existen más de un tipo de clínicas. Indicar los tipos de clínicas según este autor. Indique la opción CORRECTA",
                 options: [
@@ -1246,7 +1243,7 @@
                 reason: "Estas tres variantes categorizan las formas que asume el ejercicio clínico en las instituciones."
             },
             {
-                id: 102,
+                id: 103,
                 topic: "Testa",
                 q: "Según Mario Testa la actitud critica implica, indique respuesta CORRECTA:",
                 options: [
@@ -1259,7 +1256,7 @@
                 reason: "La actitud se basa fundamentalmente en cuestionar el sentido común instituido sobre lo dado."
             },
             {
-                id: 103,
+                id: 104,
                 topic: "Campos",
                 q: "Para Gastos Wagner de Souza Campos el método PAIDEIA sugiere un modo para atenuar la pelea entre la demanda infinita y la finitud de los recursos, involucrando a, indique respuesta CORRECTA:",
                 options: [
@@ -1272,7 +1269,7 @@
                 reason: "Propone un rol activo de la red comunitaria en la construcción de su proceso saludable."
             },
             {
-                id: 104,
+                id: 105,
                 topic: "Campos",
                 q: "La clínica del sujeto demanda:",
                 options: [
@@ -1285,7 +1282,7 @@
                 reason: "Obliga al médico a lidiar con el componente único, dinámico y existencial del enfermo."
             },
             {
-                id: 105,
+                id: 106,
                 topic: "Salud Colectiva",
                 q: "Con relación a las contribuciones de Rudolf Virchow a la medicina social, señale la opción correcta:",
                 options: [
@@ -1298,7 +1295,7 @@
                 reason: "Marcó la pauta histórica de vincular reformas socio-políticas con salud poblacional."
             },
             {
-                id: 106,
+                id: 107,
                 topic: "Mehry",
                 q: "La definición de encuentro según E. Mehry, debe incluir las siguientes características:",
                 options: [
@@ -1311,7 +1308,7 @@
                 reason: "Un buen encuentro genera potencia de obrar y transformación bidireccional."
             },
             {
-                id: 107,
+                id: 108,
                 topic: "Género",
                 q: "La utilización de la categoría sexo en los análisis de riesgos epidemiológicos reducen los cuerpos y los sujetos que los habitan en:",
                 options: [
@@ -1324,7 +1321,7 @@
                 reason: "La reducción binaria sesga y expulsa identidades no normativas del análisis."
             },
             {
-                id: 108,
+                id: 109,
                 topic: "Modelos",
                 q: "Potencialmente el modelo médico hegemónico tiene la capacidad de llevar a cabo las siguientes funciones, EXCEPTO:",
                 options: [
@@ -1337,7 +1334,7 @@
                 reason: "Las funciones descritas por Menéndez son legitimación, control y curación. No incluye la socialización libre como rol institucional directo primario."
             },
             {
-                id: 109,
+                id: 110,
                 topic: "Salud Colectiva",
                 q: "Un concepto útil para entender los diferentes tipos de vínculos que contraemos a lo largo de la vida es el de:",
                 options: [
@@ -1350,7 +1347,7 @@
                 reason: "La transferencia conceptualiza la proyección emocional sobre los cuidadores y terapeutas."
             },
             {
-                id: 110,
+                id: 111,
                 topic: "Matus",
                 q: "¿Cuál es a su juicio la mejor definición de lo que es un problema?",
                 options: [
@@ -1363,7 +1360,7 @@
                 reason: "Un problema es situacional: requiere insatisfacción de un actor con posibilidad teórica de cambio."
             },
             {
-                id: 111,
+                id: 112,
                 topic: "Matus",
                 q: "Las siguientes afirmaciones respecto de los problemas son verdaderas, excepto:",
                 options: [
@@ -1376,7 +1373,7 @@
                 reason: "Un problema cuasiestructurado no posee soluciones inmediatas ni definitivas; demanda constante concertación."
             },
             {
-                id: 112,
+                id: 113,
                 topic: "Matus",
                 q: "¿Cuál de las siguientes frases es incorrecta?",
                 options: [
@@ -1389,7 +1386,7 @@
                 reason: "La frase correcta e inversa es: 'Muchos problemas dispersan esfuerzos, pocos problemas concentran efectos'."
             },
             {
-                id: 113,
+                id: 114,
                 topic: "Testa",
                 q: "En términos de Mario Testa, diría que un problema es complejo y bien definido, cuando:",
                 options: [
@@ -1402,7 +1399,7 @@
                 reason: "La definición sistémica une cantidad de elementos con la gobernabilidad e instrumentalización técnica."
             },
             {
-                id: 114,
+                id: 115,
                 topic: "Matus",
                 q: "En términos de Carlos Matus, diría que un problema es 'cuasiestructurado' cuando, para abordarlo, se necesita:",
                 options: [
@@ -1415,7 +1412,7 @@
                 reason: "Enfrentar estos problemas requiere conciliar saberes técnicos con la voluntad y peso político de los actores."
             },
             {
-                id: 115,
+                id: 116,
                 topic: "Matus",
                 q: "Respecto del concepto de 'nudo crítico', ¿qué afirmación es incorrecta?",
                 options: [
@@ -1428,7 +1425,7 @@
                 reason: "El nudo crítico no es el punto de máxima tensión política necesariamente; es donde la acción técnica y política tiene mayor impacto sobre el problema."
             },
             {
-                id: 116,
+                id: 117,
                 topic: "Gestión",
                 q: "El concepto de 'eficiencia' remite a:",
                 options: [
@@ -1441,7 +1438,7 @@
                 reason: "Relaciona de forma directa los logros de impacto con los recursos e inversión consumida."
             },
             {
-                id: 117,
+                id: 118,
                 topic: "Mintzberg",
                 q: "Las siguientes afirmaciones caracterizan a las 'burocracias profesionales', excepto:",
                 options: [
@@ -1454,7 +1451,7 @@
                 reason: "El poder en la burocracia profesional está sumamente descentralizado en los agentes calificados del núcleo operativo."
             },
             {
-                id: 118,
+                id: 119,
                 topic: "Epidemiología",
                 q: "Uno de los elementos innovadores del modelo para abordar integralmente la mortalidad materna es:",
                 options: [
@@ -1467,7 +1464,7 @@
                 reason: "Visibiliza la falta de control reproductivo y autonomía biológica como la brecha estructural de partida."
             },
             {
-                id: 119,
+                id: 120,
                 topic: "Epidemiología",
                 q: "El aporte de la Salud Colectiva a la construcción del indicador mortalidad Infantil podria darse desde:",
                 options: [
@@ -1480,7 +1477,7 @@
                 reason: "La SC propone trascender la multicausalidad y situarse en los procesos integrales de determinación social."
             },
             {
-                id: 120,
+                id: 121,
                 topic: "Epidemiología",
                 q: "Si analizamos la Mortalidad Infantil desde sus aspectos teòrico metodològicos podríamos decir que:",
                 options: [
@@ -1493,14 +1490,13 @@
                 reason: "La crítica principal de la SC es la reducción de vidas y muertes a indicadores numéricos que no problematizan la estructura."
             },
             {
-                id: 121,
+                id: 122,
                 topic: "Epidemiología",
                 q: "El concepto de grupo de riesgo comienza a recibir duras críticas:",
                 options: [
                     "Por su falta de respuestas ante el aumento de pandemias vinculadas a gérmenes.",
                     "Por la falta de recursos para solventar las investigaciones.",
-                    "Por el abordaje que se realiza con el caso HIV Sida.",
-                    "Por ser de un carácter biologicista extremo."
+                    "Por el abordaje que se realiza con el caso HIV Sida."
                 ],
                 correct: 2,
                 reason: "La epidemia de VIH Sida demostró el fracaso del concepto de grupo de riesgo, siendo reemplazado por la noción de vulnerabilidad."
@@ -1508,7 +1504,6 @@
         ];
     </script>
 
-    <!-- STREAMING_CHUNK: Injecting HTML UI Framework & Responsive Grid... -->
     <main class="flex-1 max-w-5xl w-full mx-auto p-4 md:p-6">
         
         <!-- Tab: Dashboard -->
@@ -1537,11 +1532,11 @@
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <div class="bg-white p-6 rounded-2xl border border-slate-100 premium-shadow">
                     <span class="block text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">Preguntas Cargadas</span>
-                    <span id="total-questions" class="text-2xl font-extrabold text-slate-800">121</span>
+                    <span id="total-questions" class="text-2xl font-extrabold text-slate-800">122</span>
                 </div>
                 <div class="bg-white p-6 rounded-2xl border border-slate-100 premium-shadow">
-                    <span class="block text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">Mínimo para Aprobar</span>
-                    <span class="text-2xl font-extrabold text-indigo-600">16 / 30</span>
+                    <span class="block text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">Aprobación</span>
+                    <span class="text-2xl font-extrabold text-indigo-600">Dynamic</span>
                 </div>
                 <div class="bg-white p-6 rounded-2xl border border-slate-100 premium-shadow">
                     <span class="block text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">Intentos Realizados</span>
@@ -1603,14 +1598,13 @@
             </div>
         </section>
 
-        <!-- STREAMING_CHUNK: Rendering complete Library Explorer... -->
         <!-- Tab: Study/Library -->
         <section id="view-study" class="tab-content hidden space-y-6">
             <div class="bg-white p-6 rounded-2xl border border-slate-100 premium-shadow">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
                     <div>
                         <h2 class="text-xl font-extrabold text-slate-800">Biblioteca Completa de Estudio</h2>
-                        <p class="text-xs text-slate-400">Explora la base de datos de {121} preguntas originales del PDF.</p>
+                        <p class="text-xs text-slate-400">Explora la base de datos de {122} preguntas originales del PDF.</p>
                     </div>
                     <div class="w-full md:w-80">
                         <input type="text" id="lib-search" oninput="filterStudyLib()" placeholder="Buscar por tema o texto..." class="w-full px-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
@@ -1623,7 +1617,6 @@
             </div>
         </section>
 
-        <!-- STREAMING_CHUNK: Integrating Active Simulator and Quiz Mechanics... -->
         <!-- Tab: Simulator -->
         <section id="view-exam" class="tab-content hidden space-y-6">
             <!-- Screen: Setup/Intro -->
@@ -1632,11 +1625,19 @@
                     📝
                 </div>
                 <h2 class="text-2xl font-extrabold text-slate-800">Simulación del Examen Parcial</h2>
-                <p class="text-sm text-slate-500 leading-relaxed">Se extraerán **30 preguntas aleatorias** sin repetición de toda la base de datos oficial. Para avanzar a la siguiente etapa de tu preparación, debes aprobar un mínimo de **16 correctas**.</p>
+                <p class="text-sm text-slate-500 leading-relaxed">Selecciona la cantidad de preguntas para tu entrenamiento. Las preguntas se extraerán de forma aleatoria sin repetición de toda la base de datos oficial.</p>
                 
-                <button onclick="generateExam()" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-extrabold text-sm hover:bg-indigo-700 transition shadow-lg shadow-indigo-100">
-                    Generar Nuevo Examen
-                </button>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <button onclick="generateExam(5)" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 py-3 rounded-2xl font-extrabold text-xs transition border border-indigo-100 shadow-sm">
+                        Express (5 Qs)<br><span class="font-normal text-[10px]">Aprobación: 3/5</span>
+                    </button>
+                    <button onclick="generateExam(10)" class="bg-indigo-50 hover:bg-indigo-100 text-indigo-700 py-3 rounded-2xl font-extrabold text-xs transition border border-indigo-100 shadow-sm">
+                        Corto (10 Qs)<br><span class="font-normal text-[10px]">Aprobación: 6/10</span>
+                    </button>
+                    <button onclick="generateExam(30)" class="bg-indigo-600 hover:bg-indigo-700 text-white py-3 rounded-2xl font-extrabold text-xs transition shadow-lg shadow-indigo-100">
+                        Parcial Real (30 Qs)<br><span class="font-normal text-[10px]">Aprobación: 16/30</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Screen: Active Exam -->
@@ -1706,7 +1707,6 @@
         Simulador de Salud Colectiva &copy; 2026. Todas las preguntas pertenecen a los parciales y cuestionarios reales de la cursada.
     </footer>
 
-    <!-- STREAMING_CHUNK: Initializing Core JavaScript Logic and Chart Rendering... -->
     <script type="text/javascript">
         let currentTab = 'dashboard';
         let statsAttempts = 0;
@@ -1716,6 +1716,8 @@
         let selectedQuestions = [];
         let currentQuestionIdx = 0;
         let selectedAnswers = {}; // questionIndex -> chosen optionIdx
+        let examLength = 30;
+        let passingScore = 16;
 
         // Tab Management
         function switchTab(tabId) {
@@ -1783,10 +1785,21 @@
         }
 
         // Active Simulator logic
-        function generateExam() {
-            // Pick 30 unique random questions from the database of 121 elements
+        function generateExam(count) {
+            examLength = count;
+            
+            // Set dynamic passing thresholds based on standard ratios
+            if (count === 5) {
+                passingScore = 3;
+            } else if (count === 10) {
+                passingScore = 6;
+            } else {
+                passingScore = 16; // default 30 questions
+            }
+
+            // Pick unique random questions from the database
             const shuffled = [...QUESTIONS_DB].sort(() => 0.5 - Math.random());
-            selectedQuestions = shuffled.slice(0, 30);
+            selectedQuestions = shuffled.slice(0, examLength);
             currentQuestionIdx = 0;
             selectedAnswers = {};
 
@@ -1799,8 +1812,8 @@
 
         function renderActiveQuestion() {
             const q = selectedQuestions[currentQuestionIdx];
-            document.getElementById('exam-indicator').innerText = `Pregunta ${currentQuestionIdx + 1} de 30`;
-            document.getElementById('exam-progress-bar').style.width = `${((currentQuestionIdx + 1) / 30) * 100}%`;
+            document.getElementById('exam-indicator').innerText = `Pregunta ${currentQuestionIdx + 1} de ${examLength}`;
+            document.getElementById('exam-progress-bar').style.width = `${((currentQuestionIdx + 1) / examLength) * 100}%`;
             document.getElementById('exam-question-topic').innerText = q.topic;
             document.getElementById('exam-question-text').innerText = q.q;
 
@@ -1835,17 +1848,16 @@
             });
 
             document.getElementById('btn-exam-prev').disabled = currentQuestionIdx === 0;
-            document.getElementById('btn-exam-next').innerText = currentQuestionIdx === 29 ? 'Finalizar Examen' : 'Siguiente Pregunta';
+            document.getElementById('btn-exam-next').innerText = currentQuestionIdx === examLength - 1 ? 'Finalizar Examen' : 'Siguiente Pregunta';
         }
 
         function examNext() {
             if (selectedAnswers[currentQuestionIdx] === undefined) {
-                // Customized modal alert
                 alert('Por favor selecciona una de las opciones antes de continuar.');
                 return;
             }
 
-            if (currentQuestionIdx < 29) {
+            if (currentQuestionIdx < examLength - 1) {
                 currentQuestionIdx++;
                 renderActiveQuestion();
             } else {
@@ -1883,17 +1895,17 @@
                 }
             });
 
-            const percent = Math.round((correctCount / 30) * 100);
+            const percent = Math.round((correctCount / examLength) * 100);
             statsAttempts++;
             if (percent > statsBest) {
                 statsBest = percent;
             }
 
-            const passed = correctCount >= 16;
+            const passed = correctCount >= passingScore;
             document.getElementById('exam-active').classList.add('hidden');
             document.getElementById('exam-results').classList.remove('hidden');
 
-            document.getElementById('res-score').innerText = `${correctCount} / 30`;
+            document.getElementById('res-score').innerText = `${correctCount} / ${examLength}`;
             const medal = document.getElementById('res-medal');
             const header = document.getElementById('res-header');
             const comment = document.getElementById('res-comment');
@@ -1902,7 +1914,7 @@
                 medal.innerText = '🏆';
                 header.innerText = '¡APROBADO!';
                 header.className = 'text-4xl font-extrabold tracking-tight text-emerald-600';
-                comment.innerText = 'Excelente trabajo. Has superado el mínimo de 16 respuestas correctas requerido para avanzar a la siguiente etapa de tu preparación.';
+                comment.innerText = `Excelente trabajo. Has superado el mínimo de ${passingScore} respuestas correctas requerido para aprobar este simulacro.`;
                 
                 // Throw some confetti celebrating!
                 confetti({
@@ -1914,7 +1926,7 @@
                 medal.innerText = '📚';
                 header.innerText = 'A REPASAR';
                 header.className = 'text-4xl font-extrabold tracking-tight text-rose-500';
-                comment.innerText = 'No has alcanzado las 16 respuestas correctas mínimas. Te recomendamos repasar detenidamente tus errores utilizando la biblioteca antes de volver a intentar.';
+                comment.innerText = `No has alcanzado las ${passingScore} respuestas correctas mínimas requeridas. Te recomendamos repasar detenidamente tus errores utilizando la biblioteca antes de volver a intentar.`;
             }
         }
 
