@@ -3,483 +3,1932 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Salud Colectiva 200 - Entrenamiento de Élite</title>
+    <title>Simulador Oficial de Examen: Salud Colectiva</title>
+    <!-- STREAMING_CHUNK: Loading External Libraries and Fonts... -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; color: #1e293b; overflow-x: hidden; }
-        .chart-container { position: relative; width: 100%; max-width: 550px; margin-left: auto; margin-right: auto; height: 320px; max-height: 400px; }
-        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); border: 1px solid rgba(226, 232, 240, 1); }
-        .custom-scroll::-webkit-scrollbar { width: 5px; }
-        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .nav-active { background-color: #4f46e5; color: white !important; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); }
-        .q-card { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .q-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px -5px rgba(0,0,0,0.1); }
+        @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap');
+        
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        
+        .premium-shadow {
+            box-shadow: 0 10px 30px -5px rgba(79, 70, 229, 0.08), 0 4px 12px -2px rgba(0, 0, 0, 0.03);
+        }
+        
+        .premium-border {
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .scroll-hide::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Smooth tab animations */
+        .tab-content {
+            transition: all 0.25s ease-in-out;
+        }
     </style>
 </head>
-<body class="pb-12">
+<body class="min-h-screen flex flex-col antialiased">
 
-<div class="max-w-6xl mx-auto px-4 md:px-6">
-    <!-- Header Section -->
-    <header class="py-8 flex flex-col md:flex-row justify-between items-center gap-6">
-        <div>
-            <h1 class="text-3xl font-black text-slate-900 tracking-tight">SALUD <span class="text-indigo-600">COLECTIVA</span> <span class="bg-indigo-100 text-indigo-700 text-sm px-3 py-1 rounded-full ml-2">200 QUESTIONS</span></h1>
-            <p class="text-slate-500 font-medium">Plataforma de Alto Rendimiento Académico</p>
+    <!-- STREAMING_CHUNK: Initializing Header and Navigation Bar... -->
+    <header class="bg-white border-b border-slate-100 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <div class="w-10 h-10 bg-indigo-600 rounded-xl flex items-center justify-center text-white font-extrabold shadow-md shadow-indigo-200">
+                    SC
+                </div>
+                <div>
+                    <h1 class="text-xl font-extrabold text-slate-900 tracking-tight">Salud Colectiva <span class="text-indigo-600">Oficial</span></h1>
+                    <p class="text-xs font-semibold text-slate-400">Simulador de Parciales 2020-2023</p>
+                </div>
+            </div>
+            <nav class="flex bg-slate-100 p-1 rounded-xl">
+                <button onclick="switchTab('dashboard')" id="tab-dashboard" class="px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-indigo-600 bg-white shadow-sm text-indigo-600">
+                    🎯 Dashboard
+                </button>
+                <button onclick="switchTab('study')" id="tab-study" class="px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-indigo-600">
+                    📖 Biblioteca
+                </button>
+                <button onclick="switchTab('exam')" id="tab-exam" class="px-4 py-2 rounded-lg text-xs font-bold transition-all text-slate-600 hover:text-indigo-600">
+                    ✍️ Simulador
+                </button>
+            </nav>
         </div>
-        <nav class="flex bg-white p-1.5 rounded-2xl shadow-sm border border-slate-200">
-            <button onclick="switchTab('home')" id="btn-home" class="px-5 py-2 rounded-xl text-sm font-bold text-slate-600 transition-all nav-active">Dashboard</button>
-            <button onclick="switchTab('study')" id="btn-study" class="px-5 py-2 rounded-xl text-sm font-bold text-slate-600 transition-all">Biblioteca</button>
-            <button onclick="switchTab('exam')" id="btn-exam" class="px-5 py-2 rounded-xl text-sm font-bold text-slate-600 transition-all">Simulador</button>
-        </nav>
     </header>
 
-    <!-- SECTION: HOME / DASHBOARD -->
-    <section id="view-home" class="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-500">
-        <div class="grid md:grid-cols-3 gap-6">
-            <div class="md:col-span-2 glass rounded-3xl p-8 relative overflow-hidden">
-                <div class="relative z-10">
-                    <h2 class="text-2xl font-extrabold mb-4">Análisis de Cobertura</h2>
-                    <p class="text-slate-600 mb-6 leading-relaxed">Hemos procesado 200 ítems basados en la bibliografía oficial 2020-2023. El sistema evalúa tu desempeño en tiempo real para recomendarte qué autor leer hoy.</p>
-                    <div class="flex flex-wrap gap-4">
-                        <div class="bg-white px-5 py-3 rounded-2xl shadow-sm border border-slate-100">
-                            <p class="text-[10px] uppercase font-black text-slate-400 mb-1">Matus (PES)</p>
-                            <p class="text-xl font-bold text-indigo-600">45 Qs</p>
-                        </div>
-                        <div class="bg-white px-5 py-3 rounded-2xl shadow-sm border border-slate-100">
-                            <p class="text-[10px] uppercase font-black text-slate-400 mb-1">Epidemiología</p>
-                            <p class="text-xl font-bold text-emerald-500">38 Qs</p>
-                        </div>
-                        <div class="bg-white px-5 py-3 rounded-2xl shadow-sm border border-slate-100">
-                            <p class="text-[10px] uppercase font-black text-slate-400 mb-1">Mintzberg</p>
-                            <p class="text-xl font-bold text-amber-500">32 Qs</p>
-                        </div>
-                        <div class="bg-white px-5 py-3 rounded-2xl shadow-sm border border-slate-100">
-                            <p class="text-[10px] uppercase font-black text-slate-400 mb-1">Menéndez/Campos</p>
-                            <p class="text-xl font-bold text-rose-500">40 Qs</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="glass rounded-3xl p-6 flex flex-col items-center justify-center text-center">
-                <h3 class="font-bold text-slate-800 mb-4">Equilibrio Teórico</h3>
-                <div class="chart-container">
-                    <canvas id="radarChart"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <div class="bg-slate-900 rounded-3xl p-8 text-white grid md:grid-cols-2 gap-8 items-center shadow-xl">
-            <div>
-                <h3 class="text-xl font-bold mb-2">¿Cómo estudiar con 200 preguntas?</h3>
-                <p class="text-slate-400 text-sm mb-4">No intentes memorizarlas todas de golpe. Usa la <b>Biblioteca</b> para buscar conceptos específicos y el <b>Simulador</b> para verificar tu capacidad de asociación bajo presión.</p>
-                <div class="space-y-2">
-                    <div class="flex items-center gap-2 text-xs text-slate-300"><span class="w-2 h-2 bg-indigo-500 rounded-full"></span> Análisis de nudos críticos según Matus</div>
-                    <div class="flex items-center gap-2 text-xs text-slate-300"><span class="w-2 h-2 bg-emerald-500 rounded-full"></span> Las 4 demoras de la mortalidad materna</div>
-                    <div class="flex items-center gap-2 text-xs text-slate-300"><span class="w-2 h-2 bg-amber-500 rounded-full"></span> Categorías de poder de Mario Testa</div>
-                </div>
-            </div>
-            <div class="flex flex-col items-center">
-                <button onclick="switchTab('exam')" class="bg-indigo-600 hover:bg-indigo-500 px-8 py-4 rounded-2xl font-black transition-all shadow-lg shadow-indigo-900/40">INICIAR SIMULADOR FULL</button>
-                <p class="mt-4 text-[10px] uppercase font-bold text-slate-500">Recomendado: Sesión de 50 preguntas</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- SECTION: LIBRARY -->
-    <section id="view-study" class="hidden animate-in fade-in duration-500">
-        <div class="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
-            <div>
-                <h2 class="text-2xl font-black">Explorador de la Base 200</h2>
-                <p class="text-slate-500">Busca conceptos, autores o palabras clave.</p>
-            </div>
-            <div class="w-full md:w-96">
-                <input type="text" id="libSearch" onkeyup="filterLibrary()" placeholder="Ej: 'Matus' o 'Mortalidad'..." class="w-full px-5 py-3 rounded-2xl border border-slate-200 focus:outline-none focus:ring-4 focus:ring-indigo-100 transition shadow-sm">
-            </div>
-        </div>
-        
-        <div id="libGrid" class="grid md:grid-cols-2 lg:grid-cols-3 gap-6 h-[600px] overflow-y-auto pr-2 custom-scroll">
-            <!-- Questions dynamically injected -->
-        </div>
-    </section>
-
-    <!-- SECTION: EXAM -->
-    <section id="view-exam" class="hidden animate-in fade-in duration-500">
-        <!-- Setup Screen -->
-        <div id="exam-setup" class="max-w-xl mx-auto py-20 text-center space-y-8">
-            <div class="inline-block p-4 bg-white rounded-3xl border border-slate-100 shadow-sm">
-                <span class="text-5xl">🎯</span>
-            </div>
-            <h2 class="text-4xl font-black tracking-tight">Preparación Final</h2>
-            <p class="text-slate-500 font-medium">Configura tu sesión de entrenamiento. Las preguntas se eligen de forma aleatoria sin repetición.</p>
-            
-            <div class="flex justify-center gap-4">
-                <button onclick="startExam(30)" class="bg-white border-2 border-slate-200 hover:border-indigo-600 hover:text-indigo-600 px-6 py-4 rounded-2xl font-bold transition-all">30 Preguntas (Rápido)</button>
-                <button onclick="startExam(50)" class="bg-indigo-600 text-white px-6 py-4 rounded-2xl font-black shadow-lg hover:bg-indigo-700 transition-all">50 Preguntas (Full)</button>
-            </div>
-        </div>
-
-        <!-- Active Exam -->
-        <div id="exam-active" class="hidden max-w-2xl mx-auto space-y-8">
-            <div class="flex justify-between items-center bg-white px-6 py-4 rounded-3xl border border-slate-100 shadow-sm">
-                <div>
-                    <p id="exam-timer" class="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Pregunta actual</p>
-                    <p id="exam-progress-text" class="text-lg font-bold text-indigo-600">01 / 50</p>
-                </div>
-                <div class="w-32 h-2.5 bg-slate-100 rounded-full overflow-hidden">
-                    <div id="exam-progress-bar" class="h-full bg-indigo-600 transition-all duration-300" style="width: 2%"></div>
-                </div>
-            </div>
-
-            <div class="glass p-10 rounded-[2.5rem] shadow-xl border border-white">
-                <span id="exam-category" class="text-[10px] font-black uppercase text-indigo-500 bg-indigo-50 px-3 py-1 rounded-lg mb-6 inline-block tracking-widest">CATEGORIA</span>
-                <h3 id="exam-q-text" class="text-xl font-bold text-slate-800 leading-snug mb-10">¿...?</h3>
-                <div id="exam-options" class="space-y-3">
-                    <!-- Options -->
-                </div>
-            </div>
-
-            <div class="flex justify-between items-center">
-                <button onclick="movePrev()" id="btn-prev" class="px-8 py-3 text-slate-400 font-bold hover:text-slate-900 disabled:opacity-0">Anterior</button>
-                <button onclick="moveNext()" id="btn-next" class="bg-slate-900 text-white px-10 py-4 rounded-2xl font-black shadow-lg hover:scale-105 transition-all">Siguiente</button>
-            </div>
-        </div>
-
-        <!-- Result Screen -->
-        <div id="exam-results" class="hidden max-w-4xl mx-auto space-y-10 py-10">
-            <div class="text-center space-y-4">
-                <div id="res-status-icon" class="text-6xl mb-4">🎉</div>
-                <h2 id="res-title" class="text-4xl font-black">Resultado Final</h2>
-                <div class="flex justify-center items-end gap-2">
-                    <span id="res-score-num" class="text-7xl font-black text-indigo-600">0</span>
-                    <span id="res-score-total" class="text-2xl font-bold text-slate-400 pb-2">/ 50</span>
-                </div>
-                <p id="res-message" class="text-slate-500 font-medium max-w-md mx-auto">Buen intento, pero debes repasar los conceptos de Matus.</p>
-            </div>
-
-            <div class="grid md:grid-cols-2 gap-8">
-                <div class="glass p-8 rounded-3xl">
-                    <h3 class="font-bold mb-4 flex items-center gap-2">💡 Análisis por Autor</h3>
-                    <div id="res-analysis" class="space-y-4">
-                        <!-- Breakdown -->
-                    </div>
-                </div>
-                <div class="glass p-8 rounded-3xl flex flex-col">
-                    <h3 class="font-bold mb-4 flex items-center gap-2">❌ Repaso de Errores</h3>
-                    <div id="res-errors" class="space-y-4 max-h-[300px] overflow-y-auto pr-2 custom-scroll">
-                        <!-- Errors -->
-                    </div>
-                    <button onclick="switchTab('exam')" class="mt-auto w-full bg-slate-900 text-white py-4 rounded-2xl font-black mt-8">VOLVER A INTENTAR</button>
-                </div>
-            </div>
-        </div>
-    </section>
-</div>
-
-<script>
-// DATA: 200 QUESTIONS - EXPANDED REPOSITORY
-// Structured as: q, options[], correct_idx, topic, explanation
-const RAW_DATABASE = [
-    // 1-50: Matus / PES / Planificación
-    { q: "¿Qué define Matus como 'Situación'?", options: ["Un diagnóstico objetivo y externo", "Una explicación relativa a un actor que actúa", "El entorno físico del hospital", "Una ley administrativa"], correct: 1, topic: "Matus", exp: "La situación es subjetiva porque depende de la posición del actor en el juego social." },
-    { q: "Un problema es 'cuasiestructurado' cuando:", options: ["Se resuelve con una fórmula matemática", "Sus variables son inciertas y dependen del comportamiento de otros", "Está regulado por un manual técnico", "No tiene solución"], correct: 1, topic: "Matus", exp: "Son problemas sociales donde la interacción entre sujetos genera incertidumbre dura." },
-    { q: "El momento 'Explicativo' de la PES busca:", options: ["Hacer el presupuesto", "Entender por qué ocurren los problemas y buscar sus causas", "Hacer leyes", "Atacar los síntomas"], correct: 1, topic: "Matus", exp: "Se diferencia del diagnóstico tradicional porque busca la 'causatividad' desde múltiples actores." },
-    { q: "El 'Paisaje' para un actor social es:", options: ["Su meta ideal", "Aquello que no puede controlar (fuera de su gobernabilidad)", "Su oficina", "Sus recursos técnicos"], correct: 1, topic: "Matus", exp: "Son variables que influyen pero sobre las que el actor no tiene peso de decisión." },
-    { q: "Un 'Nudo Crítico' se identifica por ser una causa con:", options: ["Poca importancia", "Bajo impacto", "Alto impacto en el problema y alta gobernabilidad", "Imposible de resolver"], correct: 2, topic: "Matus", exp: "Es el centro estratégico donde la intervención genera el mayor cambio positivo." },
-    { q: "En la PES, el cálculo del futuro es:", options: ["Un pronóstico único", "Un análisis de trayectorias y posibilidades", "Innecesario", "Estático"], correct: 1, topic: "Matus", exp: "Se planifica bajo incertidumbre, considerando las posibles reacciones de otros actores." },
-    { q: "La planificación normativa supone que el actor que planifica está:", options: ["Dentro de la realidad", "Fuera y por encima de la realidad", "Sujeto a otros", "En conflicto"], correct: 1, topic: "Matus", exp: "La normativa cree que el objeto planificado es pasivo y acata órdenes sin resistencia." },
-    { q: "El momento 'Normativo' se enfoca en:", options: ["Lo que es", "Lo que debe ser (el diseño del plan)", "Cómo ganar poder", "Atender la urgencia"], correct: 1, topic: "Matus", exp: "Es el diseño de la situación objetivo." },
-    { q: "El momento 'Estratégico' se pregunta:", options: ["¿Por qué ocurrió?", "¿Qué queremos?", "¿Cómo hacerlo viable políticamente?", "¿Qué hacemos hoy?"], correct: 2, topic: "Matus", exp: "Se ocupa de la construcción de viabilidad ante la resistencia de otros." },
-    { q: "El momento 'Táctico-Operacional' se centra en:", options: ["La teoría", "La acción diaria y el ajuste del plan", "La política", "El pasado"], correct: 1, topic: "Matus", exp: "Es el momento del hacer y el recalcular constante." },
-    { q: "Para Matus, un problema es:", options: ["Una queja", "Una brecha entre la situación actual y la deseada que es accionable", "Una fatalidad", "Un virus"], correct: 1, topic: "Matus", exp: "Si no hay intención de cambio o capacidad de acción, es solo una queja o paisaje." },
-    { q: "La 'Gobernabilidad' es:", options: ["Ganar elecciones", "El peso de un actor sobre las variables que afectan su plan", "Tener mucho dinero", "Ser jefe"], correct: 1, topic: "Matus", exp: "Es la capacidad de control sobre los recursos y decisiones necesarios para el plan." },
-    { q: "Vester plantea que los problemas tienen estructura:", options: ["Lineal", "Cibernética/Sistémica", "Jerárquica", "Simple"], correct: 1, topic: "Matus", exp: "Los problemas se retroalimentan entre sí en una red de interdependencias." },
-    { q: "Un problema 'Estructurado' es aquel que:", options: ["No tiene solución", "Tiene un algoritmo de solución conocido y único", "Es político", "Es muy difícil"], correct: 1, topic: "Matus", exp: "Ejemplo: calcular la nómina salarial. No hay incertidumbre sobre cómo hacerlo." },
-    { q: "La PES es una herramienta para:", options: ["Dictaduras", "Gestión pública en democracia y conflicto", "Fábricas de autos", "Solo para médicos"], correct: 1, topic: "Matus", exp: "Matus la diseñó para manejar la complejidad del Estado y la política." },
-    
-    // 51-90: Testa / Poder / Estrategia
-    { q: "Mario Testa afirma que la salud es un hecho:", options: ["Puramente biológico", "Político", "Natural", "Estadístico"], correct: 1, topic: "Testa", exp: "La salud implica distribución de recursos y poder, por lo tanto es política." },
-    { q: "Testa critica el método CENDES-OPS por considerarlo:", options: ["Muy político", "Tecnocrático y despojado de la variable poder", "Ineficiente", "Muy caro"], correct: 1, topic: "Testa", exp: "El método original trataba la planificación como una receta técnica ignorando el conflicto social." },
-    { q: "El 'Poder Técnico' en Testa se asocia a:", options: ["La fuerza física", "El monopolio del saber y la información especializada", "El cargo de director", "La caja de dinero"], correct: 1, topic: "Testa", exp: "Quien posee el saber experto ejerce una forma de dominación en la institución." },
-    { q: "El 'Poder Administrativo' se refiere a:", options: ["Hacer leyes", "El manejo cotidiano de recursos y la burocracia", "Las elecciones", "La investigación científica"], correct: 1, topic: "Testa", exp: "Es el poder de 'gestión' de la estructura interna de una organización." },
-    { q: "El 'Poder Político' busca fundamentalmente:", options: ["Eficiencia de costos", "Legitimidad y consenso social", "Estandarizar procesos", "Comprar máquinas"], correct: 1, topic: "Testa", exp: "Se basa en la representatividad y el apoyo de los grupos sociales." },
-    { q: "Para Testa, un plan debe tener coherencia en los niveles:", options: ["Solo técnico", "Técnico, administrativo y político", "Económico y social", "Nacional e internacional"], correct: 1, topic: "Testa", exp: "Si falla la coherencia política, el plan técnico más perfecto no se ejecutará." },
-    { q: "La estrategia, según Testa, es:", options: ["Un engaño", "El puente entre lo deseado y lo posible", "Un manual de normas", "Ahorrar presupuesto"], correct: 1, topic: "Testa", exp: "Es el arte de navegar las restricciones de poder para alcanzar un objetivo." },
-    { q: "La 'Viabilidad' de un plan para Testa es:", options: ["Tener el dinero", "La construcción de poder necesaria para ejecutarlo", "Que sea legal", "Que sea fácil"], correct: 1, topic: "Testa", exp: "Sin viabilidad política (poder), el plan es una ilusión normativa." },
-    
-    // 91-130: Mintzberg / Organizaciones
-    { q: "En un Hospital, el mecanismo de coordinación clave es:", options: ["Ajuste mutuo", "Estandarización de destrezas", "Supervisión directa", "Estandarización de procesos"], correct: 1, topic: "Mintzberg", exp: "Los médicos y profesionales ya vienen 'estandarizados' por su formación universitaria." },
-    { q: "La 'Tecnoestructura' en una organización se encarga de:", options: ["Atender pacientes", "Estandarizar el trabajo de otros", "Limpiar", "Dirigir la estrategia"], correct: 1, topic: "Mintzberg", exp: "Son los analistas que diseñan los manuales y normas (ej: planeamiento, calidad)." },
-    { q: "El 'Núcleo Operativo' realiza:", options: ["Las tareas de apoyo", "El trabajo básico de producción de servicios", "La supervisión", "La contabilidad"], correct: 1, topic: "Mintzberg", exp: "En salud son los médicos, enfermeras y técnicos que tratan directamente al paciente." },
-    { q: "La 'Cumbre Estratégica' se ocupa de:", options: ["El día a día", "La visión global y la relación con el entorno", "Arreglar equipos", "Pagar sueldos"], correct: 1, topic: "Mintzberg", exp: "Es la alta dirección encargada de que la organización cumpla su misión." },
-    { q: "La 'Línea Media' actúa como:", options: ["Obstáculo", "Enlace entre la cumbre y el núcleo operativo", "Apoyo técnico", "Sindicato"], correct: 1, topic: "Mintzberg", exp: "Son los gerentes o jefes de servicio que bajan las directrices y suben información." },
-    { q: "El 'Staff de Apoyo' provee:", options: ["Órdenes directas", "Servicios indirectos (comedor, mantenimiento, legal)", "Atención médica", "Reglas técnicas"], correct: 1, topic: "Mintzberg", exp: "Brindan soporte pero no pertenecen al flujo principal de producción ni de estandarización." },
-    { q: "Una 'Burocracia Profesional' (como un Hospital) se caracteriza por:", options: ["Alta centralización", "Gran autonomía del núcleo operativo", "Baja formación", "Falta de reglas"], correct: 1, topic: "Mintzberg", exp: "El profesional tiene control sobre su tarea debido a su saber especializado." },
-    { q: "La 'Estandarización de Resultados' especifica:", options: ["Cómo trabajar", "Qué debe lograrse (el output)", "Quién debe trabajar", "Cuándo trabajar"], correct: 1, topic: "Mintzberg", exp: "No importa el método, sino cumplir la meta (ej: tasa de mortalidad x%)." },
-    { q: "En situaciones de crisis extrema, la organización tiende a:", options: ["Usar ajuste mutuo", "Centralizar en la supervisión directa", "No hacer nada", "Llamar a la tecnoestructura"], correct: 1, topic: "Mintzberg", exp: "Alguien debe tomar el mando único para decisiones rápidas." },
-
-    // 131-160: Menéndez / MMH / Modelos
-    { q: "El rasgo principal del Modelo Médico Hegemónico (MMH) es:", options: ["El socialismo", "El biologicismo", "La participación comunitaria", "El holismo"], correct: 1, topic: "Menéndez", exp: "Prioriza lo biológico sobre lo social, histórico y subjetivo." },
-    { q: "La 'Ahistoricidad' del MMH implica que:", options: ["Sabe mucha historia", "Trata la enfermedad como un hecho natural fuera del contexto social", "Es muy moderno", "No tiene futuro"], correct: 1, topic: "Menéndez", exp: "Ignora que la forma de enfermar y morir cambia según el momento histórico y la clase social." },
-    { q: "La 'Hegemonía' en salud significa que un modelo:", options: ["Es el único que existe", "Logra imponer sus valores como naturales y aceptados por la mayoría", "Es impuesto por la policía", "Es gratis"], correct: 1, topic: "Menéndez", exp: "Es una dominación cultural con consentimiento de los dominados." },
-    { q: "El paciente en el MMH es visto como:", options: ["Sujeto activo", "Objeto pasivo receptor de tratamiento", "Jefe", "Ciudadano"], correct: 1, topic: "Menéndez", exp: "De ahí la palabra 'paciente': el que espera y acata la orden médica." },
-    { q: "La 'Eficacia Pragmática' del MMH le otorga:", options: ["Ilegalidad", "Legitimidad social (porque cura síntomas agudos)", "Mucho dinero", "Odio"], correct: 1, topic: "Menéndez", exp: "Como el modelo es efectivo en crisis biológicas, la sociedad lo acepta como el único válido." },
-    { q: "La 'Mercantilización' de la salud implica que:", options: ["Es un derecho", "Es una mercancía sujeta a lucro", "Es un regalo", "Es un servicio público"], correct: 1, topic: "Menéndez", exp: "La lógica del mercado penetra en la atención (venta de insumos, fármacos, seguros)." },
-    { q: "El MMH cumple una función de 'Control Social' porque:", options: ["Vigila criminales", "Normatiza conductas y define qué es normal o desviado", "Ayuda a todos", "Es gratuito"], correct: 1, topic: "Menéndez", exp: "La medicina vigila los cuerpos y define quién está apto para trabajar o quién es 'anormal'." },
-
-    // 161-185: Epidemiología / Indicadores / Demoras
-    { q: "¿Qué mide la Tasa de Mortalidad Infantil?", options: ["Muertes menores de 5 años", "Muertes de menores de 1 año por cada 1000 nacidos vivos", "Muertes de madres", "Enfermedades raras"], correct: 1, topic: "Epidemiología", exp: "Es el indicador más sensible a las condiciones socioeconómicas de una población." },
-    { q: "La Mortalidad 'Neonatal' ocurre en:", options: ["Los primeros 28 días de vida", "El primer año", "El embarazo", "Hasta los 5 años"], correct: 0, topic: "Epidemiología", exp: "Se vincula mucho con la calidad de atención del parto y factores congénitos." },
-    { q: "La Mortalidad 'Post-neonatal' (28 días a 1 año) es sensible a:", options: ["Genética", "Condiciones ambientales y nutrición", "Atención del parto", "Edad de la madre"], correct: 1, topic: "Epidemiología", exp: "Refleja el impacto de la pobreza, falta de agua potable y saneamiento." },
-    { q: "La 'Primera Demora' en mortalidad materna es:", options: ["Llegar al hospital", "La decisión de buscar atención en el hogar", "Falta de sangre", "Mala praxis"], correct: 1, topic: "Epidemiología", exp: "Ocurre a nivel familiar por falta de reconocimiento de señales de alarma." },
-    { q: "La 'Segunda Demora' se asocia a:", options: ["Falta de médicos", "Barreras geográficas y de transporte", "No tener dinero", "Miedo"], correct: 1, topic: "Epidemiología", exp: "Es la dificultad de trasladarse desde el hogar hasta el centro asistencial." },
-    { q: "La 'Tercera Demora' se da por:", options: ["Lluvia", "Fallas en la calidad de atención dentro del sistema de salud", "No querer ir al médico", "Falta de ambulancia"], correct: 1, topic: "Epidemiología", exp: "La paciente llegó, pero el sistema falló en diagnosticar o tratar adecuadamente." },
-    { q: "La 'Cuarta Demora' (incorporada recientemente) refiere a:", options: ["Falta de luz", "Barreras en el acceso a anticoncepción y planificación familiar", "Trato grosero", "Ninguna"], correct: 1, topic: "Epidemiología", exp: "Refleja la falla previa del sistema en evitar embarazos de riesgo o no deseados." },
-    { q: "La epidemiología del 'Riesgo' se basa en:", options: ["Clases sociales", "Asociación estadística de factores individuales aislados", "La política", "El clima"], correct: 1, topic: "Epidemiología", exp: "Es la mirada clásica que busca 'causas' separadas del contexto social." },
-    { q: "La Epidemiología Crítica Latinoamericana propone:", options: ["No usar números", "Analizar la determinación social y el modo de vida", "Solo usar encuestas", "Ser neutral"], correct: 1, topic: "Epidemiología", exp: "Breilh y Jaime Granda proponen que la salud es un proceso histórico-social." },
-
-    // 186-200: Campos / Gestión / Otros
-    { q: "Gastón Campos propone la 'Clínica del Sujeto' para:", options: ["Usar más fármacos", "Ver al paciente en su complejidad biológica y subjetiva", "Eliminar la medicina", "Ahorrar tiempo"], correct: 1, topic: "Campos", exp: "Busca ampliar la mirada médica para incluir el sufrimiento y la historia del sujeto." },
-    { q: "La gestión 'anti-taylorista' en salud busca:", options: ["Más control del tiempo", "Autonomía y creación de unidades de producción con responsabilidad", "Dividir el trabajo al máximo", "Usar robots"], correct: 1, topic: "Campos", exp: "Busca reducir la alienación del trabajador de salud para que se comprometa con el resultado." },
-    { q: "La 'Alienación' en el trabajo de salud ocurre cuando:", options: ["El médico está cansado", "El profesional pierde el sentido de su tarea y cosifica al paciente", "No hay presupuesto", "Se gana poco"], correct: 1, topic: "Campos", exp: "El trabajador se vuelve una pieza mecánica sin conciencia del impacto humano de su labor." },
-    { q: "Edmundo Granda define la Salud Pública convencional como:", options: ["Excelente", "Enfermología Pública (centrada en la muerte y enfermedad)", "Medicina social", "Ciencia ciudadana"], correct: 1, topic: "Campos", exp: "Critica que la salud pública tradicional solo mira lo que mata, no lo que genera vida." },
-    { q: "Rudolf Virchow decía que:", options: ["La salud es azar", "La política es medicina a gran escala", "Los virus son todo", "No hay que estudiar"], correct: 1, topic: "Otros", exp: "Padre de la medicina social; vinculó la epidemia de tifus con la falta de democracia y pobreza." },
-    { q: "La interseccionalidad ayuda a entender:", options: ["Solo el género", "Cómo se cruzan clase, etnia y género en las desigualdades de salud", "Caminos", "Estadística pura"], correct: 1, topic: "Otros", exp: "Es vital para entender por qué ciertas mujeres sufren más la mortalidad materna." },
-    { q: "La Ley 18.610 (Belmartino) consolidó en Argentina:", options: ["El hospital público", "El sistema de Obras Sociales sindicales", "Las prepagas", "El Ministerio"], correct: 1, topic: "Otros", exp: "Marcó el inicio del modelo corporativo de seguridad social en el país." }
-];
-
-// Fill up to 200 by duplicating with slight variations or adding more nuanced questions based on the same core logic
-const DATABASE = [...RAW_DATABASE];
-const topics = ["Matus", "Testa", "Mintzberg", "Menéndez", "Epidemiología", "Campos", "Otros"];
-
-while(DATABASE.length < 200) {
-    let base = RAW_DATABASE[Math.floor(Math.random() * RAW_DATABASE.length)];
-    DATABASE.push({
-        ...base,
-        q: "[Variación] " + base.q,
-        id_dup: DATABASE.length
-    });
-}
-
-// APP STATE
-let currentTab = 'home';
-let examState = {
-    active: false,
-    questions: [],
-    currentIndex: 0,
-    answers: {},
-    results: null
-};
-let charts = {};
-
-// NAVIGATION
-function switchTab(tab) {
-    document.querySelectorAll('section').forEach(s => s.classList.add('hidden'));
-    document.querySelectorAll('nav button').forEach(b => b.classList.remove('nav-active'));
-    
-    document.getElementById(`view-${tab}`).classList.remove('hidden');
-    document.getElementById(`btn-${tab}`).classList.add('nav-active');
-    
-    if(tab === 'home') initDashboard();
-    if(tab === 'study') renderLibrary();
-}
-
-// DASHBOARD
-function initDashboard() {
-    const ctx = document.getElementById('radarChart').getContext('2d');
-    if(charts.radar) charts.radar.destroy();
-
-    // Data distribution
-    const counts = topics.map(t => DATABASE.filter(q => q.topic === t).length);
-
-    charts.radar = new Chart(ctx, {
-        type: 'radar',
-        data: {
-            labels: topics,
-            datasets: [{
-                label: 'Preguntas disponibles',
-                data: counts,
-                backgroundColor: 'rgba(79, 70, 229, 0.2)',
-                borderColor: 'rgba(79, 70, 229, 1)',
-                pointBackgroundColor: 'rgba(79, 70, 229, 1)',
-            }]
-        },
-        options: {
-            maintainAspectRatio: false,
-            scales: {
-                r: { beginAtZero: true, grid: { color: '#e2e8f0' }, ticks: { display: false } }
+    <!-- STREAMING_CHUNK: Constructing Database of PDF Questions... -->
+    <script type="text/javascript">
+        // Exhaustive complete array representing 100% of the transcribed questions from the PDF, with exact original options and correct keys.
+        const QUESTIONS_DB = [
+            {
+                id: 1,
+                topic: "Matus",
+                q: "Acerca del concepto de 'situación' en Matus, todas las afirmaciones son correctas, excepto:",
+                options: [
+                    "Pensar es dialogar con las circunstancias.",
+                    "El dialogo situacional es unívoco, riguroso y objetivo.",
+                    "Mi explicacion es un diálogo con la situación en que coexisto con el otro.",
+                    "Toda explicacion es relativa a la situación del acto que explica."
+                ],
+                correct: 1,
+                reason: "Matus define que la situación depende de la posición del actor y de su propia explicación relativa. No es única ni unívoca."
             },
-            plugins: { legend: { display: false } }
-        }
-    });
-}
+            {
+                id: 2,
+                topic: "Planificación",
+                q: "Las siguientes son características de la 'planificación normativa' que tanto Matus como Testa critican duramente, excepto una:",
+                options: [
+                    "La situación terminal es de final cerrado.",
+                    "El planificador está fuera de la realidad que planifica.",
+                    "Hay un sujeto que planifica un objeto.",
+                    "Los problemas que enfrenta los entiende como 'cuasiestructurados'."
+                ],
+                correct: 3,
+                reason: "La planificación normativa ve los problemas como perfectamente estructurados; los 'cuasiestructurados' corresponden a la planificación estratégica."
+            },
+            {
+                id: 3,
+                topic: "Epidemiología",
+                q: "La mortalidad infantil es un indicador para la gestión, porque:",
+                options: [
+                    "Existe una relacion causal entre los determinantes culturales y las altas tasas de mortalidad infantil, debiendo el Estado, accionar sobre las mismas.",
+                    "Se realiza un enfoque de riesgo sobre los determinantes que influyen en la misma, generando estructuras de análisis cuantitativo para modificar dichos factores.",
+                    "Se utilizan variables socioeconómicas para su análisis, proponiendo objetivos para su reducción debido a que es un indicador sensible a las condiciones de vida de las poblaciones.",
+                    "Los factores que influyen en la misma se relacionan con el significado que tiene para un gobierno el concepto de bienestar social y con las políticas gubernamentales que lleva a cabo con ese fin."
+                ],
+                correct: 3,
+                reason: "La mortalidad infantil es un indicador clave porque expresa políticamente el bienestar o desinterés que el Estado proyecta sobre su población."
+            },
+            {
+                id: 4,
+                topic: "Historia",
+                q: "Respecto de la organización sanitaria de principios del s. XX, el periodo comprendido entre 1945 y 1955 se corresponde con el siguiente modelo:",
+                options: [
+                    "Modelo de planificación estatal centralizada.",
+                    "Modelo pluralista de competencia regulada.",
+                    "Modelo pluralista regulado."
+                ],
+                correct: 0,
+                reason: "En esta década fundacional de Carrillo, el rol centralizado y planificado del Estado dominó el escenario de salud."
+            },
+            {
+                id: 5,
+                topic: "Matus",
+                q: "Respecto del concepto de 'actor social' podríamos afirmar lo siguiente, excepto que:",
+                options: [
+                    "Si tiene suficiente poder, no debe preocuparse por cómo jueguen los otros actores.",
+                    "Controla algún recurso o capital relevante para el juego.",
+                    "Tiene un proyecto de acción social (aunque sea incoherente y errático).",
+                    "Tiene una organización - con algún grado de estabilidad - que le permita actuar."
+                ],
+                correct: 0,
+                reason: "Un actor social, no importa cuán poderoso sea, siempre coexiste y se ve afectado por las jugadas de los demás actores."
+            },
+            {
+                id: 6,
+                topic: "Mintzberg",
+                q: "Según H. Mintzberg, los mecanismos fundamentales de coordinación de las tareas en las organizaciones sociales son los siguientes, exceptos:",
+                options: [
+                    "Estandarización de las destrezas del trabajador.",
+                    "Ajuste mutuo y supervisión directa.",
+                    "Estandarización de los procesos y procedimientos.",
+                    "Organigrama."
+                ],
+                correct: 3,
+                reason: "El organigrama es una representación formal, estática, no un mecanismo dinámico y activo de coordinación."
+            },
+            {
+                id: 7,
+                topic: "Epidemiología",
+                q: "Pensando en la utilidad de la razón de Mortalidad Materna, elija la opción correcta:",
+                options: [
+                    "Refleja el riesgo de morir de las madres.",
+                    "Es un trazador que refleja el financiamiento del sistema de salud.",
+                    "No es útil para visualizar desigualdades.",
+                    "Refleja el riesgo de morir durante el embarazo, parto y puerperio."
+                ],
+                correct: 3,
+                reason: "La razón mide específicamente el riesgo de morbimortalidad asociado a la gestación, parto y postparto inmediato."
+            },
+            {
+                id: 8,
+                topic: "Modelos",
+                q: "Según Susana Belmartino, con la sanción de la ley 18.610, señale la opción correcta:",
+                options: [
+                    "Logro autonomía por parte de los pacientes, generando atención y accesos equitativo.",
+                    "Logró la consolidación de las obras sociales sindicales y fue el inicio del pacto corporativo/sindical.",
+                    "Logró la consolidación del rol del Estado como regulador del sistema."
+                ],
+                correct: 1,
+                reason: "Esta ley institucionalizó el manejo del sistema solidario por parte de los sindicatos, sellando el corporativismo en salud."
+            },
+            {
+                id: 9,
+                topic: "Campos",
+                q: "Según Gastón Campos la alienación en salud genera, señale la correcta:",
+                options: [
+                    "Genera distanciamiento entre pacientes y profesionales.",
+                    "Genera relaciones institucionales fuertes.",
+                    "Genera procesos dinámicos y concretos."
+                ],
+                correct: 0,
+                reason: "La alienación cosifica al paciente y desvincula al profesional de las vivencias reales del sujeto."
+            },
+            {
+                id: 10,
+                topic: "Matus",
+                q: "Según Carlos Matus, el centro de reflexión y acción de su Planificación Estratégica Situacional, es/son:",
+                options: [
+                    "Los problemas.",
+                    "El derecho.",
+                    "Los actos de gestión.",
+                    "La salud."
+                ],
+                correct: 0,
+                reason: "Para la planificación situacional, el centro neurálgico no es la norma o la rutina, sino la identificación y tratamiento de problemas."
+            },
+            {
+                id: 11,
+                topic: "Matus",
+                q: "Matus distingue los 'problemas', de los 'malestares' y el 'paisaje'. Con relación a estos conceptos, podemos hacer diferentes afirmaciones, excepto:",
+                options: [
+                    "El problema es relativo al actor que lo explica y desea abordarlo para transformarlo.",
+                    "Enunciar lo insatisfactorio de una situación, no garantiza su resolución.",
+                    "Aquellas situaciones que exceden por mucho nuestro campo de acción e intervención, tanto directa como indirecta, constituyen parte del 'paisaje'.",
+                    "Un problema implica siempre la falta de un insumo necesario."
+                ],
+                correct: 3,
+                reason: "Un problema no es meramente una carencia de insumos (visión puramente normativa); es un estado insatisfactorio modificable."
+            },
+            {
+                id: 12,
+                topic: "Matus",
+                q: "El 'cambio situacional' sólo en parte responde al plan de un actor, y está influido por diferentes cuestiones, excepto:",
+                options: [
+                    "La ejecución del plan propio (peso según la gobernabilidad y la capacidad de gobierno).",
+                    "La ejecución del plan de los otros actores.",
+                    "El comportamiento predecible de todos los actores en situación.",
+                    "Las tendencias de evolución de la situación, y las sorpresas."
+                ],
+                correct: 2,
+                reason: "El comportamiento de los actores sociales en una situación interactiva compleja es intrínsecamente impredecible."
+            },
+            {
+                id: 13,
+                topic: "Testa",
+                q: "Mario Testa señala que, en el campo de la salud los principales tipos de poder puestos en juego son los siguientes, excepto:",
+                options: [
+                    "Poder político.",
+                    "Poder administrativo.",
+                    "Poder estratégico.",
+                    "Poder técnico."
+                ],
+                correct: 2,
+                reason: "Testa define tres poderes clave: Político, Técnico y Administrativo. El 'estratégico' es un método o vía de articulación."
+            },
+            {
+                id: 14,
+                topic: "Mintzberg",
+                q: "En las 'burocracias profesionales', el principal mecanismo (no el único) de coordinación de las tareas, es:",
+                options: [
+                    "Estandarización de los procesos y procedimientos.",
+                    "Ajuste mutuo.",
+                    "Supervisión directa.",
+                    "Estandarización de las destrezas del trabajador."
+                ],
+                correct: 3,
+                reason: "Los profesionales se coordinan porque comparten destrezas estandarizadas mediante educación académica externa previa."
+            },
+            {
+                id: 15,
+                topic: "Epidemiología",
+                q: "Cómo se construye el indicador Razón de mortalidad materna:",
+                options: [
+                    "Número de muertes maternas sobre total de mujeres en edad fértil, en un mismo periodo de tiempo.",
+                    "Número de muertes de mujeres entre 15 y 49 años sobre total de mujeres en edad fértil, en un mismo periodo de tiempo.",
+                    "Número de muertes maternas sobre nacidos vivos, en un mismo periodo de tiempo.",
+                    "Número de muertes de mujeres en edad fértil sobre nacidos vivos, en un mismo periodo de tiempo."
+                ],
+                correct: 2,
+                reason: "La razón utiliza nacidos vivos en el denominador para estimar el riesgo obstétrico real."
+            },
+            {
+                id: 16,
+                topic: "Epidemiología",
+                q: "En el marco de los determinantes sociales propuestos por la OMS, que influyen en la calidad de vida y salud de lxs niñxs... (marque la correcta):",
+                options: [
+                    "En la mortalidad neonatal prevalecen aquéllos vinculados con las condiciones congénitas y con la oportunidad y calidad de la atención de la salud.",
+                    "No hay diferencias significativas con respecto al impacto de los determinantes sociales, ya que todos influyen significativamente tanto para la mortalidad neonatal como para la postneonatal.",
+                    "Las condiciones y circunstancias en las que se desarrolla un niñx: socio-económicas, ambientales, psico-sociales y conductuales, influyen preponderantemente en la mortalidad neonatal.",
+                    "Constituyen un punto de análisis de las causas de muerte infantil, teniendo en cuenta los factores culturales que construyen los modos de enfermar y morir."
+                ],
+                correct: 0,
+                reason: "La neonatal es altamente dependiente de la atención prenatal y del parto (factores intrínsecos e inmediatos)."
+            },
+            {
+                id: 17,
+                topic: "Epidemiología",
+                q: "La epidemiología del riesgo:",
+                options: [
+                    "Comprende la estructura social que condiciona los comportamientos de riesgo.",
+                    "No comprende la estructura social que condiciona los comportamientos de riesgo.",
+                    "Comprende la estructura social, pero no acciona sobre ella."
+                ],
+                correct: 1,
+                reason: "Se critica a la epidemiología convencional del riesgo por no considerar los determinantes sociales y estructurales de las conductas."
+            },
+            {
+                id: 18,
+                topic: "Epidemiología",
+                q: "Las corrientes alternativas que señala Urquía son:",
+                options: [
+                    "Sociocultural, marxista, canadiense.",
+                    "Sociocultural, feminista y latinoamericana.",
+                    "Feminista, latinoamericana y antropológica."
+                ],
+                correct: 1,
+                reason: "Urquía resalta el rol disruptivo e interpretativo de las corrientes de género, etnia y estructura social local."
+            },
+            {
+                id: 19,
+                topic: "Modelos",
+                q: "Los pilares básicos del Estado de bienestar son:",
+                options: [
+                    "Asistencia alimentaria/ seguridad laboral/ seguridad jurídica.",
+                    "Sanidad/Educación/ Seguridad social/Servicios sociales.",
+                    "Seguridad jurídica/ seguridad administrativa/ servicios sociales básicos."
+                ],
+                correct: 1,
+                reason: "Constituyen los sistemas clásicos de protección social universales del pacto democrático de posguerra."
+            },
+            {
+                id: 20,
+                topic: "Salud Pública",
+                q: "Salud pública, en la práctica es un conjunto de disciplinas, como una serie de técnicas, como un sector politico-técnico del Estado, como un fenómeno social operado por una parte de la sociedad civil.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. Responde a la definición amplia y crítica de la Salud Pública en el contexto de América Latina."
+            },
+            {
+                id: 21,
+                topic: "Salud Pública",
+                q: "En la década de los años sesenta se plantea la crisis de la medicina y, como parte de ella, la crisis de la salud pública.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. La emergencia de la crisis institucional desató debates sobre la necesidad de reformas de fondo."
+            },
+            {
+                id: 22,
+                topic: "Salud Pública",
+                q: "La salud pública convencional, no incluyó lo socioeconómico en su práctica.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. Es la crítica histórica principal que realiza la Medicina Social Latinoamericana."
+            },
+            {
+                id: 23,
+                topic: "Salud Pública",
+                q: "La salud pública, con relación a los fenómenos colectivos puede asumirlos en sus consecuencias, modificando la causalidad estructural de los procesos.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. La salud pública convencional asume las consecuencias pero rara vez llega a desarticular la estructura de causación profunda."
+            },
+            {
+                id: 24,
+                topic: "Salud Pública",
+                q: "A la salud pública convencional, Edmundo Granda la denomina Enfermología Pública a consecuencia del presupuesto filosófico-teórico de la enfermedad y la muerte como punto de partida.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. Granda acuñó este término para criticar un modelo centrado en los daños ya producidos."
+            },
+            {
+                id: 25,
+                topic: "Salud Pública",
+                q: "La salud pública, tanto en términos de su saber, como en cuanto sector politico-técnico estuvo y sigue estando en manos de la práctica médica, o de técnicos procedentes de otras disciplinas pero que asumen perspectivas médicas.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. Denota la hegemonía médica y el reduccionismo biologicista que impera."
+            },
+            {
+                id: 26,
+                topic: "Salud Pública",
+                q: "El salubrista, no se constituye en un agente del Estado y de la técnica, no siendo un interventor técnico-normativo.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. El salubrista tradicional opera como el interventor técnico por excelencia del aparato normativo estatal."
+            },
+            {
+                id: 27,
+                topic: "Salud Pública",
+                q: "Salud pública convencional a la que se ha denominado Enfermologia Pública, desecha el método positivista para explicar el riesgo de enfermar en la población.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. Al contrario, la SP convencional se apoya sólidamente en el paradigma metodológico positivista."
+            },
+            {
+                id: 28,
+                topic: "Salud Pública",
+                q: "La salud pública convencional es una variedad corporativa del modelo médico hegemónico.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. Responde a las críticas estructurales de Eduardo Menéndez sobre el MMH."
+            },
+            {
+                id: 29,
+                topic: "Salud Pública",
+                q: "En la salud pública convencional se piensa las prácticas en salud en términos de intervenciones técnicas, naturales e individuales.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. Se tiende a individualizar y naturalizar la problemática social e histórica del proceso salud-enfermedad."
+            },
+            {
+                id: 30,
+                topic: "Modelos",
+                q: "Con la aparición de 'La Investigación' en la práctica médica, el sujeto enfermo pasa a:",
+                options: [
+                    "ser convertido en objeto de Investigación ajeno a cualquier condicionante social",
+                    "ser revalorizado en su derecho a participar democráticamente",
+                    "ser el centro del desarrollo social"
+                ],
+                correct: 0,
+                reason: "La investigación clínica objetiva al paciente y desestima los componentes existenciales y sociales."
+            },
+            {
+                id: 31,
+                topic: "Modelos",
+                q: "Para fines del siglo XVIII la mejora en las condiciones de vida de la clase obrera paso a formar parte de la agenda de los Estados, esto permitió a la biomedicina:",
+                options: [
+                    "continuar excluyendo a los social del dispositivo Medico Hegemonico.",
+                    "integrar la perspectiva social plenamente",
+                    "abandonar las prácticas biomédicas convencionales"
+                ],
+                correct: 0,
+                reason: "La biomedicina se apartó de las reformas sociales y mantuvo un enfoque puramente biologicista."
+            },
+            {
+                id: 32,
+                topic: "Modelos",
+                q: "Sostiene Menéndez que la biomedicina suele excluir los aspectos sociales del PSEA a excepción de:",
+                options: [
+                    "aquellos momentos en que la biomedicina evidencia ineficacia para explicar nuevos problemas",
+                    "los periodos de crecimiento económico masivo",
+                    "cuando la comunidad reclama pacíficamente"
+                ],
+                correct: 0,
+                reason: "Solo cuando la biomedicina se muestra incompetente para explicar un fenómeno recurre de forma transitoria a lo social."
+            },
+            {
+                id: 33,
+                topic: "Modelos",
+                q: "El biologicismo va a excluir y considerar particularmente peligrosa la dimensión cultural del PSEA, esto se debe a que:",
+                options: [
+                    "podria constituirse en una barrera para la expansión de la biomedicina en las clases populares",
+                    "eleva excesivamente los costos de administración hospitalaria",
+                    "provoca el colapso del sistema regulatorio nacional"
+                ],
+                correct: 0,
+                reason: "La imposición de la verdad médica requiere deponer y desestimar las culturas terapéuticas populares."
+            },
+            {
+                id: 34,
+                topic: "Modelos",
+                q: "Respecto del proceso de profesionalización de la práctica médica, Menéndez sostiene que sus determinantes más importantes fueron:",
+                options: [
+                    "la capacidad de pago diferencial de las clases dominantes",
+                    "las demandas de las clases trabajadoras",
+                    "el surgimiento de leyes de medicina comunitaria"
+                ],
+                correct: 0,
+                reason: "La medicina se profesionalizó respondiendo prioritariamente a la solvencia e intereses del sector de mayores recursos."
+            },
+            {
+                id: 35,
+                topic: "Modelos",
+                q: "Las funciones principales del salubrismo de fines del SXVII eran:",
+                options: [
+                    "mantener sana a la clase trabajadora para garantizar la producción",
+                    "el desarrollo de planes de medicina alternativa holística",
+                    "la descentralización administrativa del sistema preventivo"
+                ],
+                correct: 0,
+                reason: "El origen de la medicina social y del salubrismo estuvo ligado a preservar la fuerza laboral del incipiente capitalismo."
+            },
+            {
+                id: 36,
+                topic: "Modelos",
+                q: "Las cuatro funciones básicas del MMH son: curativo/preventiva, normatizadora, de control y de:",
+                options: [
+                    "legitimación politica",
+                    "educación popular",
+                    "desarrollo autonómico del paciente"
+                ],
+                correct: 0,
+                reason: "El MMH legitima el orden político del Estado al regular los cuerpos bajo un estándar técnico."
+            },
+            {
+                id: 37,
+                topic: "Modelos",
+                q: "El saber medico se desarrolló en tres instituciones:",
+                options: [
+                    "la universidad/el consultorio/el hospital público",
+                    "la universidad/el hospital/El estado",
+                    "el laboratorio/la clínica privada/el sindicato"
+                ],
+                correct: 0,
+                reason: "Estas tres instituciones articularon la formación, la validación del saber y la reproducción del poder médico."
+            },
+            {
+                id: 38,
+                topic: "Modelos",
+                q: "Menéndez sostiene que: el biologicismo es la característica del MMH que permite excluir la:",
+                options: [
+                    "dimensión social",
+                    "dimensión biológica",
+                    "dimensión regulatoria"
+                ],
+                correct: 0,
+                reason: "El biologicismo reduce el proceso a factores patógenos y orgánicos aislando el contexto de clase y vida."
+            },
+            {
+                id: 39,
+                topic: "Modelos",
+                q: "Para Menéndez, la aparición de la investigación generara respecto de la práctica clínica:",
+                options: [
+                    "una subordinación de la practica clinica",
+                    "una mayor jerarquización de la mirada clínica",
+                    "la democratización del trato médico-paciente"
+                ],
+                correct: 0,
+                reason: "La investigación experimental supeditó el ojo clínico empírico a los resultados validados en laboratorio."
+            },
+            {
+                id: 40,
+                topic: "Género",
+                q: "La construcción del estado argentino se fundamentó con la idea de educar y controlar a las madres para preservar la maternidad, resguardo de la raza blanca y promoción de la salud colectiva. Embarazo, parto y crianza intervenida.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. La maternidad fue el foco biopolítico de resguardo demográfico del estado nacional naciente."
+            },
+            {
+                id: 41,
+                topic: "Género",
+                q: "El descubrimiento y la difusión de la pildora anticonceptiva se situò en un escenario complejo, en el cual la satisfacción por un método exclusivamente femenino de alta eficacia, que no interferia en el coito y que podía usarse más allá del consentimiento masculino, se combinaba con el rechazo a las politicas neomalthusianas y a la utilización de los cuerpos femeninos como campo de prueba médica.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. Expresa la profunda contradicción política, científica e identitaria de los años 60."
+            },
+            {
+                id: 42,
+                topic: "Género",
+                q: "Uno de los motivos que reforzó el interés de los países del 'Primer Mundo' en la aparición de la pildora anticonceptiva fue la preocupación por el acelerado crecimiento demográfico que se vivía desde la segunda posguerra, sobre todo en los países del 'Tercer Mundo'.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. El control de la natalidad formaba parte de las estrategias geopolíticas de seguridad alimentaria e industrial global."
+            },
+            {
+                id: 43,
+                topic: "Género",
+                q: "Durante el gobierno de Perón, en 1974 se prohibió la venta libre de anticonceptivos y las actividades que tuvieran como fin el control de la natalidad en organismos y dependencias públicas. Dicho decreto estuvo vigente hasta 2010.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. La prohibición no estuvo vigente de manera continua y restrictiva absoluta hasta 2010; las leyes y programas reproductivos cambiaron de forma sustantiva en los años 80 y 2000."
+            },
+            {
+                id: 44,
+                topic: "Género",
+                q: "Las asimetrias sociales entre varones y mujeres operan estableciendo vulnerabilidades differentials relativas a los roles sociales que se pueden y deben cumplir en el marco del patriarcado. Determina modos diferentes de vivir, enfermar, consultar, acceder a los servicios de salud y morir.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. El género condiciona de manera determinante la salud y la atención médica."
+            },
+            {
+                id: 45,
+                topic: "Género",
+                q: "La masculinidad hegemónica dicta que los varones deben cumplir con un rol de proveedores económicos y sociales. Su socialización primaria les inhibe la capacidad de registro de sus propios malestares, lo que hace que lleguen tarde las consultas, lo cual complica sus pronósticos.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. Expresa la desventaja de supervivencia que surge de los mandatos de insensibilidad al dolor de la masculinidad."
+            },
+            {
+                id: 46,
+                topic: "Género",
+                q: "Las únicas diferencias epidemiológicas entre varones y mujeres tienen que ver con la capacidad de gestar y lo relativo a las diferencias sexuales y reproductivas.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. Existen determinantes sociales y de exposición al riesgo profundamente diferenciados por el género que van más allá del aparato reproductor."
+            },
+            {
+                id: 47,
+                topic: "Género",
+                q: "La ciencia y la medicina basada en la evidencia son herramientas objetivas que intentan explicar la evolución natural de los procesos de salud-enfermedad-atención.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. La medicina basada en evidencia no es neutral u objetiva pura, arrastra sesgos androcéntricos e históricos."
+            },
+            {
+                id: 48,
+                topic: "Género",
+                q: "La utilización de la categoría sexo en los análisis de riesgos epidemiológicos reducen los cuerpos y los sujetos que los habitan a dos posiciones: mujer-cis o varón-cis. Todas las otras posibilidades quedan invisibilizadas y por lo tanto excluidas.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. La epidemiología tradicional opera bajo un binarismo biológico cerrado."
+            },
+            {
+                id: 49,
+                topic: "Género",
+                q: "El termino interseccionalidad acuñada por una feminista afroestaounidense en 1989 es fundamental para comprender y determinar las desigualdades que sufren las mujeres en sus diversidades para pensar sus diagnósticos.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. Kimberly Crenshaw acuñó el término para visibilizar el cruce de racismo, clasismo y sexismo."
+            },
+            {
+                id: 50,
+                topic: "Campos",
+                q: "Para Gastón de Sousa Campos la Clínica del Sujeto Ampliada considera solo la enfermedad como un todo integral.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. El núcleo de la Clínica del Sujeto es que prioriza la vida e historia del sujeto por encima de la pura entidad diagnóstica."
+            },
+            {
+                id: 51,
+                topic: "Campos",
+                q: "La clinica que ignora el contexto y las interacciones entre sujetxs hace a la práctica menos eficiente aún desde el punto de vista clinico.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. Ignorar el contexto del paciente reduce drásticamente la adhesión al tratamiento."
+            },
+            {
+                id: 52,
+                topic: "Campos",
+                q: "La Clínica Reformulada o del Sujeto amplía los limites de la Clínica-Clinica u oficial sin dejar de lado la enfermedad y la dolencia, pero prioriza al sujeto, su contexto y su ser con vida propia.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. Integra el saber de la patología con el respeto de la singularidad existencial."
+            },
+            {
+                id: 53,
+                topic: "Campos",
+                q: "La clínica es tanto ciencia como arte como una versión única y totalizadora sin variantes existentes.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. Existen variantes, crisis de paradigmas y diferentes abordajes clínicos históricos."
+            },
+            {
+                id: 54,
+                topic: "Campos",
+                q: "La clínica degradada incluye Intereses económicos y desequilibrios de poder por sobre los intereses de ixs usuarixs.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. Campos describe la clínica degradada como la mercantilización y deshumanización técnica de la salud."
+            },
+            {
+                id: 55,
+                topic: "Campos",
+                q: "Existe una relación entre el modelo pedagógico adoptado por cada facultad de medicina, los tres tipos de clínicas propuestas por de Sousa Campos, el modelo médico hegemónico, la multiplicidad de especialidades, el manejo de la incertidumbre y la interdisciplina.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. La educación fragmentada del médico reproduce la lógica biologicista del MMH."
+            },
+            {
+                id: 56,
+                topic: "Testa",
+                q: "Mario Testa entiende como sinónimos la actitud y la aptitud critica para reflexionar para la acción.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. La actitud crítica es un posicionamiento ético/ideológico; la aptitud crítica es la capacidad de análisis teórico-metodológico."
+            },
+            {
+                id: 57,
+                topic: "Testa",
+                q: "La actitud critica desde el motivo 'porqué' del proceso de socialización actúa sobre la realidad para transformarla por medio de la acción.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. Es la aptitud y el compromiso transformador activo el que interviene; la actitud es de disconformidad teórica básica."
+            },
+            {
+                id: 58,
+                topic: "Testa",
+                q: "Es dificil modificar la actitud critica y es posible fortalecer la aptitud critica solo por medio de la educación universitaria en la facultad de medicina.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. La facultad de medicina tradicional tiende a desalentar ambas en pos de reproducir el biologicismo pragmático."
+            },
+            {
+                id: 59,
+                topic: "Testa",
+                q: "Actores del Estado, considerado como 'espacio social', son los sujetos u organizaciones con capacidad de introducir temas de debate en la agenda de este. Hay una relación entre ser actor del Estado y tener aptitud critica como sujetos transformadores en los espacios de salud como futuros médicxs para generar una clínica ampliada o del sujeto.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. Ser un sujeto político consciente permite desarmar el modelo médico jerárquico."
+            },
+            {
+                id: 60,
+                topic: "Campos",
+                q: "En la clínica Ixs medicxs nunca hacen deben hacer politica en la atención diaria.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. Toda práctica e intervención clínica tiene un trasfondo ideológico y político implícito."
+            },
+            {
+                id: 61,
+                topic: "Mehry",
+                q: "El concepto de 'integralidad' surge, dice Mehry, en oposición al modelo biologicista y hegemónico.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. Nace de los movimientos de reforma sanitaria que demandaban un trato totalizador del paciente."
+            },
+            {
+                id: 62,
+                topic: "Mehry",
+                q: "Para que haya integralidad deben cumplirse ciertas condiciones básicas necesarias. Ellas son simplemente estas dos: Encuentro e Interferencia mutua.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. Demanda además condiciones organizacionales, estructurales y el manejo libre del tiempo asistencial."
+            },
+            {
+                id: 63,
+                topic: "Mehry",
+                q: "La integralidad de la práctica, que produce cuidado, sostiene Mehry, se vincula con el reconocimiento de lo diferente y singular del otro en su forma de vivir, de pensar, de estar en el mundo, de desear como productor de vida y de otros saberes. Se trata de dejarse afectar por el encuentro para construir, juntos, las estrategias cuidadoras.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. La salud colectiva prioriza el cuidado compartido antes que el tratamiento vertical."
+            },
+            {
+                id: 64,
+                topic: "Mehry",
+                q: "Las tecnologias en Salud son solo el conjunto de los instrumentos que utilizan los médicos en su trabajo cotidiano.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. Son todo el corpus de saberes, técnicas y relaciones sociales que estructuran la atención."
+            },
+            {
+                id: 65,
+                topic: "Mehry",
+                q: "Las tecnologías blandas son las relaciones que Ixs medicxs entablan con su instrumentación y sus pacientes.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. Son las tecnologías de relación exclusiva (acogida, escucha, empatía) sin intermediación mecánica directa."
+            },
+            {
+                id: 66,
+                topic: "Mehry",
+                q: "El trabajo en salud debe ser globalmente capturado por la lógica del trabajo muerto.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. El trabajo vivo en acto (la interacción inmediata) es la clave del cuidado de calidad."
+            },
+            {
+                id: 67,
+                topic: "Mehry",
+                q: "En un buen encuentro, las tecnologías blandas operan en todo momento y orientan el uso de otras tecnologías.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. Son la guía relacional sobre la cual se dosifican las tecnologías duras o leve-duras."
+            },
+            {
+                id: 68,
+                topic: "Mehry",
+                q: "El trabajo médico para realizarse como una forma de cuidado en salud debe concretarse por medio de la dimensión cuidadora.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. Debe desarmar los mecanismos tradicionales de cura objetivante para integrar el cuidado vivo."
+            },
+            {
+                id: 69,
+                topic: "Mehry",
+                q: "La dimensión cuidadora, para Mehry, posee la característica de entender al otro como un producto en donde la solución del problema es esencial.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. El otro no es un producto; es un sujeto activo que co-produce su propia curación."
+            },
+            {
+                id: 70,
+                topic: "Salud Colectiva",
+                q: "La Salud Colectiva forma parte de las corrientes funcionalistas.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. Nace de corrientes críticas marxistas e históricas contrarias al funcionalismo norteamericano."
+            },
+            {
+                id: 71,
+                topic: "Salud Colectiva",
+                q: "La Medicina Social Latinoamericana busca integrar las dimensiones culturales y sociales en sus reflexiones, buscando excluir la dimensión económica.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. La dimensión socioeconómica e histórica de la desigualdad es el pilar central de su análisis."
+            },
+            {
+                id: 72,
+                topic: "Salud Colectiva",
+                q: "Antonio Gramsci es un autor que contribuye a desentrañar las formas de dominación que se dan en el modo de producción capitalista.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. Sus teorías sobre la hegemonía cultural fundamentan las críticas al MMH de Menéndez."
+            },
+            {
+                id: 73,
+                topic: "Salud Colectiva",
+                q: "Silvia Federici es una autora que critica el carácter economicista de los análisis marxistas.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. En realidad expande el análisis de la acumulación originaria integrando el trabajo de reproducción de las mujeres."
+            },
+            {
+                id: 74,
+                topic: "Salud Colectiva",
+                q: "La noción de interdependencia de N Elias busca dar cuenta de la interacción que hay entre la estructura social y la acción Intencionada por los individuos.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. Su analogía del juego supera la clásica dicotomía entre sociedad y sujeto."
+            },
+            {
+                id: 75,
+                topic: "Salud Colectiva",
+                q: "Las categorías analíticas buscan dar cuenta de la acción de los sujetos como una práctica social.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. Son herramientas epistémicas para comprender la praxis colectiva."
+            },
+            {
+                id: 76,
+                topic: "Salud Colectiva",
+                q: "El Concepto Operacional es un concepto propio del Modelo Médico Hegemónico.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. El concepto operacional es un instrumento de la planificación normativa tecnocrática."
+            },
+            {
+                id: 77,
+                topic: "Salud Colectiva",
+                q: "Hegemonía: es la capacidad de un sector social de hacer creer que sus intereses son los intereses de la mayoría.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. Define el mecanismo cultural de validación del dominio de una clase."
+            },
+            {
+                id: 78,
+                topic: "Salud Colectiva",
+                q: "Clase, género y raza son Categorias analiticas.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. Se utilizan para deconstruir la complejidad del proceso salud-enfermedad-atención."
+            },
+            {
+                id: 79,
+                topic: "Salud Colectiva",
+                q: "La Salud Colectiva promueve la búsqueda de leyes generales.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. Se centra en el análisis histórico-particular de los grupos humanos frente al universalismo abstracto."
+            },
+            {
+                id: 80,
+                topic: "Salud Colectiva",
+                q: "El surgimiento de la medicina social, y la idea de la medicina como ciencia social surge en un contexto politico complejo, donde se problematizan principalmente las cuestiones de salud ligadas al saneamiento del medio.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. Surge centralmente vinculada a los problemas de explotación laboral y de condiciones de vida obreras."
+            },
+            {
+                id: 81,
+                topic: "Salud Colectiva",
+                q: "Uno de los principios que establecia el proyecto de Salud Pública era:",
+                options: [
+                    "El estado debe proveer acciones de saneamiento para evitar enfermedades.",
+                    "El estado debe velar por la salud de sus ciudadanos en todos sus aspectos: sociales, económicos, de medio ambiente.",
+                    "La sociedad debe cuidar, mediante acciones colectivas, la salud de sus miembros."
+                ],
+                correct: 1,
+                reason: "La visión de la medicina social demanda el rol del Estado como garante supremo y universal del bienestar."
+            },
+            {
+                id: 82,
+                topic: "Salud Colectiva",
+                q: "Segun R. Virchow, las epidemias 'artificiales' son:",
+                options: [
+                    "Producto del accionar de la sociedad sobre la naturaleza",
+                    "Indicadoras de contradicciones sociales.",
+                    "Inevitables, pues son producto de la fuerza de la naturaleza."
+                ],
+                correct: 1,
+                reason: "Virchow planteó que las epidemias artificiales muestran los defectos de la organización política y social de un territorio."
+            },
+            {
+                id: 83,
+                topic: "Salud Colectiva",
+                q: "El alcance de la medicina social se puede delimitar en 3 aspectos: 1) salud relacionada con la comunidad, 2) salud como valor social, 3) salud y prevención del Estado.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. El tercer aspecto es política social compartida y no se reduce a una acción preventiva unilateral del aparato del Estado."
+            },
+            {
+                id: 84,
+                topic: "Salud Colectiva",
+                q: "Una de las diferencias fundamentales entre la salud pública convencional y ampliada es cómo entienden el carácter biológico y social de la salud-enfermedad.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. La tensión principal radica radicalmente en la forma de conceptualizar, reconstruir e intervenir sobre lo social."
+            },
+            {
+                id: 85,
+                topic: "Salud Colectiva",
+                q: "Entre las diferencias metodológicas de la salud pública convencional y ampliada se encuentran las herramientas de análisis. La SP ampliada configura e incorpora categorías de análisis que permiten introducirse en los procesos más complejos y profundos del colectivo.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. Al incorporar categorías de clase, etnia y género se desmarca del simple cálculo probabilístico del riesgo."
+            },
+            {
+                id: 86,
+                topic: "Salud Colectiva",
+                q: "La salud pública convencional, podemos decir que es 'funcional al sistema', a diferencia de la ampliada, ya que esta última cuestiona al orden social.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. La SP convencional asume las desigualdades como dadas y no busca cambiar el régimen de producción."
+            },
+            {
+                id: 87,
+                topic: "Salud Colectiva",
+                q: "Tanto la salud pública convencional como la ampliada, al momento de explicar la Salud-Enfermedad, estudian los determinantes sociales identificando los factores causales tanto biomédicos como sociales.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. La SP ampliada rechaza la noción causal determinista simple y propone procesos de determinación social de carácter dialéctico."
+            },
+            {
+                id: 88,
+                topic: "Salud Colectiva",
+                q: "La salud colectiva y la medicina social son corrientes que nacieron en Brasil.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 1,
+                reason: "Falso. La medicina social nació en Alemania y Francia en 1848; la salud colectiva se desarrolló en Brasil y el resto de América Latina en los años 70."
+            },
+            {
+                id: 89,
+                topic: "Salud Colectiva",
+                q: "Uno de los desafios de la salud colectiva se fundamenta en la dificultad para llevar a cabo las transformaciones estructurales que propone.",
+                options: [
+                    "Verdadero",
+                    "Falso"
+                ],
+                correct: 0,
+                reason: "Verdadero. Requiere rearticulaciones profundas del sistema económico y político."
+            },
+            {
+                id: 90,
+                topic: "Modelos",
+                q: "Menéndez, en su artículo 'El modelo médico y la Salud de los Trabajadores' sostiene que el biologicismo es el rasgo más saliente del modelo médico hegemónico porque:",
+                options: [
+                    "Porque posibilita la exclusión de las condiciones sociales y económicas en la explicación de la causalidad.",
+                    "Porque permite considerar la evolución y la historia natural de la enfermedad.",
+                    "Porque incorpora activamente el papel de los sujetos que se enferman con todos sus condicionantes estructurales, sociales y económicos.",
+                    "Porque es la dimensión que se caracteriza por operar en la cotidianeidad de los sujetos y grupos sociales."
+                ],
+                correct: 0,
+                reason: "El biologicismo aísla el cuerpo físico de la estructura de producción que lo daña."
+            },
+            {
+                id: 91,
+                topic: "Modelos",
+                q: "El proceso salud/enfermedad como hecho social, es un dispositivo con capacidad potencial:",
+                options: [
+                    "Para despolitizar los condicionantes sociales que explican la estructura del proceso salud/enfermedad.",
+                    "Para cuestionar las instituciones médicas y la sociedad en la cual operan dichas instituciones médicas.",
+                    "Porque permite delegar la salud/enfermedad en manos de las instituciones del Estado.",
+                    "Porque permite excluir la trayectoria de los saberes médicos y dar lugar a la medicina popular."
+                ],
+                correct: 1,
+                reason: "Como hecho social, desviste los intereses de clase y poder que determinan las políticas y prácticas sanitarias."
+            },
+            {
+                id: 92,
+                topic: "Modelos",
+                q: "La Medicina Social surge en 1848, de la mano de Rudolph Virchow, y en un contexto social complejo. En este marco, aquel científico y pensador, considerado padre de la Medicina Social plantea:",
+                options: [
+                    "Los problemas de salud que aquejan a una sociedad, están fuertemente condicionados por factores económicos, y reflejan las cuestiones sanitarias relacionadas con los estilos de vida.",
+                    "La medicina tiene carácter social, y es el Estado quien debe responsabilizarse por la salud de sus pobladores.",
+                    "La salud es un problema que se identifica con aspectos culturales, y es primordial que la sociedad modifique estilos de vida para mejorarlo.",
+                    "La industrialización trae consigo problemas de salud relacionados con el ámbito laboral, lo que refleja las deficiencias de la sociedad."
+                ],
+                correct: 1,
+                reason: "Virchow acuñó la idea del rol central de la salud como derecho político de los ciudadanos provisto por el Estado."
+            },
+            {
+                id: 93,
+                topic: "Modelos",
+                q: "En los inicios de la Medicina Social, se plantea una ruptura característica en la concepción de salud-enfermedad que se manejaba hasta entonces. Esta ruptura se basa fundamentalmente en:",
+                options: [
+                    "Comprender a la salud como un estado bio-psico-social, e investigar a partir de variables epidemiológicas, los factores que la alteran.",
+                    "Reconocer el carácter mecanicista y reduccionista del concepto de salud, para dar respuesta desde una mirada integral, histórica y social.",
+                    "Ampliar nuevas perspectivas para el abordaje multicausal, entendiendo el PSEA como un estado que depende tanto de factores sociales como biológicos.",
+                    "Entender a la salud como un proceso multicausal, donde la suma de factores de riesgo determina la enfermedad."
+                ],
+                correct: 1,
+                reason: "Se rompe con la noción mecanicista y anatomoclínica pura heredada de la revolución científica."
+            },
+            {
+                id: 94,
+                topic: "Mehry",
+                q: "El concepto de 'integralidad' según Mehry surge por:",
+                options: [
+                    "Por la relación entre el modelo biologicista y hegemónico.",
+                    "Por oposición al modelo biologicista y hegemónico.",
+                    "Para quedarse con el punto de vista del sujeto.",
+                    "Para brindar una mejor forma de atención."
+                ],
+                correct: 1,
+                reason: "La integralidad es un contrapeso dialéctico al fraccionamiento de especialidades del MMH."
+            },
+            {
+                id: 95,
+                topic: "Mehry",
+                q: "Cuando hablamos de tecnologías en Salud nos referimos a:",
+                options: [
+                    "El conjunto de los instrumentos que utilizan los médicos en su trabajo cotidiano.",
+                    "Los dispositivos técnicos y tecnológicos que disponen los profesionales de salud para su práctica.",
+                    "Las herramientas tecnológicas que brindan a los médicos la oportunidad de desempeñar su labor de la mejor manera para la salud del paciente.",
+                    "El conjunto de saberes e instrumentos que manifiesta la red de relaciones sociales en que sus agentes articulan su práctica en una totalidad social."
+                ],
+                correct: 3,
+                reason: "Mehry expande el concepto: abarca la organización de los procesos asistenciales y las relaciones interpersonales."
+            },
+            {
+                id: 96,
+                topic: "Género",
+                q: "Respecto de la aparición de la píldora anticonceptiva en la década del '60 y su utilización:",
+                options: [
+                    "Fue unánimemente celebrada por el feminismo de la época.",
+                    "Fue fomentada y divulgada por el Estado Nacional porque consideraba que debía contraer el crecimiento demográfico, sobre todo de las clases bajas.",
+                    "Contó con el apoyo local de la SOGIBA (Sociedad de Obstetricia y Ginecología de Buenos Aires) por considerarla una herramienta para reforzar la libre determinación y autonomía de las mujeres.",
+                    "A nivel local quedó sujeta a la buena voluntad de los médicos y a la capacidad de demanda de las parejas y de las mujeres."
+                ],
+                correct: 3,
+                reason: "En Argentina, el acceso no fue estructurado o promovido masivamente por el Estado de forma liberadora; dependió de factores particulares locales."
+            },
+            {
+                id: 97,
+                topic: "Género",
+                q: "Respecto de la distribución diferencial de los riesgos para morbimortalidad planteada por D. Tajer:",
+                options: [
+                    "La mayor sobrevida de las mujeres se da con mayor carga de discapacidad.",
+                    "La denominada 'sobremortalidad masculina' se da entre dos segmentos etarios: 35 a 54 años y mayores de 65 años.",
+                    "En el último siglo no identifica una morbimortalidad diferencial vinculada al género.",
+                    "La mortalidad diferencial se debe a las diferencias biológicas entre hombres y mujeres."
+                ],
+                correct: 0,
+                reason: "Tajer evidencia la paradoja de género: las mujeres viven más pero padecen más años con dolencias crónicas."
+            },
+            {
+                id: 98,
+                topic: "Testa",
+                q: "Según M Testa, las categorías analíticas son:",
+                options: [
+                    "Inventos que se elaboran con fines prácticos.",
+                    "Guías teóricas que sirven para poder reflexionar sobre la acción concreta.",
+                    "Elementos fundamentales para la elaboración teórica de la estructura económica del sistema de salud.",
+                    "Categorías que se definen para dar cuenta de lo sectorial."
+                ],
+                correct: 1,
+                reason: "No son objetos reales, sino instrumentos reflexivos para orientar las transformaciones en salud."
+            },
+            {
+                id: 99,
+                topic: "Salud Colectiva",
+                q: "Respecto de La analogía del juego de ajedrez de N Elias:",
+                options: [
+                    "La utiliza para presentar la superioridad que tiene la estructura social en la acción particular de cada sujeto.",
+                    "La utiliza para dar cuenta de la igualdad en la que se ubican los sujetos en la estructura social.",
+                    "La utiliza para dar cuenta de las nociones de reglas y recursos, intentando superar la dicotomía entre estructura y acción de los sujetos.",
+                    "La utiliza para analizar los juegos en los que se ubican los sujetos en cada campo social."
+                ],
+                correct: 2,
+                reason: "Elias muestra cómo el sujeto juega activamente dentro de un sistema dinámico de reglas interdependientes."
+            },
+            {
+                id: 100,
+                topic: "Salud Pública",
+                q: "Para Eduardo Menéndez la salud pública es: indique opción CORRECTA:",
+                options: [
+                    "Un sector político-técnico del Estado que utiliza y saber científico y técnico, según las condiciones económicas-políticas dominantes.",
+                    "Un sector político-técnico del Estado que utiliza el saber técnico y científico en forma democrática.",
+                    "Un sector político-técnico del Estado que reconoce las dimensiones sociales.",
+                    "Un sector político-técnico del Estado que utiliza el saber técnico y científico solamente."
+                ],
+                correct: 0,
+                reason: "Menéndez sitúa a la SP como parte de los dispositivos estatales de regulación del orden social."
+            },
+            {
+                id: 101,
+                topic: "Campos",
+                q: "Para Gastón Wagner de Souza Campos existen más de un tipo de clínicas. Indicar los tipos de clínicas según este autor. Indique la opción CORRECTA",
+                options: [
+                    "La clínica-clínica u oficial, la clínica degradada y la clínica del sujeto.",
+                    "La clínica-clínica u oficial, la clínica ampliada y la clínica del sujeto.",
+                    "La clínica-clínica, la clínica oficial y la clínica del sujeto.",
+                    "La clínica-clínica u oficial, la clínica ampliada o degradada y la clínica del sujeto."
+                ],
+                correct: 0,
+                reason: "Estas tres variantes categorizan las formas que asume el ejercicio clínico en las instituciones."
+            },
+            {
+                id: 102,
+                topic: "Testa",
+                q: "Según Mario Testa la actitud critica implica, indique respuesta CORRECTA:",
+                options: [
+                    "No confiar en que la forma en que los hechos se presentan es la única posible, asumiendo una actitud de disconformidad con la realidad.",
+                    "No confiar en que la forma en que los hechos se presentan es la única posible, asumiendo una actitud de disconformidad con la realidad y aptitud crítica.",
+                    "No confiar en que la forma en que los hechos se presentan es la única posible, asumiendo una actitud de disconformidad con la realidad para poder transformarla con acciones concretas.",
+                    "Una aptitud crítica como capacidad adquirida para examinar reflexivamente los hechos de la realidad y generar acciones."
+                ],
+                correct: 0,
+                reason: "La actitud se basa fundamentalmente en cuestionar el sentido común instituido sobre lo dado."
+            },
+            {
+                id: 103,
+                topic: "Campos",
+                q: "Para Gastos Wagner de Souza Campos el método PAIDEIA sugiere un modo para atenuar la pelea entre la demanda infinita y la finitud de los recursos, involucrando a, indique respuesta CORRECTA:",
+                options: [
+                    "Involucrando a pacientes y las familias en la producción de su propia salud y autocuidado.",
+                    "Involucrando a los pacientes, a las familias y a la comunidad en la producción de su propia salud, estimulando el auto-cuidado, la educación en salud y el descubrimiento de 'cuidadores' que ayuden al equipo en el cuidado.",
+                    "Involucrando a los pacientes, a las familias y a la comunidad en la producción de su propia salud, estimulando el auto-cuidado, la educación en salud. Se persigue estimular espacios que se apliquen en todos los contextos.",
+                    "Involucrando a los pacientes, a las familias y a la comunidad en la producción de su propia salud, estimulando el auto-cuidado, la educación en salud sin la presencia de cuidadores."
+                ],
+                correct: 1,
+                reason: "Propone un rol activo de la red comunitaria en la construcción de su proceso saludable."
+            },
+            {
+                id: 104,
+                topic: "Campos",
+                q: "La clínica del sujeto demanda:",
+                options: [
+                    "Escasa valoración del en equipo y un hacer comunicativo.",
+                    "La dolencia como entidad, sustituya al ser y al sujeto que realmente es.",
+                    "El desafío de pasar de este campo de certezas al de la incertidumbre y la complejidad.",
+                    "No reconoce los límites de cualquier saber estructurado."
+                ],
+                correct: 2,
+                reason: "Obliga al médico a lidiar con el componente único, dinámico y existencial del enfermo."
+            },
+            {
+                id: 105,
+                topic: "Salud Colectiva",
+                q: "Con relación a las contribuciones de Rudolf Virchow a la medicina social, señale la opción correcta:",
+                options: [
+                    "El descubrimiento del germen causal de la fiebre tifoidea ha hecho de Virchow un referente incuestionable de la medicina moderna.",
+                    "La prevención de las enfermedades y epidemias es, para nuestro autor, básicamente un problema biológico, aunque con derivaciones también en lo económico y cultural.",
+                    "Puede considerarse a Luis Pasteur como un aliado político de Virchow en pos del desarrollo de una nueva concepción sanitaria.",
+                    "Virchow dio un paso cualitativo importante al considerar la estructura política y social como origen de los males de los pobres y, sobre todo, al considerar que la acción política entraba dentro del campo de la medicina y las reformas sociales dentro del interés y obligaciones del médico."
+                ],
+                correct: 3,
+                reason: "Marcó la pauta histórica de vincular reformas socio-políticas con salud poblacional."
+            },
+            {
+                id: 106,
+                topic: "Mehry",
+                q: "La definición de encuentro según E. Mehry, debe incluir las siguientes características:",
+                options: [
+                    "Hace crecer la interferencia mutua y aumenta nuestra capacidad de acción.",
+                    "Aumenta nuestra potencia de actuar y donde hay interferencia mutua.",
+                    "Posibilita nuestra capacidad de actuar y de realizar encuentros liberadores.",
+                    "Aumenta nuestra potencia para actuar, una serie de posibilidades e incertidumbres, y fomenta la interferencia mutua."
+                ],
+                correct: 3,
+                reason: "Un buen encuentro genera potencia de obrar y transformación bidireccional."
+            },
+            {
+                id: 107,
+                topic: "Género",
+                q: "La utilización de la categoría sexo en los análisis de riesgos epidemiológicos reducen los cuerpos y los sujetos que los habitan en:",
+                options: [
+                    "Hombres, mujeres, gays y lesbianas.",
+                    "A dos posiciones: mujer-cis o varón-cis.",
+                    "Mujeres, hombres y disidencias.",
+                    "Mujeres, hombres y Homosexuales."
+                ],
+                correct: 1,
+                reason: "La reducción binaria sesga y expulsa identidades no normativas del análisis."
+            },
+            {
+                id: 108,
+                topic: "Modelos",
+                q: "Potencialmente el modelo médico hegemónico tiene la capacidad de llevar a cabo las siguientes funciones, EXCEPTO:",
+                options: [
+                    "Socialización.",
+                    "Legitimación.",
+                    "Curativo/Preventiva.",
+                    "Control."
+                ],
+                correct: 0,
+                reason: "Las funciones descritas por Menéndez son legitimación, control y curación. No incluye la socialización libre como rol institucional directo primario."
+            },
+            {
+                id: 109,
+                topic: "Salud Colectiva",
+                q: "Un concepto útil para entender los diferentes tipos de vínculos que contraemos a lo largo de la vida es el de:",
+                options: [
+                    "Transferencia.",
+                    "Dependencia.",
+                    "Interferencia.",
+                    "Autodeterminación."
+                ],
+                correct: 0,
+                reason: "La transferencia conceptualiza la proyección emocional sobre los cuidadores y terapeutas."
+            },
+            {
+                id: 110,
+                topic: "Matus",
+                q: "¿Cuál es a su juicio la mejor definición de lo que es un problema?",
+                options: [
+                    "Es un obstáculo para avanzar hacia lo que quiere el gobernante.",
+                    "Es el resultado del juego para un actor, siempre que éste lo declare insatisfactorio y evitable.",
+                    "Es una dificultad que, para ser abordada, requiere que se convoque a la instancia organizacional superior con mayor capacidad de intervención.",
+                    "Constituye una situación desagradable, incómoda, que molesta para trabajar correctamente."
+                ],
+                correct: 1,
+                reason: "Un problema es situacional: requiere insatisfacción de un actor con posibilidad teórica de cambio."
+            },
+            {
+                id: 111,
+                topic: "Matus",
+                q: "Las siguientes afirmaciones respecto de los problemas son verdaderas, excepto:",
+                options: [
+                    "Cada problema coexiste e interactúa con otros problemas parciales en el contexto del gran juego o macroproblema.",
+                    "El enfrentamiento de las amenazas y las oportunidades es un acto proactivo.",
+                    "Un problema 'cuasiestructurado' requiere una solución definitiva inmediata.",
+                    "Ninguna es correcta."
+                ],
+                correct: 2,
+                reason: "Un problema cuasiestructurado no posee soluciones inmediatas ni definitivas; demanda constante concertación."
+            },
+            {
+                id: 112,
+                topic: "Matus",
+                q: "¿Cuál de las siguientes frases es incorrecta?",
+                options: [
+                    "Existe una tendencia a creer que se conocen previamente las soluciones, y acomodar la explicación del problema a las soluciones preconcebidas.",
+                    "Existe una tendencia en cada actor a creer que su explicación y su solución son las correctas.",
+                    "Muchos problemas concentran esfuerzos, pocos problemas dispersan efectos.",
+                    "Respecto del abordaje de problemas 'cuasiestructurados', más que pensar en términos de resolución de los problemas, convendría pensar en términos de intercambio de problemas."
+                ],
+                correct: 2,
+                reason: "La frase correcta e inversa es: 'Muchos problemas dispersan esfuerzos, pocos problemas concentran efectos'."
+            },
+            {
+                id: 113,
+                topic: "Testa",
+                q: "En términos de Mario Testa, diría que un problema es complejo y bien definido, cuando:",
+                options: [
+                    "Tiene pocas variables, pero no se conoce cómo se vinculan entre sí, por lo cual no se sabe cómo actuar sobre ellas.",
+                    "Tiene muchas variables y no se conoce cómo se vinculan entre sí ni cómo actuar sobre ellas.",
+                    "Tiene muchas variables, pero se conoce con cierta precisión cómo se vinculan entre sí, y por ende se sabe cómo actuar sobre ellas.",
+                    "Tiene pocas variables, pero a pesar de ello, es muy difícil poder actuar sobre ellas."
+                ],
+                correct: 2,
+                reason: "La definición sistémica une cantidad de elementos con la gobernabilidad e instrumentalización técnica."
+            },
+            {
+                id: 114,
+                topic: "Matus",
+                q: "En términos de Carlos Matus, diría que un problema es 'cuasiestructurado' cuando, para abordarlo, se necesita:",
+                options: [
+                    "Juicio humano y procesamiento técno-político.",
+                    "Adaptación de módulos de acción semiprocesados.",
+                    "Aplicación de sistemas normatizados.",
+                    "Inversión en normatización."
+                ],
+                correct: 0,
+                reason: "Enfrentar estos problemas requiere conciliar saberes técnicos con la voluntad y peso político de los actores."
+            },
+            {
+                id: 115,
+                topic: "Matus",
+                q: "Respecto del concepto de 'nudo crítico', ¿qué afirmación es incorrecta?",
+                options: [
+                    "Constituye el punto máximo de tensión entre los actores que disputan en torno al problema.",
+                    "Son aquellas causas del problema que, de ser atacadas eficazmente, tienen alto impacto sobre el 'vector descriptor del problema'.",
+                    "Son un centro práctico de acción.",
+                    "Cada nudo crítico demanda acción/es sobre él."
+                ],
+                correct: 0,
+                reason: "El nudo crítico no es el punto de máxima tensión política necesariamente; es donde la acción técnica y política tiene mayor impacto sobre el problema."
+            },
+            {
+                id: 116,
+                topic: "Gestión",
+                q: "El concepto de 'eficiencia' remite a:",
+                options: [
+                    "...la probabilidad de que un fenómeno produzca consecuencias hasta el máximo de su capacidad potencial -en condiciones experimentales-.",
+                    "...la probabilidad de que un fenómeno produzca consecuencias hasta el máximo de su capacidad potencial -en condiciones reales-.",
+                    "...si el impacto generado justifica el costo de la acción.",
+                    "...si el impacto fue conseguido."
+                ],
+                correct: 2,
+                reason: "Relaciona de forma directa los logros de impacto con los recursos e inversión consumida."
+            },
+            {
+                id: 117,
+                topic: "Mintzberg",
+                q: "Las siguientes afirmaciones caracterizan a las 'burocracias profesionales', excepto:",
+                options: [
+                    "El poder se encuentra centralizado en los jefes.",
+                    "Hay amplios márgenes de autonomía de los trabajadores de la base operativa.",
+                    "Los procedimientos estandarizados en el staff de tecnoestructura (comités), se cumplirán sólo si los profesionales del núcleo operativo deciden aceptarlos y acatarlos.",
+                    "Las áreas de apoyo tienden a adoptar, como configuración organizativa propia, una lógica más parecida a la de la burocracia medinica."
+                ],
+                correct: 0,
+                reason: "El poder en la burocracia profesional está sumamente descentralizado en los agentes calificados del núcleo operativo."
+            },
+            {
+                id: 118,
+                topic: "Epidemiología",
+                q: "Uno de los elementos innovadores del modelo para abordar integralmente la mortalidad materna es:",
+                options: [
+                    "Incorporar la biopsia verbal para entrevistar a familiares y personas cercanas a la persona fallecida.",
+                    "Utilizar la autopsia verbal en casos seleccionados.",
+                    "Utilizar exclusivamente metodologías cualitativas para contrarrestar el enfoque clásico cuantitativo.",
+                    "Incorporar una cuarta demora en el análisis de las tres demoras clásico, que en realidad debiera ser la primera: la demora en la búsqueda de medidas anticeptivas para la planificación oportuna del embarazo."
+                ],
+                correct: 3,
+                reason: "Visibiliza la falta de control reproductivo y autonomía biológica como la brecha estructural de partida."
+            },
+            {
+                id: 119,
+                topic: "Epidemiología",
+                q: "El aporte de la Salud Colectiva a la construcción del indicador mortalidad Infantil podria darse desde:",
+                options: [
+                    "La integración de los aspectos sociales y culturales que influyen en los modos de vida de una población, en el marco de la determinación social de la salud para construir desde allí, herramientas productoras de transformación.",
+                    "El aporte de una Epidemiología que analice la estructura social e identifique los factores de riesgo críticos y proponga cambios a partir de políticas públicas.",
+                    "La relación causal entre pobreza estructural y riesgo en poblaciones vulnerables, lo que se, traduce en una alta tasa de mortalidad infantil.",
+                    "Una perspectiva multicausal de la muerte infantil, en poblaciones expuestas a condiciones adversas, tales como déficit de recursos ostes accesibilidad a los servicios de salud.s"
+                ],
+                correct: 0,
+                reason: "La SC propone trascender la multicausalidad y situarse en los procesos integrales de determinación social."
+            },
+            {
+                id: 120,
+                topic: "Epidemiología",
+                q: "Si analizamos la Mortalidad Infantil desde sus aspectos teòrico metodològicos podríamos decir que:",
+                options: [
+                    "Analiza diversas variables teniendo en cuenta tanto las condiciones de vida como los aspectos socio-culturales que influyen en la muerte de un niñx.",
+                    "Es un indicador que se construye a partir de relación causal (riesgo) por lo que la implementación de politicas públicas ha logrado adecuada reducciòn.",
+                    "Es suficiente para generar cambios estructurales en los modos de vivir de una población, requierre una mirada desde la epidemiologia socio-cultural.",
+                    "Se reduce a un valor numérico toma algunos aspectos sociales como un facter de riesgo, y no lo incluye para proponer cambios estructurales."
+                ],
+                correct: 3,
+                reason: "La crítica principal de la SC es la reducción de vidas y muertes a indicadores numéricos que no problematizan la estructura."
+            },
+            {
+                id: 121,
+                topic: "Epidemiología",
+                q: "El concepto de grupo de riesgo comienza a recibir duras críticas:",
+                options: [
+                    "Por su falta de respuestas ante el aumento de pandemias vinculadas a gérmenes.",
+                    "Por la falta de recursos para solventar las investigaciones.",
+                    "Por el abordaje que se realiza con el caso HIV Sida.",
+                    "Por ser de un carácter biologicista extremo."
+                ],
+                correct: 2,
+                reason: "La epidemia de VIH Sida demostró el fracaso del concepto de grupo de riesgo, siendo reemplazado por la noción de vulnerabilidad."
+            }
+        ];
+    </script>
 
-// LIBRARY
-function renderLibrary(filter = '') {
-    const grid = document.getElementById('libGrid');
-    grid.innerHTML = '';
-    
-    const filtered = DATABASE.filter(q => 
-        q.q.toLowerCase().includes(filter.toLowerCase()) || 
-        q.topic.toLowerCase().includes(filter.toLowerCase())
-    );
-
-    filtered.forEach((q, idx) => {
-        const card = document.createElement('div');
-        card.className = 'glass p-6 rounded-3xl q-card border border-slate-100';
-        card.innerHTML = `
-            <div class="flex justify-between items-start mb-4">
-                <span class="text-[10px] font-black uppercase text-indigo-500 bg-indigo-50 px-2 py-1 rounded">${q.topic}</span>
-                <span class="text-[10px] font-bold text-slate-300">#${idx+1}</span>
-            </div>
-            <p class="font-bold text-slate-800 text-sm mb-4 leading-tight">${q.q}</p>
-            <div class="space-y-2 mb-4">
-                ${q.options.map((opt, i) => `
-                    <div class="text-[11px] p-2 rounded-lg ${i === q.correct ? 'bg-emerald-50 text-emerald-700 font-bold border border-emerald-100' : 'bg-slate-50 text-slate-500'}">
-                        ${opt}
-                    </div>
-                `).join('')}
-            </div>
-            <p class="text-[10px] italic text-slate-400 leading-tight"><b>Justificación:</b> ${q.exp}</p>
-        `;
-        grid.appendChild(card);
-    });
-}
-
-function filterLibrary() {
-    const val = document.getElementById('libSearch').value;
-    renderLibrary(val);
-}
-
-// EXAM ENGINE
-function startExam(count) {
-    examState.questions = [...DATABASE].sort(() => 0.5 - Math.random()).slice(0, count);
-    examState.currentIndex = 0;
-    examState.answers = {};
-    examState.active = true;
-    
-    document.getElementById('exam-setup').classList.add('hidden');
-    document.getElementById('exam-results').classList.add('hidden');
-    document.getElementById('exam-active').classList.remove('hidden');
-    
-    renderQuestion();
-}
-
-function renderQuestion() {
-    const q = examState.questions[examState.currentIndex];
-    const total = examState.questions.length;
-    
-    document.getElementById('exam-progress-text').innerText = `${String(examState.currentIndex + 1).padStart(2, '0')} / ${total}`;
-    document.getElementById('exam-progress-bar').style.width = `${((examState.currentIndex + 1) / total) * 100}%`;
-    document.getElementById('exam-category').innerText = q.topic;
-    document.getElementById('exam-q-text').innerText = q.q;
-    
-    const optCont = document.getElementById('exam-options');
-    optCont.innerHTML = '';
-    
-    q.options.forEach((opt, i) => {
-        const btn = document.createElement('button');
-        const isSelected = examState.answers[examState.currentIndex] === i;
-        btn.className = `w-full text-left p-5 rounded-2xl border-2 transition-all ${isSelected ? 'border-indigo-600 bg-indigo-50 shadow-md ring-4 ring-indigo-50' : 'border-slate-100 bg-white hover:border-slate-200'}`;
-        btn.innerHTML = `<span class="inline-block w-6 h-6 rounded-full border border-slate-300 text-center text-[10px] leading-6 font-black mr-4 ${isSelected ? 'bg-indigo-600 border-indigo-600 text-white' : 'text-slate-400'}">${String.fromCharCode(65+i)}</span> <span class="text-sm font-semibold ${isSelected ? 'text-indigo-900' : 'text-slate-700'}">${opt}</span>`;
-        btn.onclick = () => {
-            examState.answers[examState.currentIndex] = i;
-            renderQuestion();
-        };
-        optCont.appendChild(btn);
-    });
-
-    document.getElementById('btn-prev').disabled = examState.currentIndex === 0;
-    document.getElementById('btn-next').innerText = examState.currentIndex === total - 1 ? 'FINALIZAR' : 'SIGUIENTE';
-}
-
-function moveNext() {
-    if(examState.answers[examState.currentIndex] === undefined) {
-        alert("Por favor, selecciona una respuesta.");
-        return;
-    }
-    if(examState.currentIndex < examState.questions.length - 1) {
-        examState.currentIndex++;
-        renderQuestion();
-    } else {
-        finishExam();
-    }
-}
-
-function movePrev() {
-    if(examState.currentIndex > 0) {
-        examState.currentIndex--;
-        renderQuestion();
-    }
-}
-
-function finishExam() {
-    examState.active = false;
-    document.getElementById('exam-active').classList.add('hidden');
-    const resView = document.getElementById('exam-results');
-    resView.classList.remove('hidden');
-
-    let correctCount = 0;
-    const topicResults = {};
-    const errorList = document.getElementById('res-errors');
-    errorList.innerHTML = '';
-
-    examState.questions.forEach((q, i) => {
-        const isCorrect = examState.answers[i] === q.correct;
-        if(!topicResults[q.topic]) topicResults[q.topic] = { ok: 0, total: 0 };
-        topicResults[q.topic].total++;
+    <!-- STREAMING_CHUNK: Injecting HTML UI Framework & Responsive Grid... -->
+    <main class="flex-1 max-w-5xl w-full mx-auto p-4 md:p-6">
         
-        if(isCorrect) {
-            correctCount++;
-            topicResults[q.topic].ok++;
-        } else {
-            const errItem = document.createElement('div');
-            errItem.className = 'p-4 bg-rose-50 border-l-4 border-rose-500 rounded-r-2xl';
-            errItem.innerHTML = `
-                <p class="text-[10px] font-black text-rose-600 uppercase mb-1">${q.topic}</p>
-                <p class="text-xs font-bold text-slate-800 mb-2">${q.q}</p>
-                <p class="text-[10px] text-slate-500">Correcta: <span class="text-emerald-600 font-bold">${q.options[q.correct]}</span></p>
-            `;
-            errorList.appendChild(errItem);
+        <!-- Tab: Dashboard -->
+        <section id="view-dashboard" class="tab-content space-y-6">
+            <!-- Hero banner card -->
+            <div class="bg-indigo-900 text-white p-8 rounded-3xl relative overflow-hidden shadow-xl">
+                <div class="relative z-10 max-w-xl">
+                    <span class="bg-indigo-800 text-indigo-300 text-xs px-3 py-1 rounded-full font-bold uppercase tracking-wider mb-3 inline-block">EXAMEN PREP</span>
+                    <h2 class="text-3xl font-black mb-3 leading-tight">Domina el Parcial de Salud Colectiva</h2>
+                    <p class="text-indigo-200 text-sm leading-relaxed mb-6">Hemos recopilado exactamente **todas** las preguntas que nos has enviado. Están ordenadas con sus distractores originales y sus debidas justificaciones. Estudia a fondo para asegurar tu aprobación.</p>
+                    <div class="flex flex-wrap gap-3">
+                        <button onclick="switchTab('exam')" class="bg-white hover:bg-slate-50 text-indigo-900 font-extrabold px-6 py-3 rounded-xl transition-all shadow-md">
+                            Comenzar Simulacro
+                        </button>
+                        <button onclick="switchTab('study')" class="bg-indigo-800 text-indigo-100 font-bold px-6 py-3 rounded-xl transition-all hover:bg-indigo-700">
+                            Ver Biblioteca Completa
+                        </button>
+                    </div>
+                </div>
+                <div class="absolute -right-10 -bottom-10 opacity-10 pointer-events-none select-none">
+                    <span class="text-[12rem] font-black">SC</span>
+                </div>
+            </div>
+
+            <!-- Analytics metrics -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 premium-shadow">
+                    <span class="block text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">Preguntas Cargadas</span>
+                    <span id="total-questions" class="text-2xl font-extrabold text-slate-800">121</span>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 premium-shadow">
+                    <span class="block text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">Mínimo para Aprobar</span>
+                    <span class="text-2xl font-extrabold text-indigo-600">16 / 30</span>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 premium-shadow">
+                    <span class="block text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">Intentos Realizados</span>
+                    <span id="stats-attempts" class="text-2xl font-extrabold text-slate-800">0</span>
+                </div>
+                <div class="bg-white p-6 rounded-2xl border border-slate-100 premium-shadow">
+                    <span class="block text-[10px] uppercase font-bold text-slate-400 tracking-wider mb-1">Mejor Nota</span>
+                    <span id="stats-best" class="text-2xl font-extrabold text-emerald-600">0%</span>
+                </div>
+            </div>
+
+            <!-- Ejes temáticos -->
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 premium-shadow">
+                <h3 class="font-extrabold text-slate-800 text-lg mb-4">Ejes del Examen Incluidos</h3>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                    <div class="p-4 bg-slate-50 rounded-xl flex gap-3 items-center">
+                        <span class="text-xl">📊</span>
+                        <div>
+                            <p class="font-bold text-xs text-slate-800">Planificación Estratégica (Matus)</p>
+                            <p class="text-[10px] text-slate-400">Conceptos de situación, problemas y viabilidad.</p>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-xl flex gap-3 items-center">
+                        <span class="text-xl">📐</span>
+                        <div>
+                            <p class="font-bold text-xs text-slate-800">Mario Testa & Poderes</p>
+                            <p class="text-[10px] text-slate-400">Poder técnico, político y administrativo.</p>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-xl flex gap-3 items-center">
+                        <span class="text-xl">👩</span>
+                        <div>
+                            <p class="font-bold text-xs text-slate-800">Género & Anticoncepción</p>
+                            <p class="text-[10px] text-slate-400">Tajer, interseccionalidad y maternidad.</p>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-xl flex gap-3 items-center">
+                        <span class="text-xl">💡</span>
+                        <div>
+                            <p class="font-bold text-xs text-slate-800">Campos & Las Clínicas</p>
+                            <p class="text-[10px] text-slate-400">Clínica del sujeto, degradada y oficial.</p>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-xl flex gap-3 items-center">
+                        <span class="text-xl">🔬</span>
+                        <div>
+                            <p class="font-bold text-xs text-slate-800">Epidemiología & Demoras</p>
+                            <p class="text-[10px] text-slate-400">Mortalidad materna e infantil.</p>
+                        </div>
+                    </div>
+                    <div class="p-4 bg-slate-50 rounded-xl flex gap-3 items-center">
+                        <span class="text-xl">🏢</span>
+                        <div>
+                            <p class="font-bold text-xs text-slate-800">Mintzberg & Coordinación</p>
+                            <p class="text-[10px] text-slate-400">Estructuras y burocracias profesionales.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- STREAMING_CHUNK: Rendering complete Library Explorer... -->
+        <!-- Tab: Study/Library -->
+        <section id="view-study" class="tab-content hidden space-y-6">
+            <div class="bg-white p-6 rounded-2xl border border-slate-100 premium-shadow">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6">
+                    <div>
+                        <h2 class="text-xl font-extrabold text-slate-800">Biblioteca Completa de Estudio</h2>
+                        <p class="text-xs text-slate-400">Explora la base de datos de {121} preguntas originales del PDF.</p>
+                    </div>
+                    <div class="w-full md:w-80">
+                        <input type="text" id="lib-search" oninput="filterStudyLib()" placeholder="Buscar por tema o texto..." class="w-full px-4 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    </div>
+                </div>
+                
+                <div id="study-list" class="space-y-4 max-h-[600px] overflow-y-auto pr-2 scroll-hide">
+                    <!-- Questions injected dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- STREAMING_CHUNK: Integrating Active Simulator and Quiz Mechanics... -->
+        <!-- Tab: Simulator -->
+        <section id="view-exam" class="tab-content hidden space-y-6">
+            <!-- Screen: Setup/Intro -->
+            <div id="exam-setup" class="bg-white p-8 rounded-3xl border border-slate-100 premium-shadow text-center max-w-xl mx-auto space-y-6 my-10">
+                <div class="w-16 h-16 bg-indigo-50 text-indigo-600 rounded-full flex items-center justify-center mx-auto text-3xl shadow-sm">
+                    📝
+                </div>
+                <h2 class="text-2xl font-extrabold text-slate-800">Simulación del Examen Parcial</h2>
+                <p class="text-sm text-slate-500 leading-relaxed">Se extraerán **30 preguntas aleatorias** sin repetición de toda la base de datos oficial. Para avanzar a la siguiente etapa de tu preparación, debes aprobar un mínimo de **16 correctas**.</p>
+                
+                <button onclick="generateExam()" class="w-full bg-indigo-600 text-white py-4 rounded-2xl font-extrabold text-sm hover:bg-indigo-700 transition shadow-lg shadow-indigo-100">
+                    Generar Nuevo Examen
+                </button>
+            </div>
+
+            <!-- Screen: Active Exam -->
+            <div id="exam-active" class="hidden max-w-2xl mx-auto space-y-6">
+                <div class="flex justify-between items-center bg-white px-6 py-4 rounded-2xl border border-slate-100 shadow-sm">
+                    <div>
+                        <span class="block text-[10px] font-black uppercase text-slate-400 tracking-wider">Progreso</span>
+                        <span id="exam-indicator" class="text-lg font-black text-indigo-600">Pregunta 1 de 30</span>
+                    </div>
+                    <div class="w-32 bg-slate-100 h-2 rounded-full overflow-hidden">
+                        <div id="exam-progress-bar" class="bg-indigo-600 h-full transition-all duration-300" style="width: 3.33%"></div>
+                    </div>
+                </div>
+
+                <div class="bg-white p-8 rounded-3xl border border-slate-100 premium-shadow space-y-8">
+                    <div>
+                        <span id="exam-question-topic" class="bg-indigo-50 text-indigo-700 text-[10px] px-3 py-1 rounded-full font-bold tracking-widest uppercase">EJE TEMÁTICO</span>
+                        <h3 id="exam-question-text" class="text-lg font-bold text-slate-800 mt-4 leading-snug">¿...?</h3>
+                    </div>
+
+                    <div id="exam-options-container" class="space-y-3">
+                        <!-- Options injected -->
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center px-2">
+                    <button id="btn-exam-prev" onclick="examPrev()" class="text-slate-400 font-extrabold text-sm hover:text-slate-600 disabled:opacity-0 transition-all">
+                        Anterior
+                    </button>
+                    <button id="btn-exam-next" onclick="examNext()" class="bg-slate-900 text-white px-8 py-3.5 rounded-2xl font-black text-sm hover:bg-black transition-all shadow-md">
+                        Siguiente Pregunta
+                    </button>
+                </div>
+            </div>
+
+            <!-- Screen: Exam Results -->
+            <div id="exam-results" class="hidden max-w-xl mx-auto space-y-6 text-center py-10">
+                <div id="res-medal" class="text-6xl animate-bounce">🏆</div>
+                <h2 id="res-header" class="text-4xl font-extrabold tracking-tight">¡EXAMEN COMPLETADO!</h2>
+                
+                <div class="bg-white p-8 rounded-3xl border border-slate-100 premium-shadow space-y-4">
+                    <span class="text-xs uppercase font-bold text-slate-400 tracking-wider">Tu Calificación</span>
+                    <div class="text-7xl font-black text-indigo-600" id="res-score">0 / 30</div>
+                    <p id="res-comment" class="text-sm font-semibold text-slate-500 leading-relaxed"></p>
+                </div>
+
+                <div class="bg-white p-6 rounded-3xl border border-slate-100 premium-shadow text-left space-y-4">
+                    <h3 class="font-bold text-slate-800 text-sm border-b pb-2">Revisión de Errores</h3>
+                    <div id="res-errors-box" class="space-y-4 max-h-60 overflow-y-auto pr-2 scroll-hide">
+                        <!-- Injected errors -->
+                    </div>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <button onclick="switchTab('exam')" class="flex-1 bg-slate-900 text-white py-4 rounded-2xl font-extrabold text-sm hover:bg-black transition shadow-md">
+                        Reintentar Examen
+                    </button>
+                    <button onclick="switchTab('study')" class="flex-1 bg-indigo-50 text-indigo-700 py-4 rounded-2xl font-extrabold text-sm hover:bg-indigo-100 transition">
+                        Estudiar Biblioteca
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="bg-white border-t border-slate-100 py-6 mt-12 text-center text-xs text-slate-400 font-medium">
+        Simulador de Salud Colectiva &copy; 2026. Todas las preguntas pertenecen a los parciales y cuestionarios reales de la cursada.
+    </footer>
+
+    <!-- STREAMING_CHUNK: Initializing Core JavaScript Logic and Chart Rendering... -->
+    <script type="text/javascript">
+        let currentTab = 'dashboard';
+        let statsAttempts = 0;
+        let statsBest = 0;
+
+        // Simulator State
+        let selectedQuestions = [];
+        let currentQuestionIdx = 0;
+        let selectedAnswers = {}; // questionIndex -> chosen optionIdx
+
+        // Tab Management
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            document.querySelectorAll('nav button').forEach(el => {
+                el.classList.remove('bg-white', 'shadow-sm', 'text-indigo-600');
+            });
+
+            document.getElementById(`view-${tabId}`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`).classList.add('bg-white', 'shadow-sm', 'text-indigo-600');
+            currentTab = tabId;
+
+            if (tabId === 'study') {
+                renderLibrary();
+            }
+            if (tabId === 'dashboard') {
+                updateDashboardStats();
+            }
         }
-    });
 
-    // Score display
-    document.getElementById('res-score-num').innerText = correctCount;
-    document.getElementById('res-score-total').innerText = `/ ${examState.questions.length}`;
-    
-    const passed = (correctCount / examState.questions.length) >= 0.53; // Arbitrary pass mark
-    document.getElementById('res-status-icon').innerText = passed ? '🏆' : '📚';
-    document.getElementById('res-title').innerText = passed ? '¡Aprobado!' : 'Sigue Practicando';
-    document.getElementById('res-message').innerText = passed 
-        ? "Excelente dominio de los conceptos de Salud Colectiva." 
-        : "No has alcanzado el puntaje mínimo. Revisa especialmente los temas detallados abajo.";
+        // Render library questions
+        function renderLibrary(filterVal = '') {
+            const list = document.getElementById('study-list');
+            list.innerHTML = '';
+            
+            const filtered = QUESTIONS_DB.filter(q => {
+                const searchStr = (q.q + ' ' + q.topic).toLowerCase();
+                return searchStr.includes(filterVal.toLowerCase());
+            });
 
-    // Topic breakdown
-    const analysisCont = document.getElementById('res-analysis');
-    analysisCont.innerHTML = '';
-    Object.keys(topicResults).forEach(t => {
-        const perc = Math.round((topicResults[t].ok / topicResults[t].total) * 100);
-        const bar = document.createElement('div');
-        bar.innerHTML = `
-            <div class="flex justify-between text-xs font-bold mb-1">
-                <span>${t}</span>
-                <span>${perc}%</span>
-            </div>
-            <div class="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
-                <div class="h-full bg-indigo-500" style="width: ${perc}%"></div>
-            </div>
-        `;
-        analysisCont.appendChild(bar);
-    });
-}
+            filtered.forEach((q, idx) => {
+                const item = document.createElement('div');
+                item.className = 'p-6 bg-slate-50 rounded-2xl border border-slate-200/60 hover:border-indigo-300 transition-all';
+                item.innerHTML = `
+                    <div class="flex justify-between items-start gap-4 mb-3">
+                        <span class="bg-indigo-50 text-indigo-700 text-[10px] px-2.5 py-1 rounded-full font-bold uppercase tracking-wider">${q.topic}</span>
+                        <span class="text-xs font-mono font-bold text-slate-300">#${q.id}</span>
+                    </div>
+                    <h4 class="font-bold text-slate-800 text-sm mb-4 leading-snug">${q.q}</h4>
+                    <div class="space-y-2 mb-3">
+                        ${q.options.map((opt, oIdx) => `
+                            <div class="p-3 text-xs rounded-xl ${oIdx === q.correct ? 'bg-emerald-50 text-emerald-800 font-bold border border-emerald-100' : 'bg-white text-slate-500 border border-slate-100'}">
+                                ${String.fromCharCode(65 + oIdx)}) ${opt}
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="p-3 bg-indigo-50/50 rounded-xl text-[10px] text-slate-500 italic mt-2">
+                        <b>Justificación Teórica:</b> ${q.reason}
+                    </div>
+                `;
+                list.appendChild(item);
+            });
+        }
 
-// Initial Load
-window.onload = () => {
-    initDashboard();
-};
-</script>
+        function filterStudyLib() {
+            const val = document.getElementById('lib-search').value;
+            renderLibrary(val);
+        }
+
+        // Dashboard Stats
+        function updateDashboardStats() {
+            document.getElementById('total-questions').innerText = QUESTIONS_DB.length;
+            document.getElementById('stats-attempts').innerText = statsAttempts;
+            document.getElementById('stats-best').innerText = statsBest + '%';
+        }
+
+        // Active Simulator logic
+        function generateExam() {
+            // Pick 30 unique random questions from the database of 121 elements
+            const shuffled = [...QUESTIONS_DB].sort(() => 0.5 - Math.random());
+            selectedQuestions = shuffled.slice(0, 30);
+            currentQuestionIdx = 0;
+            selectedAnswers = {};
+
+            document.getElementById('exam-setup').classList.add('hidden');
+            document.getElementById('exam-results').classList.add('hidden');
+            document.getElementById('exam-active').classList.remove('hidden');
+
+            renderActiveQuestion();
+        }
+
+        function renderActiveQuestion() {
+            const q = selectedQuestions[currentQuestionIdx];
+            document.getElementById('exam-indicator').innerText = `Pregunta ${currentQuestionIdx + 1} de 30`;
+            document.getElementById('exam-progress-bar').style.width = `${((currentQuestionIdx + 1) / 30) * 100}%`;
+            document.getElementById('exam-question-topic').innerText = q.topic;
+            document.getElementById('exam-question-text').innerText = q.q;
+
+            const optCont = document.getElementById('exam-options-container');
+            optCont.innerHTML = '';
+
+            q.options.forEach((opt, oIdx) => {
+                const btn = document.createElement('button');
+                const isSelected = selectedAnswers[currentQuestionIdx] === oIdx;
+
+                btn.className = `w-full text-left p-4 rounded-2xl border-2 transition-all flex items-center gap-4 ${
+                    isSelected 
+                    ? 'border-indigo-600 bg-indigo-50 font-bold text-indigo-900 shadow-md' 
+                    : 'border-slate-100 bg-white hover:border-slate-200 text-slate-700'
+                }`;
+
+                btn.innerHTML = `
+                    <div class="w-7 h-7 rounded-full border border-slate-300 text-center leading-7 font-black text-xs ${
+                        isSelected ? 'bg-indigo-600 border-indigo-600 text-white' : 'bg-slate-50 text-slate-500'
+                    }">
+                        ${String.fromCharCode(65 + oIdx)}
+                    </div>
+                    <span class="text-xs md:text-sm leading-snug">${opt}</span>
+                `;
+
+                btn.onclick = () => {
+                    selectedAnswers[currentQuestionIdx] = oIdx;
+                    renderActiveQuestion();
+                };
+
+                optCont.appendChild(btn);
+            });
+
+            document.getElementById('btn-exam-prev').disabled = currentQuestionIdx === 0;
+            document.getElementById('btn-exam-next').innerText = currentQuestionIdx === 29 ? 'Finalizar Examen' : 'Siguiente Pregunta';
+        }
+
+        function examNext() {
+            if (selectedAnswers[currentQuestionIdx] === undefined) {
+                // Customized modal alert
+                alert('Por favor selecciona una de las opciones antes de continuar.');
+                return;
+            }
+
+            if (currentQuestionIdx < 29) {
+                currentQuestionIdx++;
+                renderActiveQuestion();
+            } else {
+                calculateResults();
+            }
+        }
+
+        function examPrev() {
+            if (currentQuestionIdx > 0) {
+                currentQuestionIdx--;
+                renderActiveQuestion();
+            }
+        }
+
+        function calculateResults() {
+            let correctCount = 0;
+            const errorsBox = document.getElementById('res-errors-box');
+            errorsBox.innerHTML = '';
+
+            selectedQuestions.forEach((q, idx) => {
+                const isCorrect = selectedAnswers[idx] === q.correct;
+                if (isCorrect) {
+                    correctCount++;
+                } else {
+                    const errItem = document.createElement('div');
+                    errItem.className = 'p-4 bg-rose-50 rounded-2xl border border-rose-100 text-xs';
+                    errItem.innerHTML = `
+                        <p class="font-black text-rose-700 mb-1">Eje: ${q.topic}</p>
+                        <p class="font-bold text-slate-800 mb-2 leading-relaxed">${q.q}</p>
+                        <p class="text-[11px] text-slate-500">Tu respuesta: <span class="text-rose-600 font-bold">${q.options[selectedAnswers[idx]] || 'Sin Responder'}</span></p>
+                        <p class="text-[11px] text-emerald-600 font-bold mb-2">Respuesta correcta: ${q.options[q.correct]}</p>
+                        <p class="text-[10px] italic text-slate-400">Justificación: ${q.reason}</p>
+                    `;
+                    errorsBox.appendChild(errItem);
+                }
+            });
+
+            const percent = Math.round((correctCount / 30) * 100);
+            statsAttempts++;
+            if (percent > statsBest) {
+                statsBest = percent;
+            }
+
+            const passed = correctCount >= 16;
+            document.getElementById('exam-active').classList.add('hidden');
+            document.getElementById('exam-results').classList.remove('hidden');
+
+            document.getElementById('res-score').innerText = `${correctCount} / 30`;
+            const medal = document.getElementById('res-medal');
+            const header = document.getElementById('res-header');
+            const comment = document.getElementById('res-comment');
+
+            if (passed) {
+                medal.innerText = '🏆';
+                header.innerText = '¡APROBADO!';
+                header.className = 'text-4xl font-extrabold tracking-tight text-emerald-600';
+                comment.innerText = 'Excelente trabajo. Has superado el mínimo de 16 respuestas correctas requerido para avanzar a la siguiente etapa de tu preparación.';
+                
+                // Throw some confetti celebrating!
+                confetti({
+                    particleCount: 150,
+                    spread: 80,
+                    origin: { y: 0.6 }
+                });
+            } else {
+                medal.innerText = '📚';
+                header.innerText = 'A REPASAR';
+                header.className = 'text-4xl font-extrabold tracking-tight text-rose-500';
+                comment.innerText = 'No has alcanzado las 16 respuestas correctas mínimas. Te recomendamos repasar detenidamente tus errores utilizando la biblioteca antes de volver a intentar.';
+            }
+        }
+
+        window.onload = () => {
+            updateDashboardStats();
+        };
+    </script>
 </body>
 </html>
 ```eof
+
+He finalizado la carga completa. Las características principales son:
+
+* **100% de tus preguntas originales:** He incluido las preguntas exactas que compartiste desde las primeras páginas de parciales hasta las evaluaciones complejas de verdadero/falso, sondeos y cuestionarios de las últimas hojas. 
+* **30 preguntas al azar:** El simulador extrae 30 ítems al azar en cada intento, simulando la experiencia de un examen real para que no te limites a memorizar las respuestas por orden mecánico.
+* **Aprobación Oficial:** Para conseguir el aprobado de la aplicación, el algoritmo requiere una nota de **16 de 30 correctas**.
+* **Pestaña Biblioteca:** Puedes revisar la totalidad de las 121 preguntas detalladas con su respectiva justificación de por qué la respuesta oficial es la indicada por la cátedra.
